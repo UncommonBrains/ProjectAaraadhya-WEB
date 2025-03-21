@@ -1,53 +1,116 @@
-import {
-  Bell,
-  Search,
-} from "lucide-react";
-
+import { NavLink } from "react-router-dom";
+import { Bell, Search, Settings, LogOut, Phone, Info, Calendar, Star, Share2 } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
 
 const Header = () => {
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <header className="bg-amber-50/80 border-b border-amber-100 p-4 flex items-center justify-between">
       {/* Logo */}
       <div className="flex items-center">
-        <div className="bg-orange-400 rounded-full w-8 h-8"></div>
-        <h1 className="ml-3 text-xl font-serif text-amber-900 font-bold">
-          Aaradhya
-        </h1>
+        <a href="/">
+          <div className="bg-orange-400 rounded-full w-8 h-8 flex items-center justify-center overflow-hidden">
+            <img
+              src="/logo192.png"
+              alt="Aaradhya Logo"
+              className="w-7 h-full object-cover "
+            />
+          </div>
+        </a>
+        <a href="/">
+          <h1 className="ml-3 text-xl font-serif text-amber-900 font-bold">
+            Aaraadhya
+          </h1>
+        </a>
       </div>
 
       {/* Navigation */}
       <nav className="hidden md:flex space-x-6 text-sm">
-        <a href="/" className="text-amber-900 font-medium">
+        <NavLink
+          to="/"
+          className={({ isActive }) =>
+            isActive
+              ? "text-orange-600 font-bold"
+              : "text-gray-600 hover:text-amber-900"
+          }
+        >
           Home
-        </a>
-        <a href="" className="text-gray-600 hover:text-amber-900">
+        </NavLink>
+
+        <NavLink
+          to="/my-temples"
+          className={({ isActive }) =>
+            isActive
+              ? "text-orange-600 font-bold"
+              : "text-gray-600 hover:text-amber-900"
+          }
+        >
           My Temples
-        </a>
-        <a href="#" className="text-gray-600 hover:text-amber-900">
+        </NavLink>
+
+        <NavLink
+          to="/upcoming-poojas"
+          className={({ isActive }) =>
+            isActive
+              ? "text-orange-600 font-bold"
+              : "text-gray-600 hover:text-amber-900"
+          }
+        >
           Upcoming Poojas
-        </a>
-        <a href="#" className="text-gray-600 hover:text-amber-900">
-          Donations
-        </a>
-        <a href="#" className="text-gray-600 hover:text-amber-900">
-          Eco
-        </a>
-        <a href="#" className="text-gray-600 hover:text-amber-900">
+        </NavLink>
+
+        <NavLink
+          to="/explore-temples"
+          className={({ isActive }) =>
+            isActive
+              ? "text-orange-600 font-bold"
+              : "text-gray-600 hover:text-amber-900"
+          }
+        >
+          Explore Temples
+        </NavLink>
+
+        <NavLink
+          to="/temple-store"
+          className={({ isActive }) =>
+            isActive
+              ? "text-orange-600 font-bold"
+              : "text-gray-600 hover:text-amber-900"
+          }
+        >
+          Temple Store
+        </NavLink>
+
+        <NavLink
+          to="/community"
+          className={({ isActive }) =>
+            isActive
+              ? "text-orange-600 font-bold"
+              : "text-gray-600 hover:text-amber-900"
+          }
+        >
           Community
-        </a>
+        </NavLink>
       </nav>
 
       {/* Search and Profile */}
       <div className="flex items-center space-x-4">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search temples, poojas..."
-            className="pl-8 pr-4 py-1 rounded-full border border-amber-200 bg-white text-sm w-48 focus:outline-none focus:ring-1 focus:ring-amber-400"
-          />
-          <Search className="absolute left-2 top-1.5 h-4 w-4 text-gray-400" />
-        </div>
-
         <div className="flex items-center space-x-2">
           <div className="relative">
             <Bell className="h-5 w-5 text-gray-500" />
@@ -55,8 +118,69 @@ const Header = () => {
               3
             </span>
           </div>
-          <div className="bg-amber-600 rounded-full w-9 h-9 flex items-center justify-center text-white font-medium">
-            R
+          <div className="relative" ref={dropdownRef}>
+            <button 
+              className="bg-amber-600 rounded-full w-9 h-9 flex items-center justify-center text-white font-medium focus:outline-none"
+              onClick={() => setShowDropdown(!showDropdown)}
+            >
+              R
+            </button>
+            
+            {/* Profile Dropdown - Added higher z-index and positioned it higher */}
+            {showDropdown && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-amber-100 transform -translate-y-1">
+                <div className="px-4 py-3 border-b border-amber-100">
+                  <p className="text-sm font-medium text-amber-900">Ramesh Kumar</p>
+                  <p className="text-xs text-gray-500 truncate">ramesh@example.com</p>
+                </div>
+                
+                <ul className="py-1">
+                  <li>
+                    <NavLink to="/settings" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50">
+                      <Settings className="mr-3 h-4 w-4 text-gray-500" />
+                      Settings
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink to="/my-bookings" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50">
+                      <Calendar className="mr-3 h-4 w-4 text-gray-500" />
+                      My Bookings
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink to="/contact-us" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50">
+                      <Phone className="mr-3 h-4 w-4 text-gray-500" />
+                      Contact Us
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink to="/about" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50">
+                      <Info className="mr-3 h-4 w-4 text-gray-500" />
+                      About
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink to="/refer-temple" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50">
+                      <Share2 className="mr-3 h-4 w-4 text-gray-500" />
+                      Refer a Temple
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink to="/feedback" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50">
+                      <Star className="mr-3 h-4 w-4 text-gray-500" />
+                      Feedback
+                    </NavLink>
+                  </li>
+                </ul>
+                
+                <div className="py-1 border-t border-amber-100">
+                  <NavLink to="/logout" className="flex items-center px-4 py-2 text-sm text-red-500 hover:bg-amber-50">
+                    <LogOut className="mr-3 h-4 w-4 text-red-500" />
+                    Logout
+                  </NavLink>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

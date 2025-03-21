@@ -13,8 +13,7 @@ import {
   Info,
   Heart,
 } from "lucide-react";
-
-import Header from "../components/header.js"; // Place this at the top
+import SearchBar from "../components/searchBar"; 
 
 
 const MyTemples = () => {
@@ -22,8 +21,8 @@ const MyTemples = () => {
 
   return (
     <div className="bg-amber-50 min-h-screen font-sans">
-      < Header />
       
+      <SearchBar/>
 
       {/* Main Content */}
       <main className="container mx-auto p-4 grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -139,30 +138,32 @@ const MyTemples = () => {
               <button className="bg-white border border-amber-200 p-2 rounded text-gray-600">
                 <Map className="h-4 w-4" />
               </button>
-              <button className="bg-orange-500 text-white px-4 py-1 rounded flex items-center space-x-1">
-                <Plus className="h-4 w-4" />
-                <span>Add Temple</span>
-              </button>
             </div>
           </div>
 
           {/* Filters */}
           <div className="flex flex-wrap space-x-3 mb-6 text-sm">
-            {["All", "North Indian", "South Indian", "Vishnu", "Shiva", "Shakti", "Favorites"].map(
-              (filter) => (
-                <button
-                  key={filter}
-                  className={`${
-                    activeFilter === filter
-                      ? "bg-orange-500 text-white"
-                      : "bg-amber-50 text-gray-600"
-                  } px-4 py-1 rounded-full mb-2`}
-                  onClick={() => setActiveFilter(filter)}
-                >
-                  {filter}
-                </button>
-              )
-            )}
+            {[
+              "All",
+              "North Indian",
+              "South Indian",
+              "Vishnu",
+              "Shiva",
+              "Shakti",
+              "Favorites",
+            ].map((filter) => (
+              <button
+                key={filter}
+                className={`${
+                  activeFilter === filter
+                    ? "bg-orange-500 text-white"
+                    : "bg-amber-50 text-gray-600"
+                } px-4 py-1 rounded-full mb-2`}
+                onClick={() => setActiveFilter(filter)}
+              >
+                {filter}
+              </button>
+            ))}
           </div>
 
           {/* Temple Grid */}
@@ -261,7 +262,9 @@ const MyTemples = () => {
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-amber-900/70 to-transparent p-3">
                   <h3 className="text-white font-medium">Kashi Vishwanath</h3>
-                  <p className="text-amber-50 text-xs">Varanasi, Uttar Pradesh</p>
+                  <p className="text-amber-50 text-xs">
+                    Varanasi, Uttar Pradesh
+                  </p>
                 </div>
               </div>
               <div className="p-3">
@@ -303,7 +306,9 @@ const MyTemples = () => {
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-amber-900/70 to-transparent p-3">
                   <h3 className="text-white font-medium">Tirupati Balaji</h3>
-                  <p className="text-amber-50 text-xs">Tirupati, Andhra Pradesh</p>
+                  <p className="text-amber-50 text-xs">
+                    Tirupati, Andhra Pradesh
+                  </p>
                 </div>
               </div>
               <div className="p-3">

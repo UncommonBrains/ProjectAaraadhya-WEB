@@ -9,14 +9,13 @@ import {
   Check,
   Clock,
 } from "lucide-react";
-import Header from "../components/header.js"; // Place this at the top
-
+import SearchBar from "../components/searchBar"; 
 
 
 const Home = () => {
   return (
     <div className="bg-amber-50 min-h-screen font-sans">
-      <Header/>     
+            <SearchBar/>
 
       {/* Main Content */}
       <main className="container mx-auto p-4 grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -56,38 +55,45 @@ const Home = () => {
             </a>
           </div>
 
-          {/* Upcoming Poojas */}
+          {/* My Bookings */}
           <div className="bg-white rounded-lg shadow-sm border border-amber-100 p-4">
-            <h3 className="font-serif text-amber-900 mb-4">Upcoming Poojas</h3>
+            <h3 className="font-serif text-amber-900 mb-4">My Bookings</h3>
+
             <div className="space-y-3">
-              <div className="bg-amber-50 rounded p-3 flex">
-                <div className="bg-orange-100 rounded w-8 h-8 flex items-center justify-center text-orange-500 font-medium">
-                  13
-                </div>
-                <div className="ml-3">
+              <div className="bg-amber-50 rounded p-3 flex justify-between items-center">
+                <div>
                   <p className="text-gray-700 text-sm font-medium">
-                    Ganesh Chaturthi Pooja
+                    Ganesh Abhishekam
                   </p>
-                  <p className="text-gray-500 text-xs">Tomorrow, 9:00 AM</p>
+                  <p className="text-gray-500 text-xs">
+                    Tomorrow, 10:30 AM • ISKCON
+                  </p>
+                </div>
+                <div className="bg-green-100 rounded-md p-1">
+                  <Check className="h-4 w-4 text-green-600" />
                 </div>
               </div>
-              <div className="bg-amber-50 rounded p-3 flex">
-                <div className="bg-orange-100 rounded w-8 h-8 flex items-center justify-center text-orange-500 font-medium">
-                  15
-                </div>
-                <div className="ml-3">
+
+              <div className="bg-amber-50 rounded p-3 flex justify-between items-center">
+                <div>
                   <p className="text-gray-700 text-sm font-medium">
-                    Lakshmi Pooja
+                    VIP Darshan Pass
                   </p>
-                  <p className="text-gray-500 text-xs">March 15, 6:30 PM</p>
+                  <p className="text-gray-500 text-xs">
+                    March 18, 4:00 PM • Tirupati
+                  </p>
+                </div>
+                <div className="bg-orange-100 rounded-md p-1">
+                  <Clock className="h-4 w-4 text-orange-500" />
                 </div>
               </div>
             </div>
+
             <a
               href="#"
               className="text-orange-500 flex items-center mt-4 text-sm"
             >
-              View full calendar <ChevronRight className="h-4 w-4" />
+              View all bookings <ChevronRight className="h-4 w-4" />
             </a>
           </div>
 
@@ -234,77 +240,38 @@ const Home = () => {
 
         {/* Right Column */}
         <div className="space-y-6">
-          {/* Live Darshan */}
-          <div className="bg-amber-50 rounded-lg shadow-sm border border-amber-100 p-4">
-            <h3 className="font-serif text-amber-900 mb-4">Live Events</h3>
-
-            {/* Coming Soon Placeholder */}
-            <div className="bg-gray-100 text-gray-600 text-center text-sm py-4 rounded-lg">
-              Coming Soon...
-            </div>
-
-            {/* <div className="bg-amber-200/30 rounded-lg h-32 relative mb-4">
-              <div className="absolute top-2 left-2 flex items-center">
-                <div className="bg-orange-500 rounded-full w-3 h-3"></div>
-                <span className="ml-2 text-xs font-medium text-gray-700">
-                  Tirupati Balaji
-                </span>
-              </div>
-
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Play className="h-6 w-6 text-amber-800" />
-              </div>
-            </div>
-
-            <ul className="space-y-2 text-sm">
-              <li className="text-gray-700">
-                • Vaishno Devi (Starting in 20 min)
-              </li>
-              <li className="text-gray-700">
-                • Siddhivinayak (Starting at 6 PM)
-              </li>
-            </ul> */}
-          </div>
-
-          {/* My Bookings */}
+          {/* Upcoming Poojas */}
           <div className="bg-white rounded-lg shadow-sm border border-amber-100 p-4">
-            <h3 className="font-serif text-amber-900 mb-4">My Bookings</h3>
-
+            <h3 className="font-serif text-amber-900 mb-4">Upcoming Poojas</h3>
             <div className="space-y-3">
-              <div className="bg-amber-50 rounded p-3 flex justify-between items-center">
-                <div>
-                  <p className="text-gray-700 text-sm font-medium">
-                    Ganesh Abhishekam
-                  </p>
-                  <p className="text-gray-500 text-xs">
-                    Tomorrow, 10:30 AM • ISKCON
-                  </p>
+              <div className="bg-amber-50 rounded p-3 flex">
+                <div className="bg-orange-100 rounded w-8 h-8 flex items-center justify-center text-orange-500 font-medium">
+                  13
                 </div>
-                <div className="bg-green-100 rounded-md p-1">
-                  <Check className="h-4 w-4 text-green-600" />
+                <div className="ml-3">
+                  <p className="text-gray-700 text-sm font-medium">
+                    Ganesh Chaturthi Pooja
+                  </p>
+                  <p className="text-gray-500 text-xs">Tomorrow, 9:00 AM</p>
                 </div>
               </div>
-
-              <div className="bg-amber-50 rounded p-3 flex justify-between items-center">
-                <div>
-                  <p className="text-gray-700 text-sm font-medium">
-                    VIP Darshan Pass
-                  </p>
-                  <p className="text-gray-500 text-xs">
-                    March 18, 4:00 PM • Tirupati
-                  </p>
+              <div className="bg-amber-50 rounded p-3 flex">
+                <div className="bg-orange-100 rounded w-8 h-8 flex items-center justify-center text-orange-500 font-medium">
+                  15
                 </div>
-                <div className="bg-orange-100 rounded-md p-1">
-                  <Clock className="h-4 w-4 text-orange-500" />
+                <div className="ml-3">
+                  <p className="text-gray-700 text-sm font-medium">
+                    Lakshmi Pooja
+                  </p>
+                  <p className="text-gray-500 text-xs">March 15, 6:30 PM</p>
                 </div>
               </div>
             </div>
-
             <a
               href="#"
               className="text-orange-500 flex items-center mt-4 text-sm"
             >
-              View all bookings <ChevronRight className="h-4 w-4" />
+              View full calendar <ChevronRight className="h-4 w-4" />
             </a>
           </div>
 
@@ -358,6 +325,38 @@ const Home = () => {
             >
               Explore more temples <ChevronRight className="h-4 w-4" />
             </a>
+          </div>
+
+          {/* Live Events */}
+          <div className="bg-amber-50 rounded-lg shadow-sm border border-amber-100 p-4">
+            <h3 className="font-serif text-amber-900 mb-4">Live Events</h3>
+
+            {/* Coming Soon Placeholder */}
+            <div className="bg-gray-100 text-gray-600 text-center text-sm py-4 rounded-lg">
+              Coming Soon...
+            </div>
+
+            {/* <div className="bg-amber-200/30 rounded-lg h-32 relative mb-4">
+              <div className="absolute top-2 left-2 flex items-center">
+                <div className="bg-orange-500 rounded-full w-3 h-3"></div>
+                <span className="ml-2 text-xs font-medium text-gray-700">
+                  Tirupati Balaji
+                </span>
+              </div>
+
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Play className="h-6 w-6 text-amber-800" />
+              </div>
+            </div>
+
+            <ul className="space-y-2 text-sm">
+              <li className="text-gray-700">
+                • Vaishno Devi (Starting in 20 min)
+              </li>
+              <li className="text-gray-700">
+                • Siddhivinayak (Starting at 6 PM)
+              </li>
+            </ul> */}
           </div>
         </div>
       </main>
