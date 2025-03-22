@@ -1,5 +1,5 @@
-import React from 'react';
-import { Heart, Clock, Star } from 'lucide-react';
+import React from "react";
+import { Heart, Clock, Star } from "lucide-react";
 
 // Temple data array
 const templesData = [
@@ -11,11 +11,12 @@ const templesData = [
     rating: 4,
     reviews: 124,
     favorite: true,
+    imagePath: "/temple-images/Neendoor.jpeg",
     lastVisit: {
       type: "last",
       text: "2 days ago",
-      status: "recent" // recent, upcoming, old
-    }
+      status: "recent", // recent, upcoming, old
+    },
   },
   {
     id: 2,
@@ -25,11 +26,13 @@ const templesData = [
     rating: 5,
     reviews: 203,
     favorite: true,
+    imagePath: "/temple-images/Neendoor.jpeg",
+
     lastVisit: {
       type: "last",
       text: "1 week ago",
-      status: "recent"
-    }
+      status: "recent",
+    },
   },
   {
     id: 3,
@@ -39,11 +42,13 @@ const templesData = [
     rating: 4,
     reviews: 156,
     favorite: true,
+    imagePath: "/temple-images/Neendoor.jpeg",
+
     lastVisit: {
       type: "last",
       text: "3 days ago",
-      status: "recent"
-    }
+      status: "recent",
+    },
   },
   {
     id: 4,
@@ -53,11 +58,13 @@ const templesData = [
     rating: 5,
     reviews: 297,
     favorite: true,
+    imagePath: "/temple-images/Neendoor.jpeg",
+
     lastVisit: {
       type: "upcoming",
       text: "Mar 18",
-      status: "upcoming"
-    }
+      status: "upcoming",
+    },
   },
   {
     id: 5,
@@ -67,11 +74,13 @@ const templesData = [
     rating: 4,
     reviews: 98,
     favorite: false,
+    imagePath: "/temple-images/Neendoor.jpeg",
+
     lastVisit: {
       type: "last",
       text: "2 months ago",
-      status: "old"
-    }
+      status: "old",
+    },
   },
   {
     id: 6,
@@ -81,97 +90,110 @@ const templesData = [
     rating: 5,
     reviews: 248,
     favorite: false,
+    imagePath: "/temple-images/Neendoor.jpeg",
+
     lastVisit: {
       type: "last",
       text: "1 month ago",
-      status: "old"
-    }
+      status: "old",
+    },
   },
   {
-    "id": 7,
-    "name": "Badrinath Temple",
-    "location": "Badrinath, Uttarakhand",
-    "hours": "4:30 AM - 9:00 PM",
-    "rating": 5,
-    "reviews": 189,
-    "favorite": false,
-    "lastVisit": {
-      "type": "last",
-      "text": "3 months ago",
-      "status": "old"
-    }
-  },
-  {
-    "id": 8,
-    "name": "Rameshwaram Temple",
-    "location": "Rameshwaram, Tamil Nadu",
-    "hours": "5:00 AM - 9:00 PM",
-    "rating": 5,
-    "reviews": 212,
-    "favorite": true,
-    "lastVisit": {
-      "type": "last",
-      "text": "1 week ago",
-      "status": "recent"
-    }
-  },
-  {
-    "id": 9,
-    "name": "Jagannath Temple",
-    "location": "Puri, Odisha",
-    "hours": "6:00 AM - 10:00 PM",
-    "rating": 4,
-    "reviews": 176,
-    "favorite": false,
-    "lastVisit": {
-      "type": "last",
-      "text": "5 months ago",
-      "status": "old"
-    }
-  },
-  {
-    "id": 10,
-    "name": "Vaishno Devi Temple",
-    "location": "Katra, Jammu and Kashmir",
-    "hours": "24 hours",
-    "rating": 5,
-    "reviews": 324,
-    "favorite": true,
-    "lastVisit": {
-      "type": "last",
-      "text": "2 weeks ago",
-      "status": "recent"
-    }
-  },
-  {
-    "id": 11,
-    "name": "Kedarnath Temple",
-    "location": "Kedarnath, Uttarakhand",
-    "hours": "5:00 AM - 8:30 PM",
-    "rating": 5,
-    "reviews": 198,
-    "favorite": false,
-    "lastVisit": {
-      "type": "last",
-      "text": "6 months ago",
-      "status": "old"
-    }
-  },
-  {
-    "id": 12,
-    "name": "Mahakaleshwar Temple",
-    "location": "Ujjain, Madhya Pradesh",
-    "hours": "4:00 AM - 11:00 PM",
-    "rating": 4,
-    "reviews": 145,
-    "favorite": false,
-    "lastVisit": {
-      "type": "last",
-      "text": "4 months ago",
-      "status": "old"
-    }
-  }
+    id: 7,
+    name: "Badrinath Temple",
+    location: "Badrinath, Uttarakhand",
+    hours: "4:30 AM - 9:00 PM",
+    rating: 5,
+    reviews: 189,
+    favorite: false,
+    imagePath: "/temple-images/Neendoor.jpeg",
 
+    lastVisit: {
+      type: "last",
+      text: "3 months ago",
+      status: "old",
+    },
+  },
+  {
+    id: 8,
+    name: "Rameshwaram Temple",
+    location: "Rameshwaram, Tamil Nadu",
+    hours: "5:00 AM - 9:00 PM",
+    rating: 5,
+    reviews: 212,
+    favorite: true,
+    imagePath: "/temple-images/Neendoor.jpeg",
+
+    lastVisit: {
+      type: "last",
+      text: "1 week ago",
+      status: "recent",
+    },
+  },
+  {
+    id: 9,
+    name: "Jagannath Temple",
+    location: "Puri, Odisha",
+    hours: "6:00 AM - 10:00 PM",
+    rating: 4,
+    reviews: 176,
+    favorite: false,
+    imagePath: "/temple-images/Neendoor.jpeg",
+
+    lastVisit: {
+      type: "last",
+      text: "5 months ago",
+      status: "old",
+    },
+  },
+  {
+    id: 10,
+    name: "Vaishno Devi Temple",
+    location: "Katra, Jammu and Kashmir",
+    hours: "24 hours",
+    rating: 5,
+    reviews: 324,
+    favorite: true,
+    imagePath: "/temple-images/Neendoor.jpeg",
+
+    lastVisit: {
+      type: "last",
+      text: "2 weeks ago",
+      status: "recent",
+    },
+  },
+  {
+    id: 11,
+    name: "Kedarnath Temple",
+    location: "Kedarnath, Uttarakhand",
+    hours: "5:00 AM - 8:30 PM",
+    rating: 5,
+    reviews: 198,
+    favorite: false,
+    imagePath: "/temple-images/Neendoor.jpeg",
+
+    lastVisit: {
+      type: "last",
+      text: "6 months ago",
+      status: "old",
+    },
+  },
+  {
+    id: 12,
+    name: "Mahakaleshwar Temple",
+    location: "Ujjain, Madhya Pradesh",
+    hours: "4:00 AM - 11:00 PM",
+    rating: 4,
+    reviews: 145,
+    favorite: false,
+    imagePath: "/temple-images/Neendoor.jpeg",
+
+    lastVisit: {
+      type: "last",
+      text: "4 months ago",
+      status: "old",
+    },
+  },
 ];
 
 const TempleGrid = () => {
@@ -180,9 +202,11 @@ const TempleGrid = () => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
       stars.push(
-        <Star 
-          key={i} 
-          className={`h-3 w-3 ${i <= rating ? 'text-amber-500' : 'text-amber-200'} fill-current`} 
+        <Star
+          key={i}
+          className={`h-3 w-3 ${
+            i <= rating ? "text-amber-500" : "text-amber-200"
+          } fill-current`}
         />
       );
     }
@@ -191,20 +215,21 @@ const TempleGrid = () => {
 
   // Function to render visit status with appropriate styling
   const renderVisitStatus = (visit) => {
-    let bgColor = 'bg-gray-100';
-    let textColor = 'text-gray-600';
-    
-    if (visit.status === 'recent') {
-      bgColor = 'bg-green-100';
-      textColor = 'text-green-700';
-    } else if (visit.status === 'upcoming') {
-      bgColor = 'bg-amber-100';
-      textColor = 'text-amber-700';
+    let bgColor = "bg-gray-100";
+    let textColor = "text-gray-600";
+
+    if (visit.status === "recent") {
+      bgColor = "bg-green-100";
+      textColor = "text-green-700";
+    } else if (visit.status === "upcoming") {
+      bgColor = "bg-amber-100";
+      textColor = "text-amber-700";
     }
-    
+
     return (
       <span className={`text-xs ${bgColor} ${textColor} px-2 py-0.5 rounded`}>
-        {visit.type === 'upcoming' ? 'Upcoming visit: ' : 'Last visit: '}{visit.text}
+        {visit.type === "upcoming" ? "Upcoming visit: " : "Last visit: "}
+        {visit.text}
       </span>
     );
   };
@@ -212,17 +237,31 @@ const TempleGrid = () => {
   return (
     <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {templesData.map((temple) => (
-        <div key={temple.id} className="bg-white rounded-lg shadow-sm border border-amber-100 overflow-hidden">
-          <div className="bg-amber-200/30 h-32 relative">
-            <div className="absolute top-2 right-2">
+        <div
+          key={temple.id}
+          className="bg-white rounded-lg shadow-sm border border-amber-100 overflow-hidden"
+        >
+          <div
+            className="h-48 relative bg-cover bg-center"
+            style={{ backgroundImage: `url(${temple.imagePath})` }}
+          >
+           <div>
+           <div className="absolute top-2 right-2">
               <span className="bg-amber-100/80 rounded-full p-1">
-                <Heart className={`h-4 w-4 ${temple.favorite ? 'text-red-500 fill-current' : 'text-gray-400'}`} />
+                <Heart
+                  className={`h-4 w-4 ${
+                    temple.favorite
+                      ? "text-red-500 fill-current"
+                      : "text-gray-400"
+                  }`}
+                />
               </span>
             </div>
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-amber-900/70 to-transparent p-3">
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t  from-amber-950/100 to-transparent p-3">
               <h3 className="text-white font-medium">{temple.name}</h3>
               <p className="text-amber-50 text-xs">{temple.location}</p>
             </div>
+           </div>
           </div>
           <div className="p-3">
             <div className="flex items-center text-xs text-gray-600 mb-2">
@@ -232,7 +271,9 @@ const TempleGrid = () => {
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center">
                 {renderStars(temple.rating)}
-                <span className="text-xs text-gray-600 ml-1">({temple.reviews})</span>
+                <span className="text-xs text-gray-600 ml-1">
+                  ({temple.reviews})
+                </span>
               </div>
               {renderVisitStatus(temple.lastVisit)}
             </div>

@@ -21,7 +21,7 @@ const Header = () => {
   }, []);
 
   return (
-    <header className="bg-amber-50/80 border-b border-amber-100 p-4 flex items-center justify-between">
+    <header className="bg-amber-50/100 border-b border-amber-100 p-4 flex items-center  justify-between sticky top-0 z-50">
       {/* Logo */}
       <div className="flex items-center">
         <a href="/">
@@ -86,15 +86,16 @@ const Header = () => {
           Explore Temples
         </NavLink>
 
+        
         <NavLink
-          to="/temple-store"
+          to="/devotee-store"
           className={({ isActive }) =>
             isActive
               ? "text-orange-600 font-bold"
               : "text-gray-600 hover:text-amber-900"
           }
         >
-          Temple Store
+          Devotee Store
         </NavLink>
 
         <NavLink
@@ -106,6 +107,26 @@ const Header = () => {
           }
         >
           Community
+        </NavLink>
+        <NavLink
+          to="/astrology"
+          className={({ isActive }) =>
+            isActive
+              ? "text-orange-600 font-bold"
+              : "text-gray-600 hover:text-amber-900"
+          }
+        >
+          Astrology
+        </NavLink>
+        <NavLink
+          to="/divine-seva"
+          className={({ isActive }) =>
+            isActive
+              ? "text-orange-600 font-bold"
+              : "text-gray-600 hover:text-amber-900"
+          }
+        >
+          DivineSeva 
         </NavLink>
       </nav>
 
@@ -130,8 +151,8 @@ const Header = () => {
             {showDropdown && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-amber-100 transform -translate-y-1">
                 <div className="px-4 py-3 border-b border-amber-100">
-                  <p className="text-sm font-medium text-amber-900">Ramesh Kumar</p>
-                  <p className="text-xs text-gray-500 truncate">ramesh@example.com</p>
+                  <p className="text-sm font-medium text-amber-900">Rahul Kumar</p>
+                  <p className="text-xs text-gray-500 truncate">rahul@example.com</p>
                 </div>
                 
                 <ul className="py-1">
@@ -177,6 +198,12 @@ const Header = () => {
                   <NavLink to="/logout" className="flex items-center px-4 py-2 text-sm text-red-500 hover:bg-amber-50">
                     <LogOut className="mr-3 h-4 w-4 text-red-500" />
                     Logout
+                  </NavLink>
+                </div>
+                <div className="py-1 border-t border-amber-100">
+                  <NavLink to="/temple-store" className="flex items-center px-4 py-2 text-sm  text-gray-700 hover:bg-amber-50">
+                    <LogOut className="mr-3 h-4 w-4  text-gray-500" />
+                    Temple Store
                   </NavLink>
                 </div>
               </div>

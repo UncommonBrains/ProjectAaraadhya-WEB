@@ -24,7 +24,7 @@ const MyBookingsPage = () => {
       service: "Abhishekam",
       amount: "₹ 1,100",
       status: "upcoming",
-      imageUrl: "/api/placeholder/400/250",
+      imageUrl: "/temple-images/vadakkunnathan.webp",
       isPriority: true
     },
     {
@@ -36,7 +36,7 @@ const MyBookingsPage = () => {
       service: "Archana",
       amount: "₹ 500",
       status: "upcoming",
-      imageUrl: "/api/placeholder/400/250"
+      imageUrl: "/temple-images/vadakkunnathan.webp",
     },
     {
       id: "BK1233",
@@ -47,7 +47,7 @@ const MyBookingsPage = () => {
       service: "Darshan",
       amount: "₹ 300",
       status: "completed",
-      imageUrl: "/api/placeholder/400/250"
+      imageUrl: "/temple-images/vadakkunnathan.webp",
     },
     {
       id: "BK1232",
@@ -58,7 +58,7 @@ const MyBookingsPage = () => {
       service: "Special Darshan",
       amount: "₹ 700",
       status: "completed",
-      imageUrl: "/api/placeholder/400/250"
+      imageUrl: "/temple-images/vadakkunnathan.webp",
     },
     {
       id: "BK1231",
@@ -70,7 +70,7 @@ const MyBookingsPage = () => {
       amount: "₹ 1,500",
       status: "cancelled",
       cancellationReason: "Temple closure due to special event",
-      imageUrl: "/api/placeholder/400/250"
+      imageUrl: "/temple-images/vadakkunnathan.webp",
     },
   ];
   
@@ -256,7 +256,7 @@ const MyBookingsPage = () => {
       
       {/* Bookings display - Grid View */}
       {viewMode === "grid" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid sm-grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredBookings.length > 0 ? (
             filteredBookings.map((booking) => (
               <BookingCard key={booking.id} booking={booking} />

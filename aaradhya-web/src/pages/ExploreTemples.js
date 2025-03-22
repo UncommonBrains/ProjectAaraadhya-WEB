@@ -309,7 +309,7 @@ const ExploreTemples = () => {
           </div>
 
           {/* Temple Cards - Grid Layout */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
             {getSortedTemples().map((temple) => (
               <div
                 key={temple.id}
@@ -336,7 +336,7 @@ const ExploreTemples = () => {
                       </button>
                     )}
                   </div>
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-amber-900/70 to-transparent p-3">
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-amber-950/100 to-transparent p-3">
                     <h3 className="text-white font-medium">{temple.name}</h3>
                     <p className="text-amber-50 text-xs">{temple.location}</p>
                   </div>
