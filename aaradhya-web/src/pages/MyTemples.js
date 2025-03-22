@@ -12,8 +12,12 @@ import {
   Settings,
   Info,
   Heart,
+  Check,
 } from "lucide-react";
 import SearchBar from "../components/searchBar"; 
+import TempleGrid from "../components/myTemplesData"; 
+import { Link } from "react-router-dom";
+
 
 
 const MyTemples = () => {
@@ -83,8 +87,55 @@ const MyTemples = () => {
             </ul>
           </div>
 
+          {/* My Bookings */}
+          <div className="bg-white rounded-lg shadow-sm border border-amber-100 p-4">
+            <Link to="/my-bookings">
+              <h3 className="font-serif text-amber-900 mb-4 cursor-pointer hover:text-amber-700">
+                My Bookings
+              </h3>
+            </Link>
+
+            <div className="space-y-3">
+              <div className="bg-amber-50 rounded p-3 flex justify-between items-center">
+                <div>
+                  <p className="text-gray-700 text-sm font-medium">
+                    Ganesh Abhishekam
+                  </p>
+                  <p className="text-gray-500 text-xs">
+                    Tomorrow, 10:30 AM • ISKCON
+                  </p>
+                </div>
+                <div className="bg-green-100 rounded-md p-1">
+                  <Check className="h-4 w-4 text-green-600" />
+                </div>
+              </div>
+
+              <div className="bg-amber-50 rounded p-3 flex justify-between items-center">
+                <div>
+                  <p className="text-gray-700 text-sm font-medium">
+                    VIP Darshan Pass
+                  </p>
+                  <p className="text-gray-500 text-xs">
+                    March 18, 4:00 PM • Tirupati
+                  </p>
+                </div>
+                <div className="bg-orange-100 rounded-md p-1">
+                  <Clock className="h-4 w-4 text-orange-500" />
+                </div>
+              </div>
+            </div>
+
+            <a
+              href="#"
+              className="text-orange-500 flex items-center mt-4 text-sm"
+            >
+              View all bookings <ChevronRight className="h-4 w-4" />
+            </a>
+          </div>
+
           {/* Upcoming Events */}
           <div className="bg-white rounded-lg shadow-sm border border-amber-100 p-4">
+            
             <h3 className="font-serif text-amber-900 mb-4">
               Upcoming Temple Events
             </h3>
@@ -166,264 +217,7 @@ const MyTemples = () => {
             ))}
           </div>
 
-          {/* Temple Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {/* ISKCON Temple */}
-            <div className="bg-white rounded-lg shadow-sm border border-amber-100 overflow-hidden">
-              <div className="bg-amber-200/30 h-32 relative">
-                <div className="absolute top-2 right-2">
-                  <span className="bg-amber-100/80 rounded-full p-1">
-                    <Heart className="h-4 w-4 text-red-500 fill-current" />
-                  </span>
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-amber-900/70 to-transparent p-3">
-                  <h3 className="text-white font-medium">ISKCON Temple</h3>
-                  <p className="text-amber-50 text-xs">New Delhi, India</p>
-                </div>
-              </div>
-              <div className="p-3">
-                <div className="flex items-center text-xs text-gray-600 mb-2">
-                  <Clock className="h-3 w-3 mr-1" />
-                  <span>Open: 5:00 AM - 9:00 PM</span>
-                </div>
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center">
-                    <Star className="h-3 w-3 text-amber-500 fill-current" />
-                    <Star className="h-3 w-3 text-amber-500 fill-current" />
-                    <Star className="h-3 w-3 text-amber-500 fill-current" />
-                    <Star className="h-3 w-3 text-amber-500 fill-current" />
-                    <Star className="h-3 w-3 text-amber-200 fill-current" />
-                    <span className="text-xs text-gray-600 ml-1">(124)</span>
-                  </div>
-                  <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
-                    Last visit: 2 days ago
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <button className="text-amber-900 bg-amber-100 text-xs px-3 py-1 rounded">
-                    Virtual Darshan
-                  </button>
-                  <button className="text-orange-500 bg-orange-100 text-xs px-3 py-1 rounded">
-                    Book Pooja
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Meenakshi Temple */}
-            <div className="bg-white rounded-lg shadow-sm border border-amber-100 overflow-hidden">
-              <div className="bg-amber-200/30 h-32 relative">
-                <div className="absolute top-2 right-2">
-                  <span className="bg-amber-100/80 rounded-full p-1">
-                    <Heart className="h-4 w-4 text-red-500 fill-current" />
-                  </span>
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-amber-900/70 to-transparent p-3">
-                  <h3 className="text-white font-medium">Meenakshi Temple</h3>
-                  <p className="text-amber-50 text-xs">Madurai, Tamil Nadu</p>
-                </div>
-              </div>
-              <div className="p-3">
-                <div className="flex items-center text-xs text-gray-600 mb-2">
-                  <Clock className="h-3 w-3 mr-1" />
-                  <span>Open: 5:00 AM - 10:00 PM</span>
-                </div>
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center">
-                    <Star className="h-3 w-3 text-amber-500 fill-current" />
-                    <Star className="h-3 w-3 text-amber-500 fill-current" />
-                    <Star className="h-3 w-3 text-amber-500 fill-current" />
-                    <Star className="h-3 w-3 text-amber-500 fill-current" />
-                    <Star className="h-3 w-3 text-amber-500 fill-current" />
-                    <span className="text-xs text-gray-600 ml-1">(203)</span>
-                  </div>
-                  <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
-                    Last visit: 1 week ago
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <button className="text-amber-900 bg-amber-100 text-xs px-3 py-1 rounded">
-                    Virtual Darshan
-                  </button>
-                  <button className="text-orange-500 bg-orange-100 text-xs px-3 py-1 rounded">
-                    Book Pooja
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Kashi Vishwanath */}
-            <div className="bg-white rounded-lg shadow-sm border border-amber-100 overflow-hidden">
-              <div className="bg-amber-200/30 h-32 relative">
-                <div className="absolute top-2 right-2">
-                  <span className="bg-amber-100/80 rounded-full p-1">
-                    <Heart className="h-4 w-4 text-red-500 fill-current" />
-                  </span>
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-amber-900/70 to-transparent p-3">
-                  <h3 className="text-white font-medium">Kashi Vishwanath</h3>
-                  <p className="text-amber-50 text-xs">
-                    Varanasi, Uttar Pradesh
-                  </p>
-                </div>
-              </div>
-              <div className="p-3">
-                <div className="flex items-center text-xs text-gray-600 mb-2">
-                  <Clock className="h-3 w-3 mr-1" />
-                  <span>Open: 3:00 AM - 11:00 PM</span>
-                </div>
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center">
-                    <Star className="h-3 w-3 text-amber-500 fill-current" />
-                    <Star className="h-3 w-3 text-amber-500 fill-current" />
-                    <Star className="h-3 w-3 text-amber-500 fill-current" />
-                    <Star className="h-3 w-3 text-amber-500 fill-current" />
-                    <Star className="h-3 w-3 text-amber-200 fill-current" />
-                    <span className="text-xs text-gray-600 ml-1">(156)</span>
-                  </div>
-                  <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
-                    Last visit: 3 days ago
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <button className="text-amber-900 bg-amber-100 text-xs px-3 py-1 rounded">
-                    Virtual Darshan
-                  </button>
-                  <button className="text-orange-500 bg-orange-100 text-xs px-3 py-1 rounded">
-                    Book Pooja
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Tirupati Balaji */}
-            <div className="bg-white rounded-lg shadow-sm border border-amber-100 overflow-hidden">
-              <div className="bg-amber-200/30 h-32 relative">
-                <div className="absolute top-2 right-2">
-                  <span className="bg-amber-100/80 rounded-full p-1">
-                    <Heart className="h-4 w-4 text-red-500 fill-current" />
-                  </span>
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-amber-900/70 to-transparent p-3">
-                  <h3 className="text-white font-medium">Tirupati Balaji</h3>
-                  <p className="text-amber-50 text-xs">
-                    Tirupati, Andhra Pradesh
-                  </p>
-                </div>
-              </div>
-              <div className="p-3">
-                <div className="flex items-center text-xs text-gray-600 mb-2">
-                  <Clock className="h-3 w-3 mr-1" />
-                  <span>Open: 3:00 AM - 10:00 PM</span>
-                </div>
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center">
-                    <Star className="h-3 w-3 text-amber-500 fill-current" />
-                    <Star className="h-3 w-3 text-amber-500 fill-current" />
-                    <Star className="h-3 w-3 text-amber-500 fill-current" />
-                    <Star className="h-3 w-3 text-amber-500 fill-current" />
-                    <Star className="h-3 w-3 text-amber-500 fill-current" />
-                    <span className="text-xs text-gray-600 ml-1">(297)</span>
-                  </div>
-                  <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded">
-                    Upcoming visit: Mar 18
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <button className="text-amber-900 bg-amber-100 text-xs px-3 py-1 rounded">
-                    Virtual Darshan
-                  </button>
-                  <button className="text-orange-500 bg-orange-100 text-xs px-3 py-1 rounded">
-                    Book Pooja
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Somnath Temple */}
-            <div className="bg-white rounded-lg shadow-sm border border-amber-100 overflow-hidden">
-              <div className="bg-amber-200/30 h-32 relative">
-                <div className="absolute top-2 right-2">
-                  <span className="bg-amber-100/80 rounded-full p-1">
-                    <Heart className="h-4 w-4 text-gray-400" />
-                  </span>
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-amber-900/70 to-transparent p-3">
-                  <h3 className="text-white font-medium">Somnath Temple</h3>
-                  <p className="text-amber-50 text-xs">Somnath, Gujarat</p>
-                </div>
-              </div>
-              <div className="p-3">
-                <div className="flex items-center text-xs text-gray-600 mb-2">
-                  <Clock className="h-3 w-3 mr-1" />
-                  <span>Open: 6:00 AM - 9:00 PM</span>
-                </div>
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center">
-                    <Star className="h-3 w-3 text-amber-500 fill-current" />
-                    <Star className="h-3 w-3 text-amber-500 fill-current" />
-                    <Star className="h-3 w-3 text-amber-500 fill-current" />
-                    <Star className="h-3 w-3 text-amber-500 fill-current" />
-                    <Star className="h-3 w-3 text-amber-200 fill-current" />
-                    <span className="text-xs text-gray-600 ml-1">(98)</span>
-                  </div>
-                  <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
-                    Last visit: 2 months ago
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <button className="text-amber-900 bg-amber-100 text-xs px-3 py-1 rounded">
-                    Virtual Darshan
-                  </button>
-                  <button className="text-orange-500 bg-orange-100 text-xs px-3 py-1 rounded">
-                    Book Pooja
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Golden Temple */}
-            <div className="bg-white rounded-lg shadow-sm border border-amber-100 overflow-hidden">
-              <div className="bg-amber-200/30 h-32 relative">
-                <div className="absolute top-2 right-2">
-                  <span className="bg-amber-100/80 rounded-full p-1">
-                    <Heart className="h-4 w-4 text-gray-400" />
-                  </span>
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-amber-900/70 to-transparent p-3">
-                  <h3 className="text-white font-medium">Golden Temple</h3>
-                  <p className="text-amber-50 text-xs">Amritsar, Punjab</p>
-                </div>
-              </div>
-              <div className="p-3">
-                <div className="flex items-center text-xs text-gray-600 mb-2">
-                  <Clock className="h-3 w-3 mr-1" />
-                  <span>Open: 24 hours</span>
-                </div>
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center">
-                    <Star className="h-3 w-3 text-amber-500 fill-current" />
-                    <Star className="h-3 w-3 text-amber-500 fill-current" />
-                    <Star className="h-3 w-3 text-amber-500 fill-current" />
-                    <Star className="h-3 w-3 text-amber-500 fill-current" />
-                    <Star className="h-3 w-3 text-amber-500 fill-current" />
-                    <span className="text-xs text-gray-600 ml-1">(248)</span>
-                  </div>
-                  <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
-                    Last visit: 1 month ago
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <button className="text-amber-900 bg-amber-100 text-xs px-3 py-1 rounded">
-                    Virtual Darshan
-                  </button>
-                  <button className="text-orange-500 bg-orange-100 text-xs px-3 py-1 rounded">
-                    Book Pooja
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+         <TempleGrid/>
 
           {/* Pagination */}
           <div className="flex justify-center mt-6">

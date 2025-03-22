@@ -8,14 +8,15 @@ import {
   Play,
   Check,
   Clock,
+  Linkedin,
 } from "lucide-react";
-import SearchBar from "../components/searchBar"; 
-
+import SearchBar from "../components/searchBar";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   return (
     <div className="bg-amber-50 min-h-screen font-sans">
-            <SearchBar/>
+      <SearchBar />
 
       {/* Main Content */}
       <main className="container mx-auto p-4 grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -33,7 +34,9 @@ const Home = () => {
 
           {/* My Temples */}
           <div className="bg-white rounded-lg shadow-sm border border-amber-100 p-4">
-            <h3 className="font-serif text-amber-900 mb-4">My Temples</h3>
+            <Link to="/my-temples">
+              <h3 className="font-serif text-amber-900 mb-4">My Temples</h3>
+            </Link>
             <ul className="space-y-4">
               {[
                 "ISKCON Temple",
@@ -57,7 +60,11 @@ const Home = () => {
 
           {/* My Bookings */}
           <div className="bg-white rounded-lg shadow-sm border border-amber-100 p-4">
-            <h3 className="font-serif text-amber-900 mb-4">My Bookings</h3>
+            <Link to="/my-bookings">
+              <h3 className="font-serif text-amber-900 mb-4 cursor-pointer hover:text-amber-700">
+                My Bookings
+              </h3>
+            </Link>
 
             <div className="space-y-3">
               <div className="bg-amber-50 rounded p-3 flex justify-between items-center">
@@ -99,7 +106,10 @@ const Home = () => {
 
           {/* Community */}
           <div className="bg-white rounded-lg shadow-sm border border-amber-100 p-4">
-            <h3 className="font-serif text-amber-900 mb-4">Community</h3>
+            <Link to="/community">
+              <h3 className="font-serif text-amber-900 mb-4">Community</h3>
+            </Link>
+
             <div className="space-y-4">
               <div>
                 <p className="text-gray-700 text-sm font-medium">
@@ -242,7 +252,11 @@ const Home = () => {
         <div className="space-y-6">
           {/* Upcoming Poojas */}
           <div className="bg-white rounded-lg shadow-sm border border-amber-100 p-4">
-            <h3 className="font-serif text-amber-900 mb-4">Upcoming Poojas</h3>
+            <Link to="/upcoming-poojas">
+              <h3 className="font-serif text-amber-900 mb-4">
+                Upcoming Poojas
+              </h3>
+            </Link>
             <div className="space-y-3">
               <div className="bg-amber-50 rounded p-3 flex">
                 <div className="bg-orange-100 rounded w-8 h-8 flex items-center justify-center text-orange-500 font-medium">
@@ -277,7 +291,11 @@ const Home = () => {
 
           {/* Discover Temples */}
           <div className="bg-white rounded-lg shadow-sm border border-amber-100 p-4">
-            <h3 className="font-serif text-amber-900 mb-4">Discover Temples</h3>
+            <Link to="/expLore-temples">
+              <h3 className="font-serif text-amber-900 mb-4">
+                Discover Temples
+              </h3>
+            </Link>
 
             <div className="space-y-3">
               {[
@@ -320,10 +338,64 @@ const Home = () => {
             </div>
 
             <a
-              href="#"
+              href="/explore-temples"
               className="text-orange-500 flex items-center mt-4 text-sm"
             >
               Explore more temples <ChevronRight className="h-4 w-4" />
+            </a>
+          </div>
+
+          {/* Temple Store Preview */}
+          <div className="bg-white rounded-lg shadow-sm border border-amber-100 p-4">
+            <Link to="/temple-store">
+              <h3 className="font-serif text-amber-900 mb-4">Temple Store</h3>
+            </Link>
+
+            <div className="space-y-3">
+              {[
+                {
+                  name: "Pooja Thali",
+                  category: "Essential Kit",
+                  price: "₹499",
+                },
+                {
+                  name: "Incense Sticks",
+                  category: "Fragrance & Aroma",
+                  price: "₹149",
+                },
+                {
+                  name: "Brass Lamp",
+                  category: "Temple Decor",
+                  price: "₹799",
+                },
+              ].map((item, idx) => (
+                <div
+                  key={idx}
+                  className="bg-amber-50 rounded p-3 flex justify-between items-center"
+                >
+                  <div className="flex items-center">
+                    <div className="bg-amber-300/60 rounded-full w-8 h-8"></div>
+                    <div className="ml-3">
+                      <p className="text-gray-700 text-sm font-medium">
+                        {item.name}
+                      </p>
+                      <p className="text-gray-500 text-xs">
+                        {item.category} • {item.price}
+                      </p>
+                    </div>
+                  </div>
+                  <button className="text-orange-500 font-medium">
+                    <Plus className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <a
+              href="/temple-store"
+              className="text-orange-500 flex items-center mt-4 text-sm"
+            >
+              Explore more items <ChevronRight className="h-4 w-4" />
             </a>
           </div>
 

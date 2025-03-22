@@ -448,7 +448,7 @@ const UpcomingPoojas = () => {
             <h3 className="text-lg font-serif text-amber-900 mb-4">
               My Booked Poojas
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid xm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
               {getSortedMyPoojas().map((pooja) => (
                 <div
                   key={pooja.id}
@@ -511,7 +511,7 @@ const UpcomingPoojas = () => {
                 View All <ChevronRight className="h-4 w-4" />
               </a>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid xm:grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
               {getSortedRecommendedPoojas().map((pooja) => (
                 <div
                   key={pooja.id}
@@ -582,10 +582,10 @@ const UpcomingPoojas = () => {
                 Special Festival Poojas
               </h3>
               <span className="bg-orange-500 text-white text-xs px-3 py-1 rounded-full">
-                Limited Slots
+                Limited Bookings
               </span>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-white/80 rounded-lg p-4 backdrop-blur-sm">
                 <div className="flex justify-between">
                   <div>
@@ -614,8 +614,8 @@ const UpcomingPoojas = () => {
               <div className="bg-white/80 rounded-lg p-4 backdrop-blur-sm">
                 <div className="flex justify-between">
                   <div>
-                    <h4 className="font-medium text-amber-900">Ramadan Special Prayer</h4>
-                    <p className="text-sm text-gray-600">Jama Masjid</p>
+                    <h4 className="font-medium text-amber-900">Vishu Special Pooja</h4>
+                    <p className="text-sm text-gray-600">Guruvayoor</p>
                     <div className="mt-2 flex items-center text-xs text-gray-600">
                       <Calendar className="h-3 w-3 mr-1" />
                       <span>Mar 29, 2025 • 7:30 PM</span>
