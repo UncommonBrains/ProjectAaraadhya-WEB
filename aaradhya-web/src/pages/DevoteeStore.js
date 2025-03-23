@@ -5,10 +5,8 @@ import {
   Mail,
   Search,
   Home,
-  Menu,
   ShoppingCart,
   ChevronDown,
-  MapPin,
 } from "lucide-react";
 
 const DevoteeStore = () => {
@@ -263,15 +261,22 @@ const DevoteeStore = () => {
   return (
     <div className="bg-gray-50 min-h-screen font-sans">
       {/* Header */}
-      <header className="bg-orange-600 text-white p-2 sticky top-0 z-50">
-        <div className="container mx-auto">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Menu className="h-6 w-6" />
-              <h1 className="font-bold text-xl">DevoteeStore</h1>
-            </div>
+        <header className="bg-orange-600 text-white p-4 sticky top-0 z-50">
+          <div className="container mx-auto">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <a
+                  href="/"
+                  className="whitespace-nowrap  flex items-center pr-3 border-r-2 text-s font-semibold"
+                >
+                  <Home className="h-5 w-5 mr-1 ml-2  " strokeWidth={3} /> Go
+                  back to Aaraadhya Home
+                </a>
 
-            <div className="flex-grow mx-4 relative">
+                <h1 className="font-bold text-xl">DevoteeStore</h1>
+              </div>
+
+              {/* <div className="flex-grow mx-4 relative">
               <input
                 type="text"
                 placeholder="Search for temple offerings, items, prasadam..."
@@ -299,16 +304,21 @@ const DevoteeStore = () => {
               </div>
             </div>
           </div>
+        </header>
+        <div className="flex-grow  relative  mb-3 bg-orange-600 text-white p-2">
+          <input
+            type="text"
+            placeholder="Search for temple offerings, items, prasadam..."
+            className="w-full rounded-md py-2 px-4 text-gray-800 text-sm"
+          />
+          <Search className="absolute right-6 top-4 h-5 w-5 text-gray-500" />
         </div>
       </header>
 
       {/* Navigation */}
-      <nav className="bg-orange-700 text-white py-2 shadow-md sticky top-12 z-50">
+      <nav className="bg-orange-700 text-white py-2 shadow-md  top-12 z-50">
         <div className="container mx-auto">
-          <div className="flex items-center space-x-6 overflow-x-auto pb-1 text-sm">
-            <a href="/" className="whitespace-nowrap flex items-center">
-              <Home className="h-4 w-4 mr-1" /> Home
-            </a>
+          <div className="flex items-center space-x-6 overflow-x-auto pb-1 text-sm ml-6">
             <a href="/" className="whitespace-nowrap font-medium">
               Best Sellers
             </a>
@@ -320,12 +330,6 @@ const DevoteeStore = () => {
             </a>
             <a href="/" className="whitespace-nowrap">
               Festival Specials
-            </a>
-            <a href="/" className="whitespace-nowrap">
-              Customer Service
-            </a>
-            <a href="/" className="whitespace-nowrap">
-              Temple Directory
             </a>
           </div>
         </div>
