@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { Bell, Search, Settings, LogOut, Phone, Info, Calendar, Star, Share2 } from "lucide-react";
+import { Bell,  Settings, LogOut, Phone, Info, Calendar, Star, Share2 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
 const Header = () => {
