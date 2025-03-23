@@ -1,25 +1,40 @@
-import React from "react";
 import {
   ChevronRight,
   Plus,
   Check,
   Clock,
+  
 } from "lucide-react";
 import SearchBar from "../components/searchBar";
 import { Link } from "react-router-dom";
 
 const Home = () => {
+
+  
   return (
     <div className="bg-amber-50 min-h-screen font-sans">
-      <SearchBar />
+      
+      <div className="">
+        <SearchBar />
+        {/* Welcome Section for Mobile - Centered */}
+      <div className="md:hidden text-center p-4">
+        <h2 className="text-xl font-serif text-amber-900">
+          Namaste, Rahul!
+        </h2>
+        <p className="text-gray-600 text-sm">
+          Wishing you spiritual blessings today
+        </p>
+      </div>
+        
+      </div>
 
       {/* Main Content */}
       <main className="container mx-auto p-4 grid grid-cols-1 md:grid-cols-4 gap-6">
         {/* Left Column */}
-        <div className="space-y-6">
+        <div className="   space-y-6">
           {/* Welcome Section */}
           <div>
-            <h2 className="text-xl font-serif text-amber-900">
+            <h2 className=" text-xl font-serif text-amber-900">
               Namaste, Rahul!
             </h2>
             <p className="text-gray-600 text-sm">
@@ -136,17 +151,17 @@ const Home = () => {
             </h2>
 
             {/* Feed Filters */}
-            <div className="flex space-x-3 mb-6 text-sm">
-              <button className="bg-orange-500 text-white px-4 py-1 rounded-full">
+            <div className="flex overflow-x-auto pb-2 mb-6 text-sm">
+              <button className="bg-orange-500 text-white px-4 py-1 rounded-full whitespace-nowrap mr-3">
                 All
               </button>
-              <button className="bg-amber-50 text-gray-600 px-4 py-1 rounded-full">
+              <button className="bg-amber-50 text-gray-600 px-4 py-1 rounded-full whitespace-nowrap mr-3">
                 Updates
               </button>
-              <button className="bg-amber-50 text-gray-600 px-4 py-1 rounded-full">
+              <button className="bg-amber-50 text-gray-600 px-4 py-1 rounded-full whitespace-nowrap mr-3">
                 Events
               </button>
-              <button className="bg-amber-50 text-gray-600 px-4 py-1 rounded-full">
+              <button className="bg-amber-50 text-gray-600 px-4 py-1 rounded-full whitespace-nowrap mr-3">
                 Festivals
               </button>
             </div>
@@ -402,34 +417,14 @@ const Home = () => {
             <div className="bg-gray-100 text-gray-600 text-center text-sm py-4 rounded-lg">
               Coming Soon...
             </div>
-
-            {/* <div className="bg-amber-200/30 rounded-lg h-32 relative mb-4">
-              <div className="absolute top-2 left-2 flex items-center">
-                <div className="bg-orange-500 rounded-full w-3 h-3"></div>
-                <span className="ml-2 text-xs font-medium text-gray-700">
-                  Tirupati Balaji
-                </span>
-              </div>
-
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Play className="h-6 w-6 text-amber-800" />
-              </div>
-            </div>
-
-            <ul className="space-y-2 text-sm">
-              <li className="text-gray-700">
-                • Vaishno Devi (Starting in 20 min)
-              </li>
-              <li className="text-gray-700">
-                • Siddhivinayak (Starting at 6 PM)
-              </li>
-            </ul> */}
           </div>
         </div>
       </main>
 
-      {/* Floating Action Button */}
-      <div className="fixed bottom-6 right-6">
+      
+
+      {/* Floating Action Button - Adjusted position for mobile */}
+      <div className="fixed bottom-20 right-6 md:bottom-6">
         <button className="bg-orange-500 h-12 w-12 rounded-full flex items-center justify-center text-white shadow-lg">
           <Plus className="h-6 w-6" />
         </button>

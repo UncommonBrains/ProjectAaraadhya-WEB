@@ -5,10 +5,7 @@ import {
   Mail,
   Search,
   Home,
-  Menu,
   ShoppingCart,
-  ChevronDown,
-  MapPin,
 } from "lucide-react";
 
 const DevoteeStore = () => {
@@ -263,60 +260,48 @@ const DevoteeStore = () => {
   return (
     <div className="bg-gray-50 min-h-screen font-sans">
       {/* Header */}
-      <header className="bg-orange-600 text-white p-2 sticky top-0 z-50">
-        <div className="container mx-auto">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Menu className="h-6 w-6" />
-              <h1 className="font-bold text-xl">DevoteeStore</h1>
-            </div>
+        <header className="bg-orange-600 text-white p-4 sticky top-0 z-50">
+          <div className="container mx-auto">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <a
+                  href="/"
+                  className="whitespace-nowrap  flex items-center pr-3 border-r-2 text-s font-semibold"
+                >
+                  <Home className="h-5 w-5 mr-1 ml-2  " strokeWidth={3} /> Aaraadhya Home
+                </a>
 
-            <div className="flex-grow mx-4 relative">
-              <input
-                type="text"
-                placeholder="Search for temple offerings, items, prasadam..."
-                className="w-full rounded-md py-2 px-4 text-gray-800 text-sm"
-              />
-              <Search className="absolute right-3 top-2 h-5 w-5 text-gray-500" />
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <div className="flex flex-col items-end">
-                <span className="text-xs">Deliver to</span>
-                <div className="flex items-center">
-                  <MapPin className="h-3 w-3 mr-1" />
-                  <span className="text-sm font-medium">New Delhi</span>
-                </div>
+                <h1 className="font-bold text-xl">DevoteeStore</h1>
               </div>
 
-              <div className="flex flex-col items-start">
-                <span className="text-xs">Welcome</span>
-                <div className="flex items-center">
-                  <span className="text-sm font-medium">Account</span>
-                  <ChevronDown className="h-3 w-3 ml-1" />
-                </div>
-              </div>
+              
 
-              <div className="relative">
-                <ShoppingCart className="h-7 w-7" />
-                {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-yellow-400 text-orange-800 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                    {cartCount}
-                  </span>
-                )}
+              <div className="flex items-center space-x-4">
+                <div className="relative pr-4 pl-3">
+                  <ShoppingCart className="h-7 w-7" />
+                  {cartCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-yellow-400 text-orange-800 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                      {cartCount}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           </div>
+        </header>
+        <div className="flex-grow  relative  mb-3 bg-orange-600 text-white p-2">
+          <input
+            type="text"
+            placeholder="Search for temple offerings, items, prasadam..."
+            className="w-full rounded-md py-2 px-4 text-gray-800 text-sm"
+          />
+          <Search className="absolute right-6 top-4 h-5 w-5 text-gray-500" />
         </div>
-      </header>
 
       {/* Navigation */}
-      <nav className="bg-orange-700 text-white py-2 shadow-md sticky top-12 z-50">
+      <nav className="bg-orange-700 text-white py-2 shadow-md  top-12 z-50">
         <div className="container mx-auto">
-          <div className="flex items-center space-x-6 overflow-x-auto pb-1 text-sm">
-            <a href="/" className="whitespace-nowrap flex items-center">
-              <Home className="h-4 w-4 mr-1" /> Home
-            </a>
+          <div className="flex items-center space-x-6 overflow-x-auto pb-1 text-sm ml-6">
             <a href="/" className="whitespace-nowrap font-medium">
               Best Sellers
             </a>
@@ -328,12 +313,6 @@ const DevoteeStore = () => {
             </a>
             <a href="/" className="whitespace-nowrap">
               Festival Specials
-            </a>
-            <a href="/" className="whitespace-nowrap">
-              Customer Service
-            </a>
-            <a href="/" className="whitespace-nowrap">
-              Temple Directory
             </a>
           </div>
         </div>
@@ -364,7 +343,7 @@ const DevoteeStore = () => {
             {/* Featured Collections */}
             <div className="mb-6">
               <h3 className="font-serif text-amber-900 text-lg mb-4">
-                 Collections
+                Collections
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {/* Collection 1 */}
@@ -693,7 +672,9 @@ const DevoteeStore = () => {
       <footer className="bg-gray-800 text-gray-200 mt-8 py-8">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
+            <div className="col-span-1 md:col-span-1"></div>{" "}
+            {/* Empty for centering */}
+            <div className="col-span-1 md:col-span-1">
               <h4 className="font-bold mb-4">Get to Know Us</h4>
               <ul className="space-y-2 text-sm text-gray-400">
                 <li>
@@ -723,7 +704,7 @@ const DevoteeStore = () => {
                 </li>
               </ul>
             </div>
-            <div>
+            <div className="col-span-1 md:col-span-1 text-right">
               <h4 className="font-bold mb-4">Customer Service</h4>
               <ul className="space-y-2 text-sm text-gray-400">
                 <li>
@@ -753,63 +734,10 @@ const DevoteeStore = () => {
                 </li>
               </ul>
             </div>
-            <div>
-              <h4 className="font-bold mb-4">Temple Categories</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li>
-                  <a href="/" className="hover:text-white">
-                    Vishnu Temples
-                  </a>
-                </li>
-                <li>
-                  <a href="/" className="hover:text-white">
-                    Shiva Temples
-                  </a>
-                </li>
-                <li>
-                  <a href="/" className="hover:text-white">
-                    Shakti Temples
-                  </a>
-                </li>
-                <li>
-                  <a href="/" className="hover:text-white">
-                    Ganesha Temples
-                  </a>
-                </li>
-                <li>
-                  <a href="/" className="hover:text-white">
-                    All Temples Directory
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4">Connect With Us</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li>
-                  <a href="/" className="hover:text-white">
-                    Facebook
-                  </a>
-                </li>
-                <li>
-                  <a href="/" className="hover:text-white">
-                    Twitter
-                  </a>
-                </li>
-                <li>
-                  <a href="/" className="hover:text-white">
-                    Instagram
-                  </a>
-                </li>
-                <li>
-                  <a href="/" className="hover:text-white">
-                    YouTube
-                  </a>
-                </li>
-              </ul>
-            </div>
+            <div className="col-span-1 md:col-span-1"></div>{" "}
+            {/* Empty for centering */}
           </div>
-          <div className="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-400">
+          <div className=" border-gray-700 mt-8 pt-8 text-center text-sm text-gray-400">
             <p>&copy; 2025 DevoteeStore. All rights reserved.</p>
           </div>
         </div>

@@ -1,6 +1,8 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import React from "react";
 import Header from "./components/header"; 
+import Footer from "./components/Footer"; 
 import Home from "./pages/Home";
 import MyTemples from "./pages/MyTemples";
 import ExploreTemples from "./pages/ExploreTemples";
@@ -12,10 +14,13 @@ import Settings from "./pages/Settings";
 import MyBookings from "./pages/MyBookingsPage";
 import Astrology from "./pages/Astrology";
 
-function App() {
+function Layout() {
+  const location = useLocation();
+  const hideHeaderFooter = location.pathname === "/devotee-store";
+
   return (
-    <Router>
-      <Header /> {/* Include the header for navigation */}
+    <>
+      {!hideHeaderFooter && <Header />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/my-temples" element={<MyTemples />} />
@@ -28,8 +33,19 @@ function App() {
         <Route path="/my-bookings" element={<MyBookings />} />
         <Route path="/astrology" element={<Astrology />} />
       </Routes>
+      {!hideHeaderFooter && <Footer />}
+    </>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <Layout />
     </Router>
   );
 }
 
 export default App;
+
+
