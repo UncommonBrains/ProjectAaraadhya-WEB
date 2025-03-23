@@ -1,17 +1,42 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   ChevronRight,
   Plus,
   Check,
   Clock,
+  Menu,
+  Home as HomeIcon,
+  Calendar,
+  ShoppingBag,
+  Users,
+  User,
 } from "lucide-react";
 import SearchBar from "../components/searchBar";
 import { Link } from "react-router-dom";
 
 const Home = () => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
   return (
     <div className="bg-amber-50 min-h-screen font-sans">
-      <SearchBar />
+      {/* Mobile Navigation Header */}
+      <div className="bg-white shadow-sm sticky top-0 z-10 md:hidden">
+        <div className="flex items-center p-4">
+          <button onClick={toggleMobileMenu} className="mr-3">
+            <Menu className="h-6 w-6 text-amber-900" />
+          </button>
+          <div className="flex-1">
+            <SearchBar />
+          </div>
+        </div>
+      </div>
+      <div className="">
+        <SearchBar />
+      </div>
 
       {/* Main Content */}
       <main className="container mx-auto p-4 grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -136,17 +161,17 @@ const Home = () => {
             </h2>
 
             {/* Feed Filters */}
-            <div className="flex space-x-3 mb-6 text-sm">
-              <button className="bg-orange-500 text-white px-4 py-1 rounded-full">
+            <div className="flex overflow-x-auto pb-2 mb-6 text-sm">
+              <button className="bg-orange-500 text-white px-4 py-1 rounded-full whitespace-nowrap mr-3">
                 All
               </button>
-              <button className="bg-amber-50 text-gray-600 px-4 py-1 rounded-full">
+              <button className="bg-amber-50 text-gray-600 px-4 py-1 rounded-full whitespace-nowrap mr-3">
                 Updates
               </button>
-              <button className="bg-amber-50 text-gray-600 px-4 py-1 rounded-full">
+              <button className="bg-amber-50 text-gray-600 px-4 py-1 rounded-full whitespace-nowrap mr-3">
                 Events
               </button>
-              <button className="bg-amber-50 text-gray-600 px-4 py-1 rounded-full">
+              <button className="bg-amber-50 text-gray-600 px-4 py-1 rounded-full whitespace-nowrap mr-3">
                 Festivals
               </button>
             </div>
@@ -402,34 +427,48 @@ const Home = () => {
             <div className="bg-gray-100 text-gray-600 text-center text-sm py-4 rounded-lg">
               Coming Soon...
             </div>
-
-            {/* <div className="bg-amber-200/30 rounded-lg h-32 relative mb-4">
-              <div className="absolute top-2 left-2 flex items-center">
-                <div className="bg-orange-500 rounded-full w-3 h-3"></div>
-                <span className="ml-2 text-xs font-medium text-gray-700">
-                  Tirupati Balaji
-                </span>
-              </div>
-
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Play className="h-6 w-6 text-amber-800" />
-              </div>
-            </div>
-
-            <ul className="space-y-2 text-sm">
-              <li className="text-gray-700">
-                • Vaishno Devi (Starting in 20 min)
-              </li>
-              <li className="text-gray-700">
-                • Siddhivinayak (Starting at 6 PM)
-              </li>
-            </ul> */}
           </div>
         </div>
       </main>
 
-      {/* Floating Action Button */}
-      <div className="fixed bottom-6 right-6">
+      {/* Mobile Bottom Navigation */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-amber-100 flex justify-around py-2">
+        <Link to="/" className="flex flex-col items-center text-amber-900">
+          <HomeIcon className="h-5 w-5" />
+          <span className="text-xs mt-1">Home</span>
+        </Link>
+        <Link
+          to="/my-temples"
+          className="flex flex-col items-center text-gray-500"
+        >
+          <HomeIcon className="h-5 w-5" />
+          <span className="text-xs mt-1">Temples</span>
+        </Link>
+        <Link
+          to="/my-bookings"
+          className="flex flex-col items-center text-gray-500"
+        >
+          <Calendar className="h-5 w-5" />
+          <span className="text-xs mt-1">Bookings</span>
+        </Link>
+        <Link
+          to="/temple-store"
+          className="flex flex-col items-center text-gray-500"
+        >
+          <ShoppingBag className="h-5 w-5" />
+          <span className="text-xs mt-1">Store</span>
+        </Link>
+        <Link
+          to="/community"
+          className="flex flex-col items-center text-gray-500"
+        >
+          <Users className="h-5 w-5" />
+          <span className="text-xs mt-1">Community</span>
+        </Link>
+      </div>
+
+      {/* Floating Action Button - Adjusted position for mobile */}
+      <div className="fixed bottom-20 right-6 md:bottom-6">
         <button className="bg-orange-500 h-12 w-12 rounded-full flex items-center justify-center text-white shadow-lg">
           <Plus className="h-6 w-6" />
         </button>
