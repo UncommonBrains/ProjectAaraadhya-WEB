@@ -1,50 +1,40 @@
-import React, { useState } from "react";
 import {
   ChevronRight,
   Plus,
   Check,
   Clock,
-  Menu,
-  Home as HomeIcon,
-  Calendar,
-  ShoppingBag,
-  Users,
-  User,
+  
 } from "lucide-react";
 import SearchBar from "../components/searchBar";
 import { Link } from "react-router-dom";
 
 const Home = () => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-  };
-
+  
   return (
     <div className="bg-amber-50 min-h-screen font-sans">
-      {/* Mobile Navigation Header */}
-      <div className="bg-white shadow-sm sticky top-0 z-10 md:hidden">
-        <div className="flex items-center p-4">
-          <button onClick={toggleMobileMenu} className="mr-3">
-            <Menu className="h-6 w-6 text-amber-900" />
-          </button>
-          <div className="flex-1">
-            <SearchBar />
-          </div>
-        </div>
-      </div>
+      
       <div className="">
         <SearchBar />
+        {/* Welcome Section for Mobile - Centered */}
+      <div className="md:hidden text-center p-4">
+        <h2 className="text-xl font-serif text-amber-900">
+          Namaste, Rahul!
+        </h2>
+        <p className="text-gray-600 text-sm">
+          Wishing you spiritual blessings today
+        </p>
+      </div>
+        
       </div>
 
       {/* Main Content */}
       <main className="container mx-auto p-4 grid grid-cols-1 md:grid-cols-4 gap-6">
         {/* Left Column */}
-        <div className="space-y-6">
+        <div className="   space-y-6">
           {/* Welcome Section */}
           <div>
-            <h2 className="text-xl font-serif text-amber-900">
+            <h2 className=" text-xl font-serif text-amber-900">
               Namaste, Rahul!
             </h2>
             <p className="text-gray-600 text-sm">
@@ -431,41 +421,7 @@ const Home = () => {
         </div>
       </main>
 
-      {/* Mobile Bottom Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-amber-100 flex justify-around py-2">
-        <Link to="/" className="flex flex-col items-center text-amber-900">
-          <HomeIcon className="h-5 w-5" />
-          <span className="text-xs mt-1">Home</span>
-        </Link>
-        <Link
-          to="/my-temples"
-          className="flex flex-col items-center text-gray-500"
-        >
-          <HomeIcon className="h-5 w-5" />
-          <span className="text-xs mt-1">Temples</span>
-        </Link>
-        <Link
-          to="/my-bookings"
-          className="flex flex-col items-center text-gray-500"
-        >
-          <Calendar className="h-5 w-5" />
-          <span className="text-xs mt-1">Bookings</span>
-        </Link>
-        <Link
-          to="/temple-store"
-          className="flex flex-col items-center text-gray-500"
-        >
-          <ShoppingBag className="h-5 w-5" />
-          <span className="text-xs mt-1">Store</span>
-        </Link>
-        <Link
-          to="/community"
-          className="flex flex-col items-center text-gray-500"
-        >
-          <Users className="h-5 w-5" />
-          <span className="text-xs mt-1">Community</span>
-        </Link>
-      </div>
+      
 
       {/* Floating Action Button - Adjusted position for mobile */}
       <div className="fixed bottom-20 right-6 md:bottom-6">
