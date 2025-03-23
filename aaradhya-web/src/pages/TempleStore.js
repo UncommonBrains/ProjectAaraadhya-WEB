@@ -3,7 +3,6 @@ import {
   ShoppingBag,
   Gift,
   ChevronRight,
-  Plus,
   Star,
   Filter,
   Heart,
