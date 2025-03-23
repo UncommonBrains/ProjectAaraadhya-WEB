@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import React from "react";
 import Header from "./components/header"; 
 import Footer from "./components/Footer"; 
@@ -13,10 +14,13 @@ import Settings from "./pages/Settings";
 import MyBookings from "./pages/MyBookingsPage";
 import Astrology from "./pages/Astrology";
 
-function App() {
+function Layout() {
+  const location = useLocation();
+  const hideHeaderFooter = location.pathname === "/devotee-store";
+
   return (
-    <Router>
-      <Header /> 
+    <>
+      {!hideHeaderFooter && <Header />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/my-temples" element={<MyTemples />} />
@@ -29,9 +33,19 @@ function App() {
         <Route path="/my-bookings" element={<MyBookings />} />
         <Route path="/astrology" element={<Astrology />} />
       </Routes>
-      <Footer /> 
+      {!hideHeaderFooter && <Footer />}
+    </>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <Layout />
     </Router>
   );
 }
 
 export default App;
+
+
