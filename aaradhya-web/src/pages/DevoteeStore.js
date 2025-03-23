@@ -6,7 +6,6 @@ import {
   Search,
   Home,
   ShoppingCart,
-  ChevronDown,
 } from "lucide-react";
 
 const DevoteeStore = () => {
@@ -269,38 +268,23 @@ const DevoteeStore = () => {
                   href="/"
                   className="whitespace-nowrap  flex items-center pr-3 border-r-2 text-s font-semibold"
                 >
-                  <Home className="h-5 w-5 mr-1 ml-2  " strokeWidth={3} /> Go
-                  back to Aaraadhya Home
+                  <Home className="h-5 w-5 mr-1 ml-2  " strokeWidth={3} /> Aaraadhya Home
                 </a>
 
                 <h1 className="font-bold text-xl">DevoteeStore</h1>
               </div>
 
-              {/* <div className="flex-grow mx-4 relative">
-              <input
-                type="text"
-                placeholder="Search for temple offerings, items, prasadam..."
-                className="w-full rounded-md py-2 px-4 text-gray-800 text-sm"
-              />
-              <Search className="absolute right-3 top-2 h-5 w-5 text-gray-500" />
-            </div>
+              
 
-            <div className="flex items-center space-x-4">
-              <div className="flex flex-col items-start">
-                <span className="text-xs">Welcome</span>
-                <div className="flex items-center">
-                  <span className="text-sm font-medium">Account</span>
-                  <ChevronDown className="h-3 w-3 ml-1" />
+              <div className="flex items-center space-x-4">
+                <div className="relative pr-4 pl-3">
+                  <ShoppingCart className="h-7 w-7" />
+                  {cartCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-yellow-400 text-orange-800 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                      {cartCount}
+                    </span>
+                  )}
                 </div>
-              </div>
-
-              <div className="relative">
-                <ShoppingCart className="h-7 w-7" />
-                {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-yellow-400 text-orange-800 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                    {cartCount}
-                  </span>
-                )}
               </div>
             </div>
           </div>
@@ -313,7 +297,6 @@ const DevoteeStore = () => {
           />
           <Search className="absolute right-6 top-4 h-5 w-5 text-gray-500" />
         </div>
-      </header>
 
       {/* Navigation */}
       <nav className="bg-orange-700 text-white py-2 shadow-md  top-12 z-50">
