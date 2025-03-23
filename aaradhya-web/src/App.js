@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import React from "react";
 import Header from "./components/header"; 
+import Footer from "./components/Footer"; 
 import Home from "./pages/Home";
 import MyTemples from "./pages/MyTemples";
 import ExploreTemples from "./pages/ExploreTemples";
@@ -15,7 +16,7 @@ import Astrology from "./pages/Astrology";
 function App() {
   return (
     <Router>
-      <Header /> {/* Include the header for navigation */}
+      <Header /> 
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/my-temples" element={<MyTemples />} />
@@ -28,6 +29,7 @@ function App() {
         <Route path="/my-bookings" element={<MyBookings />} />
         <Route path="/astrology" element={<Astrology />} />
       </Routes>
+      <Footer /> 
     </Router>
   );
 }
