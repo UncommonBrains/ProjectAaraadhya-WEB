@@ -6,9 +6,7 @@ import {
   MessageCircle,
   Calendar,
   Star,
-  Bell,
   Plus,
-  Filter,
   Bookmark,
   TrendingUp,
 } from "lucide-react";
@@ -69,7 +67,7 @@ const Community = () => {
               ))}
             </ul>
             <a
-              href="#"
+              href="/"
               className="text-orange-500 flex items-center mt-4 text-sm"
             >
               See all my groups <ChevronRight className="h-4 w-4" />
@@ -121,7 +119,7 @@ const Community = () => {
             </div>
 
             <a
-              href="#"
+              href="/"
               className="text-orange-500 flex items-center mt-4 text-sm"
             >
               View all events <ChevronRight className="h-4 w-4" />
@@ -148,7 +146,7 @@ const Community = () => {
               </div>
             </div>
             <a
-              href="#"
+              href="/"
               className="text-orange-500 flex items-center mt-4 text-sm"
             >
               Browse all forums <ChevronRight className="h-4 w-4" />
@@ -222,7 +220,7 @@ const Community = () => {
                   <span className="text-gray-500 mr-4 flex items-center">
                     <MessageCircle className="h-4 w-4 mr-1" /> 8 comments
                   </span>
-                  <a href="#" className="text-orange-500">
+                  <a href="/" className="text-orange-500">
                     Join Discussion
                   </a>
                 </div>
@@ -268,7 +266,7 @@ const Community = () => {
                   <span className="text-gray-500 mr-4 flex items-center">
                     <MessageCircle className="h-4 w-4 mr-1" /> 17 comments
                   </span>
-                  <a href="#" className="text-orange-500">
+                  <a href="/" className="text-orange-500">
                     See All Photos
                   </a>
                 </div>
@@ -306,7 +304,7 @@ const Community = () => {
                   <span className="text-gray-500 mr-4 flex items-center">
                     <MessageCircle className="h-4 w-4 mr-1" /> 43 comments
                   </span>
-                  <a href="#" className="text-orange-500">
+                  <a href="/" className="text-orange-500">
                     RSVP Now
                   </a>
                 </div>
@@ -386,7 +384,7 @@ const Community = () => {
             </div>
 
             <a
-              href="#"
+              href="/"
               className="text-orange-500 flex items-center mt-4 text-sm"
             >
               See all members <ChevronRight className="h-4 w-4" />
@@ -437,7 +435,7 @@ const Community = () => {
             </div>
 
             <a
-              href="#"
+              href="/"
               className="text-orange-500 flex items-center mt-4 text-sm"
             >
               Discover more groups <ChevronRight className="h-4 w-4" />

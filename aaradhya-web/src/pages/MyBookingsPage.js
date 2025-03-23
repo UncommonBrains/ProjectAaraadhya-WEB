@@ -1,18 +1,30 @@
 import React, { useState } from "react";
-import { 
-  Calendar, ChevronLeft, ChevronRight, Filter, Search, Download, 
-  Clock, MapPin, User, CreditCard, CheckCircle, AlertCircle, Clock8,
-  PieChart, List
+import {
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
+  Filter,
+  Search,
+  Download,
+  Clock,
+  MapPin,
+  User,
+  CreditCard,
+  CheckCircle,
+  AlertCircle,
+  Clock8,
+  PieChart,
+  List,
 } from "lucide-react";
 
 const MyBookingsPage = () => {
   const [activeTab, setActiveTab] = useState("upcoming");
   const [viewMode, setViewMode] = useState("grid");
-  
+
   // Filter options
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false);
-  
+
   // Sample booking data
   const bookings = [
     {
@@ -25,7 +37,7 @@ const MyBookingsPage = () => {
       amount: "₹ 1,100",
       status: "upcoming",
       imageUrl: "/temple-images/vadakkunnathan.webp",
-      isPriority: true
+      isPriority: true,
     },
     {
       id: "BK1235",
@@ -73,37 +85,48 @@ const MyBookingsPage = () => {
       imageUrl: "/temple-images/vadakkunnathan.webp",
     },
   ];
-  
+
   // Filter bookings based on active tab and search query
-  const filteredBookings = bookings.filter(booking => {
+  const filteredBookings = bookings.filter((booking) => {
     const matchesTab = activeTab === "all" || booking.status === activeTab;
-    const matchesSearch = booking.templeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          booking.service.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          booking.id.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch =
+      booking.templeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      booking.service.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      booking.id.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesTab && matchesSearch;
   });
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8">
-        <h1 className="text-2xl font-serif text-amber-900 font-bold">My Bookings</h1>
-        
+        <h1 className="text-2xl font-serif text-amber-900 font-bold">
+          My Bookings
+        </h1>
+
         <div className="flex items-center space-x-2 mt-4 sm:mt-0">
-          <button 
+          <button
             onClick={() => setViewMode("grid")}
-            className={`p-2 rounded-md ${viewMode === "grid" ? "bg-amber-100 text-amber-900" : "bg-amber-50 text-gray-600"}`}
+            className={`p-2 rounded-md ${
+              viewMode === "grid"
+                ? "bg-amber-100 text-amber-900"
+                : "bg-amber-50 text-gray-600"
+            }`}
           >
             <PieChart className="w-5 h-5" />
           </button>
-          <button 
+          <button
             onClick={() => setViewMode("list")}
-            className={`p-2 rounded-md ${viewMode === "list" ? "bg-amber-100 text-amber-900" : "bg-amber-50 text-gray-600"}`}
+            className={`p-2 rounded-md ${
+              viewMode === "list"
+                ? "bg-amber-100 text-amber-900"
+                : "bg-amber-50 text-gray-600"
+            }`}
           >
             <List className="w-5 h-5" />
           </button>
         </div>
       </div>
-      
+
       {/* Tabs */}
       <div className="flex border-b border-amber-100 mb-6">
         <button
@@ -147,7 +170,7 @@ const MyBookingsPage = () => {
           All Bookings
         </button>
       </div>
-      
+
       {/* Search and filter */}
       <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
         <div className="relative flex-1 max-w-md">
@@ -162,30 +185,32 @@ const MyBookingsPage = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        
+
         <div className="flex space-x-2">
-          <button 
+          <button
             onClick={() => setShowFilters(!showFilters)}
             className="flex items-center px-4 py-2 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-md transition-colors"
           >
             <Filter className="w-4 h-4 mr-2" />
             Filters
           </button>
-          
+
           <button className="flex items-center px-4 py-2 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-md transition-colors">
             <Download className="w-4 h-4 mr-2" />
             Export
           </button>
         </div>
       </div>
-      
+
       {/* Filters panel (expandable) */}
       {showFilters && (
         <div className="bg-amber-50 rounded-lg p-4 mb-6 border border-amber-100">
           <h3 className="font-medium text-amber-900 mb-3">Filter Options</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Service Type</label>
+              <label className="block text-sm text-gray-600 mb-1">
+                Service Type
+              </label>
               <select className="bg-white border border-amber-100 rounded-md px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-amber-200">
                 <option value="">All Services</option>
                 <option value="darshan">Darshan</option>
@@ -194,40 +219,44 @@ const MyBookingsPage = () => {
                 <option value="homam">Homam</option>
               </select>
             </div>
-            
+
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Booking Date Range</label>
+              <label className="block text-sm text-gray-600 mb-1">
+                Booking Date Range
+              </label>
               <div className="flex space-x-2">
-                <input 
-                  type="date" 
+                <input
+                  type="date"
                   className="bg-white border border-amber-100 rounded-md px-3 py-2 flex-1 focus:outline-none focus:ring-2 focus:ring-amber-200"
                 />
                 <span className="text-gray-500 self-center">to</span>
-                <input 
-                  type="date" 
+                <input
+                  type="date"
                   className="bg-white border border-amber-100 rounded-md px-3 py-2 flex-1 focus:outline-none focus:ring-2 focus:ring-amber-200"
                 />
               </div>
             </div>
-            
+
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Price Range</label>
+              <label className="block text-sm text-gray-600 mb-1">
+                Price Range
+              </label>
               <div className="flex space-x-2">
-                <input 
-                  type="number" 
-                  placeholder="Min" 
+                <input
+                  type="number"
+                  placeholder="Min"
                   className="bg-white border border-amber-100 rounded-md px-3 py-2 flex-1 focus:outline-none focus:ring-2 focus:ring-amber-200"
                 />
                 <span className="text-gray-500 self-center">to</span>
-                <input 
-                  type="number" 
-                  placeholder="Max" 
+                <input
+                  type="number"
+                  placeholder="Max"
                   className="bg-white border border-amber-100 rounded-md px-3 py-2 flex-1 focus:outline-none focus:ring-2 focus:ring-amber-200"
                 />
               </div>
             </div>
           </div>
-          
+
           <div className="flex justify-end mt-4 space-x-2">
             <button className="px-4 py-2 text-gray-600 hover:text-gray-800">
               Reset
@@ -238,22 +267,26 @@ const MyBookingsPage = () => {
           </div>
         </div>
       )}
-      
+
       {/* Pagination */}
       <div className="flex justify-between items-center mb-6 text-sm">
-        <span className="text-gray-500">Showing {filteredBookings.length} bookings</span>
-        
+        <span className="text-gray-500">
+          Showing {filteredBookings.length} bookings
+        </span>
+
         <div className="flex items-center space-x-2">
           <button className="p-1 rounded-md hover:bg-amber-100">
             <ChevronLeft className="w-5 h-5 text-amber-900" />
           </button>
-          <span className="px-3 py-1 bg-amber-100 rounded-md text-amber-900">1</span>
+          <span className="px-3 py-1 bg-amber-100 rounded-md text-amber-900">
+            1
+          </span>
           <button className="p-1 rounded-md hover:bg-amber-100">
             <ChevronRight className="w-5 h-5 text-amber-900" />
           </button>
         </div>
       </div>
-      
+
       {/* Bookings display - Grid View */}
       {viewMode === "grid" && (
         <div className="grid sm-grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -264,13 +297,17 @@ const MyBookingsPage = () => {
           ) : (
             <div className="col-span-full text-center py-12 bg-amber-50 rounded-lg">
               <AlertCircle className="mx-auto w-12 h-12 text-amber-300 mb-4" />
-              <h3 className="text-lg font-medium text-amber-900 mb-1">No bookings found</h3>
-              <p className="text-gray-500">Try adjusting your filters or search criteria</p>
+              <h3 className="text-lg font-medium text-amber-900 mb-1">
+                No bookings found
+              </h3>
+              <p className="text-gray-500">
+                Try adjusting your filters or search criteria
+              </p>
             </div>
           )}
         </div>
       )}
-      
+
       {/* Bookings display - List View */}
       {viewMode === "list" && (
         <div className="overflow-hidden rounded-lg border border-amber-100">
@@ -305,7 +342,8 @@ const MyBookingsPage = () => {
                             {booking.templeName}
                           </div>
                           <div className="text-sm text-gray-500 flex items-center">
-                            <MapPin className="w-3 h-3 mr-1" /> {booking.location}
+                            <MapPin className="w-3 h-3 mr-1" />{" "}
+                            {booking.location}
                           </div>
                           <div className="text-xs text-gray-400 mt-1">
                             ID: {booking.id}
@@ -314,12 +352,20 @@ const MyBookingsPage = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{booking.date}</div>
-                      <div className="text-sm text-gray-500">{booking.time}</div>
+                      <div className="text-sm text-gray-900">
+                        {booking.date}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {booking.time}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{booking.service}</div>
-                      <div className="text-sm font-medium text-amber-900">{booking.amount}</div>
+                      <div className="text-sm text-gray-900">
+                        {booking.service}
+                      </div>
+                      <div className="text-sm font-medium text-amber-900">
+                        {booking.amount}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <StatusBadge status={booking.status} />
@@ -348,8 +394,12 @@ const MyBookingsPage = () => {
           ) : (
             <div className="text-center py-12 bg-amber-50">
               <AlertCircle className="mx-auto w-12 h-12 text-amber-300 mb-4" />
-              <h3 className="text-lg font-medium text-amber-900 mb-1">No bookings found</h3>
-              <p className="text-gray-500">Try adjusting your filters or search criteria</p>
+              <h3 className="text-lg font-medium text-amber-900 mb-1">
+                No bookings found
+              </h3>
+              <p className="text-gray-500">
+                Try adjusting your filters or search criteria
+              </p>
             </div>
           )}
         </div>
@@ -389,9 +439,9 @@ const BookingCard = ({ booking }) => {
   return (
     <div className="bg-white rounded-lg border border-amber-100 overflow-hidden shadow-sm hover:shadow transition-shadow">
       <div className="relative">
-        <img 
-          src={booking.imageUrl} 
-          alt={booking.templeName} 
+        <img
+          src={booking.imageUrl}
+          alt={booking.templeName}
           className="w-full h-48 object-cover"
         />
         {booking.isPriority && (
@@ -399,17 +449,22 @@ const BookingCard = ({ booking }) => {
             Priority Booking
           </div>
         )}
-        <StatusBadge status={booking.status} className="absolute top-3 right-3" />
+        <StatusBadge
+          status={booking.status}
+          className="absolute top-3 right-3"
+        />
       </div>
-      
+
       <div className="p-4">
-        <h3 className="font-medium text-lg text-amber-900">{booking.templeName}</h3>
-        
+        <h3 className="font-medium text-lg text-amber-900">
+          {booking.templeName}
+        </h3>
+
         <div className="flex items-center text-sm text-gray-500 mt-1">
           <MapPin className="w-4 h-4 mr-1" />
           {booking.location}
         </div>
-        
+
         <div className="mt-4 grid grid-cols-2 gap-3">
           <div>
             <div className="text-xs text-gray-500">Date</div>
@@ -418,7 +473,7 @@ const BookingCard = ({ booking }) => {
               <span className="text-sm">{booking.date}</span>
             </div>
           </div>
-          
+
           <div>
             <div className="text-xs text-gray-500">Time</div>
             <div className="flex items-center mt-1">
@@ -426,7 +481,7 @@ const BookingCard = ({ booking }) => {
               <span className="text-sm">{booking.time}</span>
             </div>
           </div>
-          
+
           <div>
             <div className="text-xs text-gray-500">Service</div>
             <div className="flex items-center mt-1">
@@ -434,7 +489,7 @@ const BookingCard = ({ booking }) => {
               <span className="text-sm">{booking.service}</span>
             </div>
           </div>
-          
+
           <div>
             <div className="text-xs text-gray-500">Amount</div>
             <div className="flex items-center mt-1">
@@ -443,26 +498,29 @@ const BookingCard = ({ booking }) => {
             </div>
           </div>
         </div>
-        
+
         {booking.status === "cancelled" && (
           <div className="mt-3 p-2 bg-red-50 text-red-800 rounded text-xs">
-            <span className="font-medium">Cancellation reason:</span> {booking.cancellationReason}
+            <span className="font-medium">Cancellation reason:</span>{" "}
+            {booking.cancellationReason}
           </div>
         )}
-        
+
         <div className="mt-4 pt-3 border-t border-amber-100 flex justify-between">
-          <span className="text-xs text-gray-500">Booking ID: {booking.id}</span>
+          <span className="text-xs text-gray-500">
+            Booking ID: {booking.id}
+          </span>
           <div className="flex space-x-3">
             <button className="text-sm font-medium text-amber-600 hover:text-amber-800">
               Details
             </button>
-            
+
             {booking.status === "upcoming" && (
               <button className="text-sm font-medium text-red-500 hover:text-red-700">
                 Cancel
               </button>
             )}
-            
+
             {booking.status === "completed" && (
               <button className="text-sm font-medium text-gray-500 hover:text-gray-700">
                 Receipt

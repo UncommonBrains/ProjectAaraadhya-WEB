@@ -1,17 +1,10 @@
 import React, { useState } from "react";
 import {
-  Bell,
-  Search,
   ChevronRight,
-  Calendar,
   Plus,
-  Star,
   Filter,
   Map,
   Clock,
-  Settings,
-  Info,
-  Heart,
   Check,
 } from "lucide-react";
 import SearchBar from "../components/searchBar"; 
@@ -126,7 +119,7 @@ const MyTemples = () => {
             </div>
 
             <a
-              href="#"
+              href="/"
               className="text-orange-500 flex items-center mt-4 text-sm"
             >
               View all bookings <ChevronRight className="h-4 w-4" />
@@ -164,7 +157,7 @@ const MyTemples = () => {
               </div>
             </div>
             <a
-              href="#"
+              href="/"
               className="text-orange-500 flex items-center mt-4 text-sm"
             >
               View all events <ChevronRight className="h-4 w-4" />

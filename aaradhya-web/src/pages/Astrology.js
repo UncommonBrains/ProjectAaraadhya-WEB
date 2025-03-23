@@ -9,9 +9,7 @@ import {
   MessageCircle,
   Users,
   Plus,
-  Filter,
-  Bookmark,
-  TrendingUp,
+  
 } from "lucide-react";
 import SearchBar from "../components/searchBar";
 
@@ -48,7 +46,7 @@ const Astrology = () => {
                   <span className="text-gray-500 text-xs">4th Nakshatra • Taurus</span>
                 </div>
               </div>
-              <a href="#" className="text-orange-500 text-sm">View</a>
+              <a href="/" className="text-orange-500 text-sm">View</a>
             </div>
             <div className="bg-amber-50 rounded-lg p-3">
               <p className="text-gray-700 text-sm mb-2">Today's Guidance:</p>
@@ -95,7 +93,7 @@ const Astrology = () => {
             </div>
 
             <a
-              href="#"
+              href="/"
               className="text-orange-500 flex items-center mt-4 text-sm"
             >
               View full planetary transits <ChevronRight className="h-4 w-4" />
@@ -122,7 +120,7 @@ const Astrology = () => {
               </div>
             </div>
             <a
-              href="#"
+              href="/"
               className="text-orange-500 flex items-center mt-4 text-sm"
             >
               View full panchang <ChevronRight className="h-4 w-4" />
@@ -196,7 +194,7 @@ const Astrology = () => {
                   <span className="text-gray-500 mr-4 flex items-center">
                     <MessageCircle className="h-4 w-4 mr-1" /> 15 comments
                   </span>
-                  <a href="#" className="text-orange-500">
+                  <a href="/" className="text-orange-500">
                     Join Discussion
                   </a>
                 </div>
@@ -234,7 +232,7 @@ const Astrology = () => {
                   <span className="text-gray-500 mr-4 flex items-center">
                     <MessageCircle className="h-4 w-4 mr-1" /> 27 comments
                   </span>
-                  <a href="#" className="text-orange-500">
+                  <a href="/" className="text-orange-500">
                     Read Article
                   </a>
                 </div>
@@ -268,7 +266,7 @@ const Astrology = () => {
                   <span className="text-gray-500 mr-4 flex items-center">
                     <MessageCircle className="h-4 w-4 mr-1" /> 52 comments
                   </span>
-                  <a href="#" className="text-orange-500">
+                  <a href="/" className="text-orange-500">
                     Join Discussion
                   </a>
                 </div>
@@ -338,7 +336,7 @@ const Astrology = () => {
               </div>
             </div>
             <a
-              href="#"
+              href="/"
               className="text-orange-500 flex items-center mt-4 text-sm"
             >
               Read detailed prediction <ChevronRight className="h-4 w-4" />
@@ -387,7 +385,7 @@ const Astrology = () => {
             </div>
 
             <a
-              href="#"
+              href="/"
               className="text-orange-500 flex items-center mt-4 text-sm"
             >
               View all services <ChevronRight className="h-4 w-4" />
@@ -438,7 +436,7 @@ const Astrology = () => {
             </div>
 
             <a
-              href="#"
+              href="/"
               className="text-orange-500 flex items-center mt-4 text-sm"
             >
               Discover more communities <ChevronRight className="h-4 w-4" />

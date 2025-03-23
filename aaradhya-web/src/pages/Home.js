@@ -1,14 +1,9 @@
 import React from "react";
 import {
-  Bell,
-  Search,
   ChevronRight,
-  Calendar,
   Plus,
-  Play,
   Check,
   Clock,
-  Linkedin,
 } from "lucide-react";
 import SearchBar from "../components/searchBar";
 import { Link } from "react-router-dom";
@@ -51,7 +46,7 @@ const Home = () => {
               ))}
             </ul>
             <a
-              href="#"
+              href="/"
               className="text-orange-500 flex items-center mt-4 text-sm"
             >
               See all temples <ChevronRight className="h-4 w-4" />
@@ -97,7 +92,7 @@ const Home = () => {
             </div>
 
             <a
-              href="#"
+              href="/"
               className="text-orange-500 flex items-center mt-4 text-sm"
             >
               View all bookings <ChevronRight className="h-4 w-4" />
@@ -125,7 +120,7 @@ const Home = () => {
               </div>
             </div>
             <a
-              href="#"
+              href="/"
               className="text-orange-500 flex items-center mt-4 text-sm"
             >
               Explore communities <ChevronRight className="h-4 w-4" />
@@ -183,7 +178,7 @@ const Home = () => {
                 <div className="flex text-sm">
                   <span className="text-gray-500 mr-4">78 likes</span>
                   <span className="text-gray-500 mr-4">12 comments</span>
-                  <a href="#" className="text-orange-500">
+                  <a href="/" className="text-orange-500">
                     Register Now
                   </a>
                 </div>
@@ -208,7 +203,7 @@ const Home = () => {
                 <div className="flex text-sm">
                   <span className="text-gray-500 mr-4">45 likes</span>
                   <span className="text-gray-500 mr-4">8 comments</span>
-                  <a href="#" className="text-orange-500">
+                  <a href="/" className="text-orange-500">
                     Book Archana
                   </a>
                 </div>
@@ -239,7 +234,7 @@ const Home = () => {
                 <div className="flex text-sm">
                   <span className="text-gray-500 mr-4">125 likes</span>
                   <span className="text-gray-500 mr-4">34 comments</span>
-                  <a href="#" className="text-orange-500">
+                  <a href="/" className="text-orange-500">
                     View Live Stream
                   </a>
                 </div>
@@ -282,7 +277,7 @@ const Home = () => {
               </div>
             </div>
             <a
-              href="#"
+              href="/"
               className="text-orange-500 flex items-center mt-4 text-sm"
             >
               View full calendar <ChevronRight className="h-4 w-4" />

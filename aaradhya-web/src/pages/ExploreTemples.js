@@ -1,22 +1,15 @@
 import React, { useState } from "react";
 import {
-  Bell,
-  Search,
-  ChevronRight,
-  Calendar,
+ 
   Plus,
   Star,
   Filter,
   Map,
   Clock,
-  Settings,
-  Info,
-  Heart,
   MapPin,
   ArrowUpDown,
   Camera,
   Check,
-  CheckIcon,
 } from "lucide-react";
 
 import temples from "../datas/temples"; // Adjust path if needed

@@ -1,22 +1,13 @@
 import React, { useState } from "react";
 import {
-  Bell,
-  Search,
   ChevronRight,
   Calendar,
   Plus,
-  Star,
   Filter,
-  Map,
   Clock,
-  Settings,
   Info,
-  Heart,
-  MapPin,
   ArrowUpDown,
   CalendarDays,
-  Users,
-  Check,
   ListFilter
 } from "lucide-react";
 
@@ -507,7 +498,7 @@ const UpcomingPoojas = () => {
               <h3 className="text-lg font-serif text-amber-900">
                 Recommended Poojas
               </h3>
-              <a href="#" className="text-orange-500 text-sm flex items-center">
+              <a href="/" className="text-orange-500 text-sm flex items-center">
                 View All <ChevronRight className="h-4 w-4" />
               </a>
             </div>

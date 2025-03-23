@@ -1,11 +1,6 @@
 import React, { useState } from "react";
 import {
-  ShoppingBag,
-  Gift,
-  ChevronRight,
-  Plus,
   Star,
-  Filter,
   Heart,
   Mail,
   Search,
@@ -13,7 +8,6 @@ import {
   Menu,
   ShoppingCart,
   ChevronDown,
-  User,
   MapPin,
 } from "lucide-react";
 
@@ -320,25 +314,25 @@ const DevoteeStore = () => {
       <nav className="bg-orange-700 text-white py-2 shadow-md sticky top-12 z-50">
         <div className="container mx-auto">
           <div className="flex items-center space-x-6 overflow-x-auto pb-1 text-sm">
-            <a href="#" className="whitespace-nowrap flex items-center">
+            <a href="/" className="whitespace-nowrap flex items-center">
               <Home className="h-4 w-4 mr-1" /> Home
             </a>
-            <a href="#" className="whitespace-nowrap font-medium">
+            <a href="/" className="whitespace-nowrap font-medium">
               Best Sellers
             </a>
-            <a href="#" className="whitespace-nowrap">
+            <a href="/" className="whitespace-nowrap">
               Today's Deals
             </a>
-            <a href="#" className="whitespace-nowrap">
+            <a href="/" className="whitespace-nowrap">
               New Releases
             </a>
-            <a href="#" className="whitespace-nowrap">
+            <a href="/" className="whitespace-nowrap">
               Festival Specials
             </a>
-            <a href="#" className="whitespace-nowrap">
+            <a href="/" className="whitespace-nowrap">
               Customer Service
             </a>
-            <a href="#" className="whitespace-nowrap">
+            <a href="/" className="whitespace-nowrap">
               Temple Directory
             </a>
           </div>
@@ -703,27 +697,27 @@ const DevoteeStore = () => {
               <h4 className="font-bold mb-4">Get to Know Us</h4>
               <ul className="space-y-2 text-sm text-gray-400">
                 <li>
-                  <a href="#" className="hover:text-white">
+                  <a href="/" className="hover:text-white">
                     About DevoteeStore
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white">
+                  <a href="/" className="hover:text-white">
                     Temple Partnerships
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white">
+                  <a href="/" className="hover:text-white">
                     Careers
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white">
+                  <a href="/" className="hover:text-white">
                     Press Releases
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white">
+                  <a href="/" className="hover:text-white">
                     Community Initiatives
                   </a>
                 </li>
@@ -733,27 +727,27 @@ const DevoteeStore = () => {
               <h4 className="font-bold mb-4">Customer Service</h4>
               <ul className="space-y-2 text-sm text-gray-400">
                 <li>
-                  <a href="#" className="hover:text-white">
+                  <a href="/" className="hover:text-white">
                     Your Account
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white">
+                  <a href="/" className="hover:text-white">
                     Track Your Order
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white">
+                  <a href="/" className="hover:text-white">
                     Shipping & Delivery
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white">
+                  <a href="/" className="hover:text-white">
                     Returns & Refunds
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white">
+                  <a href="/" className="hover:text-white">
                     Help Center
                   </a>
                 </li>
@@ -763,27 +757,27 @@ const DevoteeStore = () => {
               <h4 className="font-bold mb-4">Temple Categories</h4>
               <ul className="space-y-2 text-sm text-gray-400">
                 <li>
-                  <a href="#" className="hover:text-white">
+                  <a href="/" className="hover:text-white">
                     Vishnu Temples
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white">
+                  <a href="/" className="hover:text-white">
                     Shiva Temples
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white">
+                  <a href="/" className="hover:text-white">
                     Shakti Temples
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white">
+                  <a href="/" className="hover:text-white">
                     Ganesha Temples
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white">
+                  <a href="/" className="hover:text-white">
                     All Temples Directory
                   </a>
                 </li>
@@ -793,22 +787,22 @@ const DevoteeStore = () => {
               <h4 className="font-bold mb-4">Connect With Us</h4>
               <ul className="space-y-2 text-sm text-gray-400">
                 <li>
-                  <a href="#" className="hover:text-white">
+                  <a href="/" className="hover:text-white">
                     Facebook
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white">
+                  <a href="/" className="hover:text-white">
                     Twitter
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white">
+                  <a href="/" className="hover:text-white">
                     Instagram
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white">
+                  <a href="/" className="hover:text-white">
                     YouTube
                   </a>
                 </li>
