@@ -281,14 +281,6 @@ const DevoteeStore = () => {
             </div>
 
             <div className="flex items-center space-x-4">
-              <div className="flex flex-col items-end">
-                <span className="text-xs">Deliver to</span>
-                <div className="flex items-center">
-                  <MapPin className="h-3 w-3 mr-1" />
-                  <span className="text-sm font-medium">New Delhi</span>
-                </div>
-              </div>
-
               <div className="flex flex-col items-start">
                 <span className="text-xs">Welcome</span>
                 <div className="flex items-center">
@@ -364,7 +356,7 @@ const DevoteeStore = () => {
             {/* Featured Collections */}
             <div className="mb-6">
               <h3 className="font-serif text-amber-900 text-lg mb-4">
-                 Collections
+                Collections
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {/* Collection 1 */}
@@ -693,7 +685,9 @@ const DevoteeStore = () => {
       <footer className="bg-gray-800 text-gray-200 mt-8 py-8">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
+            <div className="col-span-1 md:col-span-1"></div>{" "}
+            {/* Empty for centering */}
+            <div className="col-span-1 md:col-span-1">
               <h4 className="font-bold mb-4">Get to Know Us</h4>
               <ul className="space-y-2 text-sm text-gray-400">
                 <li>
@@ -723,7 +717,7 @@ const DevoteeStore = () => {
                 </li>
               </ul>
             </div>
-            <div>
+            <div className="col-span-1 md:col-span-1 text-right">
               <h4 className="font-bold mb-4">Customer Service</h4>
               <ul className="space-y-2 text-sm text-gray-400">
                 <li>
@@ -753,63 +747,10 @@ const DevoteeStore = () => {
                 </li>
               </ul>
             </div>
-            <div>
-              <h4 className="font-bold mb-4">Temple Categories</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li>
-                  <a href="/" className="hover:text-white">
-                    Vishnu Temples
-                  </a>
-                </li>
-                <li>
-                  <a href="/" className="hover:text-white">
-                    Shiva Temples
-                  </a>
-                </li>
-                <li>
-                  <a href="/" className="hover:text-white">
-                    Shakti Temples
-                  </a>
-                </li>
-                <li>
-                  <a href="/" className="hover:text-white">
-                    Ganesha Temples
-                  </a>
-                </li>
-                <li>
-                  <a href="/" className="hover:text-white">
-                    All Temples Directory
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4">Connect With Us</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li>
-                  <a href="/" className="hover:text-white">
-                    Facebook
-                  </a>
-                </li>
-                <li>
-                  <a href="/" className="hover:text-white">
-                    Twitter
-                  </a>
-                </li>
-                <li>
-                  <a href="/" className="hover:text-white">
-                    Instagram
-                  </a>
-                </li>
-                <li>
-                  <a href="/" className="hover:text-white">
-                    YouTube
-                  </a>
-                </li>
-              </ul>
-            </div>
+            <div className="col-span-1 md:col-span-1"></div>{" "}
+            {/* Empty for centering */}
           </div>
-          <div className="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-400">
+          <div className=" border-gray-700 mt-8 pt-8 text-center text-sm text-gray-400">
             <p>&copy; 2025 DevoteeStore. All rights reserved.</p>
           </div>
         </div>
