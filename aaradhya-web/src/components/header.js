@@ -12,8 +12,8 @@ import {
   ChevronDown,
   Home,
   ShoppingBag,
-  MapPlus, 
-  
+  MapPlus,
+  X
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
@@ -50,6 +50,19 @@ const Header = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  // Prevent scrolling when mobile menu is open
+  useEffect(() => {
+    if (showMobileMenu) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [showMobileMenu]);
 
   return (
     <>
@@ -302,99 +315,160 @@ const Header = () => {
               </div>
             </div>
           </div>
-
-          {/* Mobile menu - only visible when toggled on mobile */}
-          {showMobileMenu && (
-            <div
-              className="md:hidden mt-4 bg-white rounded-md shadow-md border border-amber-100 p-2 z-40"
-              ref={mobileMenuRef}
-            >
-              <nav className="flex flex-col space-y-2">
-                <NavLink
-                  to="/my-temples"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "text-orange-600 font-bold p-2"
-                      : "text-gray-600 hover:text-amber-900 p-2"
-                  }
-                  onClick={() => setShowMobileMenu(false)}
-                >
-                  My Temples
-                </NavLink>
-                <NavLink
-                  to="/my-bookings"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "text-orange-600 font-bold p-2"
-                      : "text-gray-600 hover:text-amber-900 p-2"
-                  }
-                  onClick={() => setShowMobileMenu(false)}
-                >
-                  My Bookings
-                </NavLink>
-                <NavLink
-                  to="/upcoming-poojas"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "text-orange-600 font-bold p-2"
-                      : "text-gray-600 hover:text-amber-900 p-2"
-                  }
-                  onClick={() => setShowMobileMenu(false)}
-                >
-                  Upcoming Poojas
-                </NavLink>
-                <NavLink
-                  to="/explore-temples"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "text-orange-600 font-bold p-2"
-                      : "text-gray-600 hover:text-amber-900 p-2"
-                  }
-                  onClick={() => setShowMobileMenu(false)}
-                >
-                  Explore Temples
-                </NavLink>
-                <NavLink
-                  to="/community"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "block text-orange-600 font-bold p-2"
-                      : "block text-gray-600 hover:text-amber-900 p-2"
-                  }
-                  onClick={() => setShowMobileMenu(false)}
-                >
-                  Community
-                </NavLink>
-                <NavLink
-                  to="/astrology"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "block text-orange-600 font-bold p-2"
-                      : "block text-gray-600 hover:text-amber-900 p-2"
-                  }
-                  onClick={() => setShowMobileMenu(false)}
-                >
-                  Astrology
-                </NavLink>
-                <NavLink
-                  to="/divine-seva"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "block text-orange-600 font-bold p-2"
-                      : "block text-gray-600 hover:text-amber-900 p-2"
-                  }
-                  onClick={() => setShowMobileMenu(false)}
-                >
-                  DivineSeva
-                </NavLink>
-              </nav>
-            </div>
-          )}
         </div>
       </header>
 
+      {/* Mobile side menu overlay */}
+      {showMobileMenu && (
+        <>
+          {/* Overlay background */}
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-50"
+            onClick={() => setShowMobileMenu(false)}
+          />
+          
+          {/* Side menu */}
+          <div 
+            ref={mobileMenuRef}
+            className="fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-50 transform transition-transform duration-300 ease-in-out"
+          >
+            <div className="flex justify-between items-center p-4 border-b border-amber-100">
+              <div className="flex items-center">
+                <div className="bg-orange-400 rounded-full w-8 h-8 flex items-center justify-center overflow-hidden">
+                  <img
+                    src="/logo192.png"
+                    alt="Aaradhya Logo"
+                    className="w-7 h-full object-cover"
+                  />
+                </div>
+                <h1 className="ml-3 text-xl font-serif text-amber-900 font-bold">
+                  Aaraadhya
+                </h1>
+              </div>
+              <button
+                onClick={() => setShowMobileMenu(false)}
+                className="text-gray-500 hover:text-amber-900"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            
+            <nav className="flex flex-col p-2">
+              <NavLink
+                to="/"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex items-center text-orange-600 font-bold p-3"
+                    : "flex items-center text-gray-600 hover:text-amber-900 p-3"
+                }
+                onClick={() => setShowMobileMenu(false)}
+              >
+                <Home className="mr-3 h-5 w-5" />
+                Home
+              </NavLink>
+              <NavLink
+                to="/my-temples"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex items-center text-orange-600 font-bold p-3"
+                    : "flex items-center text-gray-600 hover:text-amber-900 p-3"
+                }
+                onClick={() => setShowMobileMenu(false)}
+              >
+                <MapPlus className="mr-3 h-5 w-5" />
+                My Temples
+              </NavLink>
+              <NavLink
+                to="/my-bookings"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex items-center text-orange-600 font-bold p-3"
+                    : "flex items-center text-gray-600 hover:text-amber-900 p-3"
+                }
+                onClick={() => setShowMobileMenu(false)}
+              >
+                <Calendar className="mr-3 h-5 w-5" />
+                My Bookings
+              </NavLink>
+              <NavLink
+                to="/upcoming-poojas"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex items-center text-orange-600 font-bold p-3"
+                    : "flex items-center text-gray-600 hover:text-amber-900 p-3"
+                }
+                onClick={() => setShowMobileMenu(false)}
+              >
+                <Calendar className="mr-3 h-5 w-5" />
+                Upcoming Poojas
+              </NavLink>
+              <NavLink
+                to="/explore-temples"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex items-center text-orange-600 font-bold p-3"
+                    : "flex items-center text-gray-600 hover:text-amber-900 p-3"
+                }
+                onClick={() => setShowMobileMenu(false)}
+              >
+                <MapPlus className="mr-3 h-5 w-5" />
+                Explore Temples
+              </NavLink>
+              <NavLink
+                to="/devotee-store"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex items-center text-orange-600 font-bold p-3"
+                    : "flex items-center text-gray-600 hover:text-amber-900 p-3"
+                }
+                onClick={() => setShowMobileMenu(false)}
+              >
+                <ShoppingBag className="mr-3 h-5 w-5" />
+                Devotee Store
+              </NavLink>
+              <NavLink
+                to="/community"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex items-center text-orange-600 font-bold p-3"
+                    : "flex items-center text-gray-600 hover:text-amber-900 p-3"
+                }
+                onClick={() => setShowMobileMenu(false)}
+              >
+                <Share2 className="mr-3 h-5 w-5" />
+                Community
+              </NavLink>
+              <NavLink
+                to="/astrology"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex items-center text-orange-600 font-bold p-3"
+                    : "flex items-center text-gray-600 hover:text-amber-900 p-3"
+                }
+                onClick={() => setShowMobileMenu(false)}
+              >
+                <Star className="mr-3 h-5 w-5" />
+                Astrology
+              </NavLink>
+              <NavLink
+                to="/divine-seva"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex items-center text-orange-600 font-bold p-3"
+                    : "flex items-center text-gray-600 hover:text-amber-900 p-3"
+                }
+                onClick={() => setShowMobileMenu(false)}
+              >
+                <Info className="mr-3 h-5 w-5" />
+                DivineSeva
+              </NavLink>
+            </nav>
+          </div>
+        </>
+      )}
+
       {/* Bottom navigation bar for mobile */}
-      <div className="fixed md:hidden bottom-0 left-0 right-0 bg-white border-t border-amber-100 z-50">
+      <div className="fixed md:hidden bottom-0 left-0 right-0 bg-white border-t border-amber-100 z-40">
         <div className="flex justify-between px-2 py-2">
           <NavLink
             to="/"
