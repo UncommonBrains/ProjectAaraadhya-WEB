@@ -2,7 +2,7 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import React from "react";
 import Header from "./components/header"; 
-import Footer from "./components/Footer"; 
+import Footer from "./components/footer"; 
 import Home from "./pages/Home";
 import MyTemples from "./pages/MyTemples";
 import ExploreTemples from "./pages/ExploreTemples";
