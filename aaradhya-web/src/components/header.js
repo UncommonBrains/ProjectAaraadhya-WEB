@@ -72,6 +72,18 @@ const Header = () => {
     };
   }, [showMobileMenu, showMobileMoreMenu]);
 
+  // Handle the profile button click
+  const handleProfileClick = () => {
+    // For desktop, show the dropdown
+    if (window.innerWidth >= 768) {
+      setShowDropdown(!showDropdown);
+    } 
+    // For mobile, show the mobile more menu (same as "More" button)
+    else {
+      setShowMobileMoreMenu(!showMobileMoreMenu);
+    }
+  };
+
   return (
     <>
       <header className="bg-amber-50/100 border-b border-amber-100 p-4 md:grid-cols-4 sticky top-0 z-50">
@@ -225,13 +237,13 @@ const Header = () => {
                 <div className="relative pl-5" ref={dropdownRef}>
                   <button
                     className="bg-amber-600 rounded-full w-9 h-9 flex items-center justify-center text-white font-medium focus:outline-none"
-                    onClick={() => setShowDropdown(!showDropdown)}
+                    onClick={handleProfileClick}
                   >
                     R
                   </button>
 
-                  {/* Profile Dropdown */}
-                  {showDropdown && (
+                  {/* Profile Dropdown - ONLY shown on desktop */}
+                  {showDropdown && window.innerWidth >= 768 && (
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-amber-100 transform -translate-y-1">
                       <div className="px-4 py-3 border-b border-amber-100">
                         <p className="text-sm font-medium text-amber-900">
@@ -544,34 +556,8 @@ const Header = () => {
                 <MapPlus className="mr-3 h-5 w-5" />
                 My Temples
               </NavLink>
-              <NavLink
-                to="/contact-us"
-                className={({ isActive }) =>
-                  isActive
-                    ? "flex items-center text-orange-600 font-bold p-3"
-                    : "flex items-center text-gray-600 hover:text-amber-900 p-3"
-                }
-                onClick={() => setShowMobileMoreMenu(false)}
-              >
-                <Phone className="mr-3 h-5 w-5" />
-                Contact Us
-              </NavLink>
-              
-              {/* <NavLink
-                to="/refer-temple"
-                className={({ isActive }) =>
-                  isActive
-                    ? "flex items-center text-orange-600 font-bold p-3"
-                    : "flex items-center text-gray-600 hover:text-amber-900 p-3"
-                }
-                onClick={() => setShowMobileMoreMenu(false)}
-              >
-                <Share2 className="mr-3 h-5 w-5" />
-                Refer a Temple
-              </NavLink> */}
               
               
-                
               <NavLink
                 to="/community"
                 className={({ isActive }) =>
@@ -619,6 +605,18 @@ const Header = () => {
               >
                 <Info className="mr-3 h-5 w-5" />
                 About
+              </NavLink>
+              <NavLink
+                to="/contact-us"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex items-center text-orange-600 font-bold p-3"
+                    : "flex items-center text-gray-600 hover:text-amber-900 p-3"
+                }
+                onClick={() => setShowMobileMoreMenu(false)}
+              >
+                <Phone className="mr-3 h-5 w-5" />
+                Contact Us
               </NavLink>
               
               <div className="border-t border-amber-100 mt-2 pt-2">
