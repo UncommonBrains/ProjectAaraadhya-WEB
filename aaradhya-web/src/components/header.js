@@ -1,4 +1,4 @@
-import { NavLink, Link } from "react-router-dom";
+import { NavLink,  } from "react-router-dom";
 import {
   Bell,
   Settings,
@@ -129,14 +129,14 @@ const Header = () => {
               </NavLink>
 
               <NavLink
-                to="/my-temples"
+                to="/explore-temples"
                 className={({ isActive }) =>
                   isActive
                     ? "text-orange-600 font-bold"
                     : "text-gray-600 hover:text-amber-900"
                 }
               >
-                My Temples
+                Explore Temples
               </NavLink>
 
               <NavLink
@@ -150,16 +150,7 @@ const Header = () => {
                 Upcoming Poojas
               </NavLink>
 
-              <NavLink
-                to="/explore-temples"
-                className={({ isActive }) =>
-                  isActive
-                    ? "text-orange-600 font-bold"
-                    : "text-gray-600 hover:text-amber-900"
-                }
-              >
-                Explore Temples
-              </NavLink>
+              
 
               <NavLink
                 to="/devotee-store"
@@ -262,6 +253,15 @@ const Header = () => {
                           >
                             <Settings className="mr-3 h-4 w-4 text-gray-500" />
                             Settings
+                          </NavLink>
+                        </li>
+                        <li>
+                          <NavLink
+                            to="/my-temples"
+                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                          >
+                            <Calendar className="mr-3 h-4 w-4 text-gray-500" />
+                            My Temples
                           </NavLink>
                         </li>
                         <li>
@@ -598,8 +598,8 @@ const Header = () => {
                 to="/about"
                 className={({ isActive }) =>
                   isActive
-                    ? "flex items-center text-orange-600 font-bold p-3"
-                    : "flex items-center text-gray-600 hover:text-amber-900 p-3"
+                    ? "flex border-t border-amber-300 mt-2 pt-2 items-center text-orange-600 font-bold p-3"
+                    : "flex border-t border-amber-300 mt-2 pt-2 items-center text-gray-600 hover:text-amber-900 p-3"
                 }
                 onClick={() => setShowMobileMoreMenu(false)}
               >
@@ -619,7 +619,7 @@ const Header = () => {
                 Contact Us
               </NavLink>
               
-              <div className="border-t border-amber-100 mt-2 pt-2">
+              <div className="border-t border-amber-300 mt-2 pt-2">
                 <NavLink
                   to="/logout"
                   className="flex items-center text-red-500 p-3"
