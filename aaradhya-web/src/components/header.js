@@ -503,8 +503,7 @@ const Header = () => {
             }
           >
             <Calendar className="h-5 w-5" />
-            <span className="text-xs mt-1">Upcoming </span>
-            <span className="text-xs ">Poojas</span>
+            <span className="text-xs mt-1">Poojas </span>
           </NavLink>
           
           <NavLink
