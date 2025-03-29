@@ -59,9 +59,9 @@ const Header = () => {
     };
   }, []);
 
-  // Prevent scrolling when mobile menu is open
+  // Prevent scrolling when mobile menu or mobile more menu is open
   useEffect(() => {
-    if (showMobileMenu) {
+    if (showMobileMenu || showMobileMoreMenu) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'auto';
@@ -70,7 +70,7 @@ const Header = () => {
     return () => {
       document.body.style.overflow = 'auto';
     };
-  }, [showMobileMenu]);
+  }, [showMobileMenu, showMobileMoreMenu]);
 
   return (
     <>
@@ -297,6 +297,15 @@ const Header = () => {
                             Feedback
                           </NavLink>
                         </li>
+                        <li>
+                          <NavLink
+                            to="/temple-store"
+                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                          >
+                            <ShoppingBag className="mr-3 h-4 w-4 text-gray-500" />
+                            Temple Store
+                          </NavLink>
+                        </li>
                       </ul>
 
                       <div className="py-1 border-t border-amber-100">
@@ -306,15 +315,6 @@ const Header = () => {
                         >
                           <LogOut className="mr-3 h-4 w-4 text-red-500" />
                           Logout
-                        </NavLink>
-                      </div>
-                      <div className="py-1 border-t border-amber-100">
-                        <NavLink
-                          to="/temple-store"
-                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
-                        >
-                          <LogOut className="mr-3 h-4 w-4 text-gray-500" />
-                          Temple Store
                         </NavLink>
                       </div>
                     </div>
@@ -475,6 +475,167 @@ const Header = () => {
         </>
       )}
 
+      {/* Mobile More menu overlay - slide from right side */}
+      {showMobileMoreMenu && (
+        <>
+          {/* Overlay background */}
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-50"
+            onClick={() => setShowMobileMoreMenu(false)}
+          />
+          
+          {/* Side menu from right */}
+          <div 
+            ref={mobileMoreMenuRef}
+            className="fixed top-0 right-0 h-full w-64 bg-white shadow-lg z-50 transform transition-transform duration-300 ease-in-out"
+          >
+            <div className="flex justify-between items-center p-4 border-b border-amber-100">
+              <div className="flex items-center">
+                <div className="bg-amber-600 rounded-full w-8 h-8 flex items-center justify-center text-white font-medium">
+                  R
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm font-medium text-amber-900">Rahul Kumar</p>
+                  <p className="text-xs text-gray-500 truncate">rahul@example.com</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowMobileMoreMenu(false)}
+                className="text-gray-500 hover:text-amber-900"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            
+            <nav className="flex flex-col p-2 overflow-y-auto h-[calc(100%-70px)]">
+              <NavLink
+                to="/settings"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex items-center text-orange-600 font-bold p-3"
+                    : "flex items-center text-gray-600 hover:text-amber-900 p-3"
+                }
+                onClick={() => setShowMobileMoreMenu(false)}
+              >
+                <Settings className="mr-3 h-5 w-5" />
+                Settings
+              </NavLink>
+              <NavLink
+                to="/my-bookings"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex items-center text-orange-600 font-bold p-3"
+                    : "flex items-center text-gray-600 hover:text-amber-900 p-3"
+                }
+                onClick={() => setShowMobileMoreMenu(false)}
+              >
+                <Calendar className="mr-3 h-5 w-5" />
+                My Bookings
+              </NavLink>
+              <NavLink
+                to="/my-temples"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex items-center text-orange-600 font-bold p-3"
+                    : "flex items-center text-gray-600 hover:text-amber-900 p-3"
+                }
+                onClick={() => setShowMobileMoreMenu(false)}
+              >
+                <MapPlus className="mr-3 h-5 w-5" />
+                My Temples
+              </NavLink>
+              <NavLink
+                to="/contact-us"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex items-center text-orange-600 font-bold p-3"
+                    : "flex items-center text-gray-600 hover:text-amber-900 p-3"
+                }
+                onClick={() => setShowMobileMoreMenu(false)}
+              >
+                <Phone className="mr-3 h-5 w-5" />
+                Contact Us
+              </NavLink>
+              
+              {/* <NavLink
+                to="/refer-temple"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex items-center text-orange-600 font-bold p-3"
+                    : "flex items-center text-gray-600 hover:text-amber-900 p-3"
+                }
+                onClick={() => setShowMobileMoreMenu(false)}
+              >
+                <Share2 className="mr-3 h-5 w-5" />
+                Refer a Temple
+              </NavLink> */}
+              
+              
+                
+              <NavLink
+                to="/community"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex items-center text-orange-600 font-bold p-3"
+                    : "flex items-center text-gray-600 hover:text-amber-900 p-3"
+                }
+                onClick={() => setShowMobileMoreMenu(false)}
+              >
+                <Share2 className="mr-3 h-5 w-5" />
+                Community
+              </NavLink>
+              <NavLink
+                to="/astrology"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex items-center text-orange-600 font-bold p-3"
+                    : "flex items-center text-gray-600 hover:text-amber-900 p-3"
+                }
+                onClick={() => setShowMobileMoreMenu(false)}
+              >
+                <Star className="mr-3 h-5 w-5" />
+                Astrology
+              </NavLink>
+              <NavLink
+                to="/divine-seva"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex items-center text-orange-600 font-bold p-3"
+                    : "flex items-center text-gray-600 hover:text-amber-900 p-3"
+                }
+                onClick={() => setShowMobileMoreMenu(false)}
+              >
+                <Info className="mr-3 h-5 w-5" />
+                DivineSeva
+              </NavLink>
+              <NavLink
+                to="/about"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex items-center text-orange-600 font-bold p-3"
+                    : "flex items-center text-gray-600 hover:text-amber-900 p-3"
+                }
+                onClick={() => setShowMobileMoreMenu(false)}
+              >
+                <Info className="mr-3 h-5 w-5" />
+                About
+              </NavLink>
+              
+              <div className="border-t border-amber-100 mt-2 pt-2">
+                <NavLink
+                  to="/logout"
+                  className="flex items-center text-red-500 p-3"
+                  onClick={() => setShowMobileMoreMenu(false)}
+                >
+                  <LogOut className="mr-3 h-5 w-5" />
+                  Logout
+                </NavLink>
+              </div>
+            </nav>
+          </div>
+        </>
+      )}
+
       {/* Bottom navigation bar for mobile */}
       <div className="fixed md:hidden bottom-0 left-0 right-0 bg-white border-t border-amber-100 z-40">
         <div className="flex justify-between px-2 py-2">
@@ -536,69 +697,6 @@ const Header = () => {
               <Menu className="h-5 w-5" />
               <span className="text-xs mt-1">More</span>
             </button>
-            
-            {showMobileMoreMenu && (
-              <div 
-                ref={mobileMoreMenuRef}
-                className="absolute bottom-16 right-0 bg-white rounded-md shadow-lg py-1 z-50 border border-amber-100 w-40"
-              >
-                <NavLink
-                  to="/my-temples"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "block px-4 py-2 text-orange-600 font-bold"
-                      : "block px-4 py-2 text-gray-600 hover:bg-amber-50"
-                  }
-                  onClick={() => setShowMobileMoreMenu(false)}
-                >
-                  My Temples
-                </NavLink>
-                <NavLink
-                  to="/my-bookings"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "block px-4 py-2 text-orange-600 font-bold"
-                      : "block px-4 py-2 text-gray-600 hover:bg-amber-50"
-                  }
-                  onClick={() => setShowMobileMoreMenu(false)}
-                >
-                  My Bookings
-                </NavLink>
-                <NavLink
-                  to="/community"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "block px-4 py-2 text-orange-600 font-bold"
-                      : "block px-4 py-2 text-gray-600 hover:bg-amber-50"
-                  }
-                  onClick={() => setShowMobileMoreMenu(false)}
-                >
-                  Community
-                </NavLink>
-                <NavLink
-                  to="/astrology"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "block px-4 py-2 text-orange-600 font-bold"
-                      : "block px-4 py-2 text-gray-600 hover:bg-amber-50"
-                  }
-                  onClick={() => setShowMobileMoreMenu(false)}
-                >
-                  Astrology
-                </NavLink>
-                <NavLink
-                  to="/divine-seva"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "block px-4 py-2 text-orange-600 font-bold"
-                      : "block px-4 py-2 text-gray-600 hover:bg-amber-50"
-                  }
-                  onClick={() => setShowMobileMoreMenu(false)}
-                >
-                  DivineSeva
-                </NavLink>
-              </div>
-            )}
           </div>
         </div>
       </div>
