@@ -21,9 +21,11 @@ const Header = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showMoreDropdown, setShowMoreDropdown] = useState(false);
+  const [showMobileMoreMenu, setShowMobileMoreMenu] = useState(false);
   const dropdownRef = useRef(null);
   const mobileMenuRef = useRef(null);
   const moreDropdownRef = useRef(null);
+  const mobileMoreMenuRef = useRef(null);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -42,6 +44,12 @@ const Header = () => {
         !moreDropdownRef.current.contains(event.target)
       ) {
         setShowMoreDropdown(false);
+      }
+      if (
+        mobileMoreMenuRef.current &&
+        !mobileMoreMenuRef.current.contains(event.target)
+      ) {
+        setShowMobileMoreMenu(false);
       }
     };
 
@@ -518,17 +526,80 @@ const Header = () => {
             <span className="text-xs mt-1">Devotee Store</span>
           </NavLink>
           
-          <NavLink
-            to="/more"
-            className={({ isActive }) =>
-              isActive
-                ? "flex flex-col items-center text-orange-600 flex-1"
-                : "flex flex-col items-center text-gray-500 flex-1"
-            }
-          >
-            <Menu className="h-5 w-5" />
-            <span className="text-xs mt-1">More</span>
-          </NavLink>
+          <div className="relative flex-1">
+            <button
+              onClick={() => setShowMobileMoreMenu(!showMobileMoreMenu)}
+              className={showMobileMoreMenu 
+                ? "flex flex-col items-center text-orange-600 w-full" 
+                : "flex flex-col items-center text-gray-500 w-full"}
+            >
+              <Menu className="h-5 w-5" />
+              <span className="text-xs mt-1">More</span>
+            </button>
+            
+            {showMobileMoreMenu && (
+              <div 
+                ref={mobileMoreMenuRef}
+                className="absolute bottom-16 right-0 bg-white rounded-md shadow-lg py-1 z-50 border border-amber-100 w-40"
+              >
+                <NavLink
+                  to="/my-temples"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "block px-4 py-2 text-orange-600 font-bold"
+                      : "block px-4 py-2 text-gray-600 hover:bg-amber-50"
+                  }
+                  onClick={() => setShowMobileMoreMenu(false)}
+                >
+                  My Temples
+                </NavLink>
+                <NavLink
+                  to="/my-bookings"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "block px-4 py-2 text-orange-600 font-bold"
+                      : "block px-4 py-2 text-gray-600 hover:bg-amber-50"
+                  }
+                  onClick={() => setShowMobileMoreMenu(false)}
+                >
+                  My Bookings
+                </NavLink>
+                <NavLink
+                  to="/community"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "block px-4 py-2 text-orange-600 font-bold"
+                      : "block px-4 py-2 text-gray-600 hover:bg-amber-50"
+                  }
+                  onClick={() => setShowMobileMoreMenu(false)}
+                >
+                  Community
+                </NavLink>
+                <NavLink
+                  to="/astrology"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "block px-4 py-2 text-orange-600 font-bold"
+                      : "block px-4 py-2 text-gray-600 hover:bg-amber-50"
+                  }
+                  onClick={() => setShowMobileMoreMenu(false)}
+                >
+                  Astrology
+                </NavLink>
+                <NavLink
+                  to="/divine-seva"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "block px-4 py-2 text-orange-600 font-bold"
+                      : "block px-4 py-2 text-gray-600 hover:bg-amber-50"
+                  }
+                  onClick={() => setShowMobileMoreMenu(false)}
+                >
+                  DivineSeva
+                </NavLink>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </>
