@@ -99,7 +99,7 @@ const Header = () => {
 
             {/* Logo - centered on desktop, to the right of menu button on mobile */}
             <div className="flex items-center">
-              <a href="/">
+              {/* <a href="/">
                 <div className="bg-orange-400 rounded-full w-8 h-8 flex items-center justify-center overflow-hidden">
                   <img
                     src="/logo192.png"
@@ -107,12 +107,15 @@ const Header = () => {
                     className="w-7 h-full object-cover"
                   />
                 </div>
-              </a>
-              <a href="/">
-                <h1 className="ml-3 text-xl font-serif text-amber-900 font-bold">
-                  Aaraadhya
-                </h1>
-              </a>
+              </a> */}
+             <a href="/">
+  <img
+    src="/AaraadhyaLogo.png"
+    alt="Aaradhya Logo"
+    className="w-44"
+  />
+</a>
+
             </div>
 
             {/* Navigation - hidden on mobile, visible on desktop */}
