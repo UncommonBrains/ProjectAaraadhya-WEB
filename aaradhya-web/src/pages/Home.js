@@ -31,7 +31,7 @@ const Home = () => {
       {/* Main Content */}
       <main className="container mx-auto p-4 grid grid-cols-1 md:grid-cols-4 gap-6">
         {/* Left Column */}
-        <div className="   space-y-6">
+        <div className="!hidden  md:!block  space-y-6">
           {/* Welcome Section */}
           <div>
             <h2 className=" text-xl font-serif text-amber-900">
@@ -144,7 +144,7 @@ const Home = () => {
         </div>
 
         {/* Center Column (Feed) - Takes 2 columns in the 4-column grid */}
-        <div className="md:col-span-2">
+        <div className="md:col-span-2 mb-14">
           <div className="bg-white rounded-lg shadow-sm border border-amber-100 p-4">
             <h2 className="font-serif text-amber-900 text-lg mb-4">
               Temple Feed
@@ -259,7 +259,7 @@ const Home = () => {
         </div>
 
         {/* Right Column */}
-        <div className="space-y-6">
+        <div className="space-y-6  !hidden md:!block">
           {/* Upcoming Poojas */}
           <div className="bg-white rounded-lg shadow-sm border border-amber-100 p-4">
             <Link to="/upcoming-poojas">

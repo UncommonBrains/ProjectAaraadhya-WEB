@@ -3,7 +3,7 @@ import { MapPin, Mail, Phone, Facebook, Instagram, Youtube, Twitter, CreditCard,
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-800 text-gray-200 py-6">
+    <footer className="!hidden md:!block bg-gray-800 text-gray-200 py-6 ">
       <div className="max-w-[92rem] mx-auto px-4">
         {/* Main Navigation */}
         <div className="flex flex-wrap justify-center space-x-4 mb-4">
