@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Plus,
   Star,
@@ -13,13 +13,38 @@ import {
 } from "lucide-react";
 
 import temples from "../datas/temples"; // Adjust path if needed
-import SearchBar from "../components/searchBar"; 
+import SearchBar from "../components/searchBar";
+import ActionButton from "../components/ActionButton";
 
 const ExploreTemples = () => {
-  
   const [activeFilter, setActiveFilter] = useState("All");
   const [activeSortBy, setActiveSortBy] = useState("Popular");
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const sidebarRef = useRef(null);
+
+  // Add click outside handler
+  useEffect(() => {
+    function handleClickOutside(event) {
+      // If the sidebar is open and the click is outside the sidebar element
+      if (
+        mobileFiltersOpen &&
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target)
+      ) {
+        setMobileFiltersOpen(false);
+      }
+    }
+
+    // Add event listener when the sidebar is open
+    if (mobileFiltersOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    // Clean up the event listener
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [mobileFiltersOpen]);
 
   // Filter temples based on active filter
   const filteredTemples =
@@ -47,7 +72,6 @@ const ExploreTemples = () => {
         return filteredTemples;
     }
   };
-  
 
   // Toggle mobile filters
   const toggleMobileFilters = () => {
@@ -79,21 +103,40 @@ const ExploreTemples = () => {
     return stars;
   };
 
-  
-
   return (
     <div className="bg-amber-50 min-h-screen font-sans">
       <SearchBar />
+      
 
       {/* Main Content */}
       <main className="container mx-auto p-4 grid grid-cols-1 md:grid-cols-4 gap-6 relative">
         {/* Left Column - Filters - Hidden on mobile by default */}
-        <div className={`${mobileFiltersOpen ? 'fixed inset-0 bg-amber-900/70 z-40 md:static md:bg-transparent md:z-auto' : 'hidden md:!block'}`}>
-          <div className={`${mobileFiltersOpen ? 'absolute right-0 top-0 h-full w-4/5 max-w-sm overflow-y-auto bg-amber-50 p-4 shadow-xl transition-all transform' : 'space-y-6'}`}>
+
+        <div
+          className={`${
+            mobileFiltersOpen
+              ? "fixed inset-0 bg-amber-900/70 z-40 md:static md:bg-transparent md:z-auto"
+              : "hidden md:!block"
+          }`}
+          onClick={(e) => {
+            // Close sidebar if clicking on the overlay (not the sidebar itself)
+            if (e.target === e.currentTarget) {
+              setMobileFiltersOpen(false);
+            }
+          }}
+        >
+          <div
+            ref={sidebarRef}
+            className={`${
+              mobileFiltersOpen
+                ? "absolute right-0 top-0 h-full w-4/5 max-w-sm overflow-y-auto bg-amber-50 p-4 shadow-xl transition-all transform"
+                : "space-y-6"
+            }`}
+          >
             {mobileFiltersOpen && (
               <div className="flex justify-between items-center mb-4 sticky top-0 bg-amber-50 p-2 border-b border-amber-200">
                 <h3 className="font-serif text-amber-900">Filters</h3>
-                <button 
+                <button
                   onClick={toggleMobileFilters}
                   className="text-amber-900 p-2"
                 >
@@ -101,33 +144,15 @@ const ExploreTemples = () => {
                 </button>
               </div>
             )}
-            
-            
-
-            {/* Featured Temples */}
-            <div className="bg-white rounded-lg shadow-sm border border-amber-100 p-4 hidden md:!block">
-              <h3 className="font-serif text-amber-900 mb-3">Featured Temples</h3>
-              <div className="space-y-3">
-                {temples
-                  .filter((temple) => temple.featured)
-                  .slice(0, 3)
-                  .map((temple) => (
-                    <div
-                      key={temple.id}
-                      className="flex items-center p-2 bg-amber-50 rounded"
-                    >
-                      <div className="bg-amber-200/50 w-10 h-10 rounded flex items-center justify-center text-orange-500">
-                        <Star className="h-5 w-5" />
-                      </div>
-                      <div className="ml-3">
-                        <h4 className="text-sm font-medium text-amber-900">
-                          {temple.name}
-                        </h4>
-                        <p className="text-xs text-gray-600">{temple.location}</p>
-                      </div>
-                    </div>
-                  ))}
-              </div>
+           
+            {/* Welcome Section */}
+            <div>
+              <h2 className=" text-xl font-serif text-amber-900">
+                Namaste, Rahul!
+              </h2>
+              <p className="text-gray-600 text-sm">
+                Wishing you spiritual blessings today
+              </p>
             </div>
 
             {/* Filters Section */}
@@ -139,7 +164,9 @@ const ExploreTemples = () => {
 
               {/* Region Filter */}
               <div className="mb-4">
-                <h4 className="text-gray-700 font-medium text-sm mb-2">Region</h4>
+                <h4 className="text-gray-700 font-medium text-sm mb-2">
+                  Region
+                </h4>
                 <div className="space-y-1">
                   {[
                     "North Indian",
@@ -166,7 +193,9 @@ const ExploreTemples = () => {
 
               {/* Deity Filter */}
               <div className="mb-4">
-                <h4 className="text-gray-700 font-medium text-sm mb-2">Deity</h4>
+                <h4 className="text-gray-700 font-medium text-sm mb-2">
+                  Deity
+                </h4>
                 <div className="space-y-1">
                   {["Vishnu", "Shiva", "Shakti", "Ganesh", "Hanuman"].map(
                     (deity) => (
@@ -232,14 +261,50 @@ const ExploreTemples = () => {
                 </div>
               </div>
 
-              <button className="w-full mt-4 bg-orange-500 text-white rounded-lg py-2 text-sm font-medium">
-                Apply Filters
-              </button>
+              {mobileFiltersOpen && (
+                <button
+                  onClick={toggleMobileFilters}
+                  className="w-full mt-4 bg-orange-500 text-white rounded-lg py-2 text-sm font-medium"
+                >
+                  Apply Filters
+                </button>
+              )}
             </div>
 
+            {/* Featured Temples */}
+            <div className="bg-white rounded-lg shadow-sm border border-amber-100 p-4 hidden md:!block">
+              <h3 className="font-serif text-amber-900 mb-3">
+                Featured Temples
+              </h3>
+              <div className="space-y-3">
+                {temples
+                  .filter((temple) => temple.featured)
+                  .slice(0, 3)
+                  .map((temple) => (
+                    <div
+                      key={temple.id}
+                      className="flex items-center p-2 bg-amber-50 rounded"
+                    >
+                      <div className="bg-amber-200/50 w-10 h-10 rounded flex items-center justify-center text-orange-500">
+                        <Star className="h-5 w-5" />
+                      </div>
+                      <div className="ml-3">
+                        <h4 className="text-sm font-medium text-amber-900">
+                          {temple.name}
+                        </h4>
+                        <p className="text-xs text-gray-600">
+                          {temple.location}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
             {/* Map Preview */}
             <div className="bg-white rounded-lg shadow-sm border border-amber-100 p-4 mb-6 hidden md:!block">
-              <h3 className="font-serif text-amber-900 mb-3">Temple Locations</h3>
+              <h3 className="font-serif text-amber-900 mb-3">
+                Temple Locations
+              </h3>
               <div className="bg-amber-100 h-48 rounded-lg flex items-center justify-center relative overflow-hidden">
                 <div className="absolute inset-0 bg-amber-200/30"></div>
                 <MapPin className="h-8 w-8 text-orange-500" />
@@ -249,20 +314,10 @@ const ExploreTemples = () => {
                 View Larger Map
               </button>
             </div>
-            
-            {mobileFiltersOpen && (
-              <div className="my-6">
-                <button 
-                  onClick={toggleMobileFilters}
-                  className="w-full bg-orange-500 text-white rounded-lg py-2 text-sm font-medium"
-                >
-                  Show Results
-                </button>
-              </div>
-            )}
           </div>
         </div>
 
+        {/* Rest of the component remains unchanged */}
         {/* Center & Right Columns (Temple Content) */}
         <div className="md:col-span-3 space-y-6">
           {/* Page Header */}
@@ -277,7 +332,7 @@ const ExploreTemples = () => {
             </div>
             <div className="flex space-x-3">
               {/* Filter button - Visible only on small screens */}
-              <button 
+              <button
                 className="bg-white border border-amber-200 p-2 rounded text-gray-600 md:hidden"
                 onClick={toggleMobileFilters}
               >
@@ -419,11 +474,17 @@ const ExploreTemples = () => {
                   </div>
 
                   <div className="flex justify-between">
-                    <a href={`/temple/${temple.id}`} className="text-amber-900 bg-amber-100 text-xs px-3 py-1 rounded flex items-center">
+                    <a
+                      href={`/temple/${temple.id}`}
+                      className="text-amber-900 bg-amber-100 text-xs px-3 py-1 rounded flex items-center"
+                    >
                       <Camera className="h-3 w-3 mr-1" />
                       Virtual Tour
                     </a>
-                    <a href={`/temple/${temple.id}`} className="text-orange-500 bg-orange-100 text-xs px-3 py-1 rounded">
+                    <a
+                      href={`/temple/${temple.id}`}
+                      className="text-orange-500 bg-orange-100 text-xs px-3 py-1 rounded"
+                    >
                       View Details
                     </a>
                   </div>
@@ -441,12 +502,8 @@ const ExploreTemples = () => {
         </div>
       </main>
 
-      {/* Floating Action Button */}
-      <div className="fixed bottom-6 right-6">
-        <button className="bg-orange-500 h-12 w-12 rounded-full flex items-center justify-center text-white shadow-lg">
-          <Plus className="h-6 w-6" />
-        </button>
-      </div>
+      {/* Floating Action Button - Adjusted position for mobile */}
+      <ActionButton />
     </div>
   );
 };

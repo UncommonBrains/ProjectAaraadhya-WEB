@@ -16,6 +16,8 @@ import {
   PieChart,
   List,
 } from "lucide-react";
+import ActionButton from "../components/ActionButton";
+
 
 const MyBookingsPage = () => {
   const [activeTab, setActiveTab] = useState("upcoming");
@@ -529,6 +531,9 @@ const BookingCard = ({ booking }) => {
           </div>
         </div>
       </div>
+
+      {/* Floating Action Button - Adjusted position for mobile */}
+      <ActionButton/>
     </div>
   );
 };

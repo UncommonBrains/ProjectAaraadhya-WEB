@@ -1,25 +1,16 @@
 import React, { useState } from "react";
-import {
-  ChevronRight,
-  Plus,
-  Filter,
-  Map,
-  Clock,
-  Check,
-} from "lucide-react";
-import SearchBar from "../components/searchBar"; 
-import TempleGrid from "../components/myTemplesData"; 
+import { ChevronRight, Filter, Map, Clock, Check } from "lucide-react";
+import SearchBar from "../components/searchBar";
+import TempleGrid from "../components/myTemplesData";
 import { Link } from "react-router-dom";
-
-
+import ActionButton from "../components/ActionButton";
 
 const MyTemples = () => {
   const [activeFilter, setActiveFilter] = useState("All");
 
   return (
     <div className="bg-amber-50 min-h-screen font-sans">
-      
-      <SearchBar/>
+      <SearchBar />
 
       {/* Main Content */}
       <main className="container mx-auto p-4 grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -128,7 +119,6 @@ const MyTemples = () => {
 
           {/* Upcoming Events */}
           <div className="bg-white rounded-lg shadow-sm border border-amber-100 p-4">
-            
             <h3 className="font-serif text-amber-900 mb-4">
               Upcoming Temple Events
             </h3>
@@ -210,7 +200,7 @@ const MyTemples = () => {
             ))}
           </div>
 
-         <TempleGrid/>
+          <TempleGrid />
 
           {/* Pagination */}
           <div className="flex justify-center mt-6">
@@ -232,12 +222,8 @@ const MyTemples = () => {
         </div>
       </main>
 
-      {/* Floating Action Button */}
-      <div className="fixed bottom-6 right-6">
-        <button className="bg-orange-500 h-12 w-12 rounded-full flex items-center justify-center text-white shadow-lg">
-          <Plus className="h-6 w-6" />
-        </button>
-      </div>
+      {/* Floating Action Button - Adjusted position for mobile */}
+      <ActionButton />
     </div>
   );
 };

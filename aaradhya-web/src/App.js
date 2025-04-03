@@ -25,9 +25,9 @@ function Layout() {
     <>
       {!hideHeaderFooter && <Header />}
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<ExploreTemples />} />
         <Route path="/my-temples" element={<MyTemples />} />
-        <Route path="/explore-temples" element={<ExploreTemples />} />
+        <Route path="/feed" element={<Home />} />
         <Route path="/temple-details" element={<TempleDetails />} />
         <Route path="/upcoming-poojas" element={<UpcomingPoojas />} />
         <Route path="/temple-store" element={<TempleStore />} />
@@ -39,15 +39,16 @@ function Layout() {
         <Route path="/divine-seva" element={<DivineSeva />} /> 
         <Route path="/live-events" element={<LiveEvents />} /> 
       </Routes>
-      {!hideHeaderFooter && <Footer />}
+      {!hideHeaderFooter  &&  <Footer />}
     </>
   );
 }
 
+
 function App() {
   return (
     <Router>
-      <Layout />
+      <Layout /> 
     </Router>
   );
 }

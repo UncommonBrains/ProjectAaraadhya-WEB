@@ -17,6 +17,8 @@ import {
   User,
 } from "lucide-react";
 import SearchBar from "../components/searchBar";
+import ActionButton from "../components/ActionButton";
+
 
 const DivineSeva = () => {
   return (
@@ -561,12 +563,8 @@ const DivineSeva = () => {
           </div>
         </main>
 
-        {/* Floating Action Button */}
-        <div className="fixed bottom-6 right-6">
-          <button className="bg-orange-500 h-12 w-12 rounded-full flex items-center justify-center text-white shadow-lg">
-            <Plus className="h-6 w-6" />
-          </button>
-        </div>
+        {/* Floating Action Button - Adjusted position for mobile */}
+      <ActionButton/>
       </div>
 
       {/* Overlay Layer */}

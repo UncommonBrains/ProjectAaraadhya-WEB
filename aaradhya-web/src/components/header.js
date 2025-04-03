@@ -1,4 +1,8 @@
-import { NavLink, } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import { MdTempleHindu } from "react-icons/md";
+import { AiFillHeart } from "react-icons/ai";
+import { FaPeopleGroup } from "react-icons/fa6";
+
 import {
   Bell,
   Settings,
@@ -12,8 +16,8 @@ import {
   ChevronDown,
   Home,
   ShoppingBag,
-  MapPlus,
   X,
+  Video,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
@@ -91,7 +95,7 @@ const Header = () => {
           <div className="flex items-center justify-between">
             {/* Mobile menu button - visible only on mobile */}
             <button
-              className="md:!hidden mr-3 text-amber-900"
+              className="md:hidden mr-3 text-amber-900"
               onClick={() => setShowMobileMenu(!showMobileMenu)}
             >
               <Menu className="h-6 w-6" />
@@ -99,15 +103,6 @@ const Header = () => {
 
             {/* Logo - centered on desktop, to the right of menu button on mobile */}
             <div className="flex items-center">
-              {/* <a href="/">
-                <div className="bg-orange-400 rounded-full w-8 h-8 flex items-center justify-center overflow-hidden">
-                  <img
-                    src="/logo192.png"
-                    alt="Aaradhya Logo"
-                    className="w-7 h-full object-cover"
-                  />
-                </div>
-              </a> */}
               <a href="/">
                 <img
                   src="/AaraadhyaLogo.png"
@@ -119,19 +114,10 @@ const Header = () => {
 
             {/* Navigation - hidden on mobile, visible on desktop */}
             <nav className="hidden md:flex space-x-6 text-sm">
-              <NavLink
-                to="/"
-                className={({ isActive }) =>
-                  isActive
-                    ? "text-orange-600 font-bold"
-                    : "text-gray-600 hover:text-amber-900"
-                }
-              >
-                Home
-              </NavLink>
+              
 
               <NavLink
-                to="/explore-temples"
+                to="/"
                 className={({ isActive }) =>
                   isActive
                     ? "text-orange-600 font-bold"
@@ -151,8 +137,16 @@ const Header = () => {
               >
                 Upcoming Poojas
               </NavLink>
-
-             
+              <NavLink
+                to="/feed"
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-orange-600 font-bold"
+                    : "text-gray-600 hover:text-amber-900"
+                }
+              >
+                Feed
+              </NavLink>
 
               {/* More dropdown for desktop */}
               <div className="relative" ref={moreDropdownRef}>
@@ -209,7 +203,7 @@ const Header = () => {
                       }
                       onClick={() => setShowMoreDropdown(false)}
                     >
-                      DivineSeva
+                      Divine Seva
                     </NavLink>
                     <NavLink
                       to="/live-events"
@@ -271,7 +265,7 @@ const Header = () => {
                             to="/my-temples"
                             className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
                           >
-                            <Calendar className="mr-3 h-4 w-4 text-gray-500" />
+                            <AiFillHeart className="mr-3 h-4 w-4 text-gray-500" />
                             My Temples
                           </NavLink>
                         </li>
@@ -386,7 +380,7 @@ const Header = () => {
 
             <nav className="flex flex-col p-2">
               <NavLink
-                to="/"
+                to="/feed"
                 className={({ isActive }) =>
                   isActive
                     ? "flex items-center text-orange-600 font-bold p-3"
@@ -395,7 +389,7 @@ const Header = () => {
                 onClick={() => setShowMobileMenu(false)}
               >
                 <Home className="mr-3 h-5 w-5" />
-                Home
+                Feed
               </NavLink>
               <NavLink
                 to="/my-temples"
@@ -406,7 +400,7 @@ const Header = () => {
                 }
                 onClick={() => setShowMobileMenu(false)}
               >
-                <MapPlus className="mr-3 h-5 w-5" />
+                <AiFillHeart className="mr-3 h-5 w-5" />
                 My Temples
               </NavLink>
               <NavLink
@@ -434,7 +428,7 @@ const Header = () => {
                 Upcoming Poojas
               </NavLink>
               <NavLink
-                to="/explore-temples"
+                to="/"
                 className={({ isActive }) =>
                   isActive
                     ? "flex items-center text-orange-600 font-bold p-3"
@@ -442,7 +436,7 @@ const Header = () => {
                 }
                 onClick={() => setShowMobileMenu(false)}
               >
-                <MapPlus className="mr-3 h-5 w-5" />
+                <MdTempleHindu className="mr-3 h-5 w-5" />
                 Explore Temples
               </NavLink>
               <NavLink
@@ -490,8 +484,8 @@ const Header = () => {
                 }
                 onClick={() => setShowMobileMenu(false)}
               >
-                <Info className="mr-3 h-5 w-5" />
-                DivineSeva
+                <FaPeopleGroup className="mr-3 h-5 w-5" />
+                Divine Seva
               </NavLink>
             </nav>
           </div>
@@ -568,7 +562,7 @@ const Header = () => {
                 }
                 onClick={() => setShowMobileMoreMenu(false)}
               >
-                <MapPlus className="mr-3 h-5 w-5" />
+                <AiFillHeart className="mr-3 h-5 w-5" />
                 My Temples
               </NavLink>
 
@@ -605,8 +599,21 @@ const Header = () => {
                 }
                 onClick={() => setShowMobileMoreMenu(false)}
               >
-                <Info className="mr-3 h-5 w-5" />
+                <FaPeopleGroup className="mr-3 h-5 w-5" />
                 DivineSeva
+              </NavLink>
+
+              <NavLink
+                to="/live-events"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex items-center text-orange-600 font-bold p-3"
+                    : "flex items-center text-gray-600 hover:text-amber-900 p-3"
+                }
+                onClick={() => setShowMobileMoreMenu(false)}
+              >
+                <Video className="mr-3 h-5 w-5" />
+                Live Events
               </NavLink>
               <NavLink
                 to="/about"
@@ -651,6 +658,8 @@ const Header = () => {
       {/* Bottom navigation bar for mobile */}
       <div className="fixed md:hidden bottom-0 left-0 right-0 bg-white border-t border-amber-100 z-40">
         <div className="flex justify-between px-2 py-2">
+          
+
           <NavLink
             to="/"
             className={({ isActive }) =>
@@ -659,19 +668,7 @@ const Header = () => {
                 : "flex flex-col items-center text-gray-500 flex-1"
             }
           >
-            <Home className="h-5 w-5" />
-            <span className="text-xs mt-1">Home</span>
-          </NavLink>
-
-          <NavLink
-            to="/explore-temples"
-            className={({ isActive }) =>
-              isActive
-                ? "flex flex-col items-center text-orange-600 flex-1"
-                : "flex flex-col items-center text-gray-500 flex-1"
-            }
-          >
-            <MapPlus className="h-5 w-5" />
+            <MdTempleHindu className="h-5 w-5" />
             <span className="text-xs mt-1">Temples</span>
           </NavLink>
 
@@ -685,6 +682,18 @@ const Header = () => {
           >
             <Calendar className="h-5 w-5" />
             <span className="text-xs mt-1">Poojas </span>
+          </NavLink>
+
+          <NavLink
+            to="/feed"
+            className={({ isActive }) =>
+              isActive
+                ? "flex flex-col items-center text-orange-600 flex-1"
+                : "flex flex-col items-center text-gray-500 flex-1"
+            }
+          >
+            <Home className="h-5 w-5" />
+            <span className="text-xs mt-1">Feed</span>
           </NavLink>
 
           <NavLink

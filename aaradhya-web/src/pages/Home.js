@@ -1,31 +1,20 @@
-import {
-  ChevronRight,
-  Plus,
-  Check,
-  Clock,
-  
-} from "lucide-react";
+import { ChevronRight, Plus, Check, Clock } from "lucide-react";
 import SearchBar from "../components/searchBar";
+import ActionButton from "../components/ActionButton";
 import { Link } from "react-router-dom";
 
 const Home = () => {
-
-  
   return (
     <div className="bg-amber-50 min-h-screen font-sans">
-      
       <div className="">
         <SearchBar />
         {/* Welcome Section for Mobile - Centered */}
-      <div className="md:hidden text-center p-4">
-        <h2 className="text-xl font-serif text-amber-900">
-          Namaste, Rahul!
-        </h2>
-        <p className="text-gray-600 text-sm">
-          Wishing you spiritual blessings today
-        </p>
-      </div>
-        
+        <div className="md:hidden text-center p-4">
+          <h2 className="text-xl font-serif text-amber-900">Namaste, Rahul!</h2>
+          <p className="text-gray-600 text-sm">
+            Wishing you spiritual blessings today
+          </p>
+        </div>
       </div>
 
       {/* Main Content */}
@@ -254,6 +243,36 @@ const Home = () => {
                   </a>
                 </div>
               </div>
+              {/* Post 3 */}
+              <div className="bg-amber-50 rounded-lg p-4">
+                <div className="flex items-center mb-3">
+                  <div className="bg-amber-100 rounded-full w-8 h-8"></div>
+                  <span className="ml-3 font-medium text-gray-700">
+                    Kashi Vishwanath
+                  </span>
+                  <span className="ml-3 text-xs text-gray-500">2 days ago</span>
+                </div>
+
+                <p className="text-gray-700 mb-3">
+                  Live streaming of the Maha Shivaratri rituals will be
+                  available on our platform. Devotees can also register for the
+                  online prasad delivery service.
+                </p>
+
+                <div className="bg-amber-200/30 rounded h-32 flex items-center justify-center mb-3">
+                  <span className="text-amber-800 font-serif">
+                    Ritual Image
+                  </span>
+                </div>
+
+                <div className="flex text-sm">
+                  <span className="text-gray-500 mr-4">125 likes</span>
+                  <span className="text-gray-500 mr-4">34 comments</span>
+                  <a href="/live-events" className="text-orange-500">
+                    View Live Stream
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -421,14 +440,8 @@ const Home = () => {
         </div>
       </main>
 
-      
-
       {/* Floating Action Button - Adjusted position for mobile */}
-      <div className="fixed bottom-20 right-6 md:bottom-6">
-        <button className="bg-orange-500 h-12 w-12 rounded-full flex items-center justify-center text-white shadow-lg">
-          <Plus className="h-6 w-6" />
-        </button>
-      </div>
+      <ActionButton />
     </div>
   );
 };

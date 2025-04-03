@@ -73,7 +73,7 @@ const Footer = () => {
         {/* Social & App Links */}
         <div className="flex flex-wrap justify-center mb-4">
           <div className="flex items-center mr-6">
-            <span className="text-sm mr-2">Social Icons</span>
+            <span className="text-sm mr-2">Socials</span>
             <a href="/" className="text-pink-500 hover:text-pink-400 mx-1">
               <Facebook className="h-4 w-4" />
             </a>
