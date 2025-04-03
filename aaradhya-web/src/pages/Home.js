@@ -249,7 +249,7 @@ const Home = () => {
                 <div className="flex text-sm">
                   <span className="text-gray-500 mr-4">125 likes</span>
                   <span className="text-gray-500 mr-4">34 comments</span>
-                  <a href="/" className="text-orange-500">
+                  <a href="/live-events" className="text-orange-500">
                     View Live Stream
                   </a>
                 </div>
@@ -292,7 +292,7 @@ const Home = () => {
               </div>
             </div>
             <a
-              href="/"
+              href="/upcoming-poojas"
               className="text-orange-500 flex items-center mt-4 text-sm"
             >
               View full calendar <ChevronRight className="h-4 w-4" />
@@ -410,7 +410,7 @@ const Home = () => {
           </div>
 
           {/* Live Events */}
-          <div className="bg-amber-50 rounded-lg shadow-sm border border-amber-100 p-4">
+          <div className="bg-white rounded-lg shadow-sm border border-amber-100 p-4">
             <h3 className="font-serif text-amber-900 mb-4">Live Events</h3>
 
             {/* Coming Soon Placeholder */}

@@ -1,4 +1,4 @@
-import { NavLink, Link } from "react-router-dom";
+import { NavLink,  } from "react-router-dom";
 import {
   Bell,
   Settings,
@@ -15,7 +15,7 @@ import {
   Home,
   ShoppingBag,
   MapPlus,
-  X
+  X,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
@@ -64,13 +64,13 @@ const Header = () => {
   // Prevent scrolling when mobile menu or mobile more menu is open
   useEffect(() => {
     if (showMobileMenu || showMobileMoreMenu) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = "auto";
     }
-    
+
     return () => {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = "auto";
     };
   }, [showMobileMenu, showMobileMoreMenu]);
 
@@ -79,7 +79,7 @@ const Header = () => {
     // For desktop, show the dropdown
     if (window.innerWidth >= 768) {
       setShowDropdown(!showDropdown);
-    } 
+    }
     // For mobile, show the mobile more menu (same as "More" button)
     else {
       setShowMobileMoreMenu(!showMobileMoreMenu);
@@ -110,14 +110,13 @@ const Header = () => {
                   />
                 </div>
               </a> */}
-             <a href="/">
-  <img
-    src="/AaraadhyaLogo.png"
-    alt="Aaradhya Logo"
-    className="w-44"
-  />
-</a>
-
+              <a href="/">
+                <img
+                  src="/AaraadhyaLogo.png"
+                  alt="Aaradhya Logo"
+                  className="w-44"
+                />
+              </a>
             </div>
 
             {/* Navigation - hidden on mobile, visible on desktop */}
@@ -155,26 +154,10 @@ const Header = () => {
                 Upcoming Poojas
               </NavLink>
 
-              
-
-              <NavLink
-                to="/devotee-store"
-                className={({ isActive }) =>
-                  isActive
-                    ? "text-orange-600 font-bold"
-                    : "text-gray-600 hover:text-amber-900"
-                }
-              >
-                Devotee Store
-              </NavLink>
+             
 
               {/* More dropdown for desktop */}
-              <div
-                className="relative"
-                ref={moreDropdownRef}
-                onMouseEnter={() => setShowMoreDropdown(true)}
-                onMouseLeave={() => setShowMoreDropdown(false)}
-              >
+              <div className="relative" ref={moreDropdownRef}>
                 <button
                   className="flex items-center text-gray-600 hover:text-amber-900 focus:outline-none"
                   onClick={() => setShowMoreDropdown(!showMoreDropdown)}
@@ -187,12 +170,24 @@ const Header = () => {
                 {showMoreDropdown && (
                   <div className="absolute left-0 mt-2 w-40 bg-white rounded-md shadow-lg py-1 z-50 border border-amber-100">
                     <NavLink
+                      to="/devotee-store"
+                      className={({ isActive }) =>
+                        isActive
+                          ? "block px-4 py-2 text-orange-600 font-bold"
+                          : "block px-4 py-2 text-gray-600 hover:bg-amber-50"
+                      }
+                      onClick={() => setShowMoreDropdown(false)}
+                    >
+                      Devotee Store
+                    </NavLink>
+                    <NavLink
                       to="/community"
                       className={({ isActive }) =>
                         isActive
                           ? "block px-4 py-2 text-orange-600 font-bold"
                           : "block px-4 py-2 text-gray-600 hover:bg-amber-50"
                       }
+                      onClick={() => setShowMoreDropdown(false)}
                     >
                       Community
                     </NavLink>
@@ -203,6 +198,7 @@ const Header = () => {
                           ? "block px-4 py-2 text-orange-600 font-bold"
                           : "block px-4 py-2 text-gray-600 hover:bg-amber-50"
                       }
+                      onClick={() => setShowMoreDropdown(false)}
                     >
                       Astrology
                     </NavLink>
@@ -213,8 +209,20 @@ const Header = () => {
                           ? "block px-4 py-2 text-orange-600 font-bold"
                           : "block px-4 py-2 text-gray-600 hover:bg-amber-50"
                       }
+                      onClick={() => setShowMoreDropdown(false)}
                     >
                       DivineSeva
+                    </NavLink>
+                    <NavLink
+                      to="/live-events"
+                      className={({ isActive }) =>
+                        isActive
+                          ? "block px-4 py-2 text-orange-600 font-bold"
+                          : "block px-4 py-2 text-gray-600 hover:bg-amber-50"
+                      }
+                      onClick={() => setShowMoreDropdown(false)}
+                    >
+                      Live Events
                     </NavLink>
                   </div>
                 )}
@@ -347,13 +355,13 @@ const Header = () => {
       {showMobileMenu && (
         <>
           {/* Overlay background */}
-          <div 
+          <div
             className="fixed inset-0 bg-black bg-opacity-50 z-50"
             onClick={() => setShowMobileMenu(false)}
           />
-          
+
           {/* Side menu */}
-          <div 
+          <div
             ref={mobileMenuRef}
             className="fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-50 transform transition-transform duration-300 ease-in-out"
           >
@@ -377,7 +385,7 @@ const Header = () => {
                 <X className="h-6 w-6" />
               </button>
             </div>
-            
+
             <nav className="flex flex-col p-2">
               <NavLink
                 to="/"
@@ -496,13 +504,13 @@ const Header = () => {
       {showMobileMoreMenu && (
         <>
           {/* Overlay background */}
-          <div 
+          <div
             className="fixed inset-0 bg-black bg-opacity-50 z-50"
             onClick={() => setShowMobileMoreMenu(false)}
           />
-          
+
           {/* Side menu from right */}
-          <div 
+          <div
             ref={mobileMoreMenuRef}
             className="fixed top-0 right-0 h-full w-64 bg-white shadow-lg z-50 transform transition-transform duration-300 ease-in-out"
           >
@@ -512,8 +520,12 @@ const Header = () => {
                   R
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm font-medium text-amber-900">Rahul Kumar</p>
-                  <p className="text-xs text-gray-500 truncate">rahul@example.com</p>
+                  <p className="text-sm font-medium text-amber-900">
+                    Rahul Kumar
+                  </p>
+                  <p className="text-xs text-gray-500 truncate">
+                    rahul@example.com
+                  </p>
                 </div>
               </div>
               <button
@@ -523,7 +535,7 @@ const Header = () => {
                 <X className="h-6 w-6" />
               </button>
             </div>
-            
+
             <nav className="flex flex-col p-2 overflow-y-auto h-[calc(100%-70px)]">
               <NavLink
                 to="/settings"
@@ -561,8 +573,7 @@ const Header = () => {
                 <MapPlus className="mr-3 h-5 w-5" />
                 My Temples
               </NavLink>
-              
-              
+
               <NavLink
                 to="/community"
                 className={({ isActive }) =>
@@ -623,7 +634,7 @@ const Header = () => {
                 <Phone className="mr-3 h-5 w-5" />
                 Contact Us
               </NavLink>
-              
+
               <div className="border-t border-amber-300 mt-2 pt-2">
                 <NavLink
                   to="/logout"
@@ -653,7 +664,7 @@ const Header = () => {
             <Home className="h-5 w-5" />
             <span className="text-xs mt-1">Home</span>
           </NavLink>
-          
+
           <NavLink
             to="/explore-temples"
             className={({ isActive }) =>
@@ -665,7 +676,7 @@ const Header = () => {
             <MapPlus className="h-5 w-5" />
             <span className="text-xs mt-1">Temples</span>
           </NavLink>
-          
+
           <NavLink
             to="/upcoming-poojas"
             className={({ isActive }) =>
@@ -677,7 +688,7 @@ const Header = () => {
             <Calendar className="h-5 w-5" />
             <span className="text-xs mt-1">Poojas </span>
           </NavLink>
-          
+
           <NavLink
             to="/devotee-store"
             className={({ isActive }) =>
@@ -689,13 +700,15 @@ const Header = () => {
             <ShoppingBag className="h-5 w-5" />
             <span className="text-xs mt-1">Devotee Store</span>
           </NavLink>
-          
+
           <div className="relative flex-1">
             <button
               onClick={() => setShowMobileMoreMenu(!showMobileMoreMenu)}
-              className={showMobileMoreMenu 
-                ? "flex flex-col items-center text-orange-600 w-full" 
-                : "flex flex-col items-center text-gray-500 w-full"}
+              className={
+                showMobileMoreMenu
+                  ? "flex flex-col items-center text-orange-600 w-full"
+                  : "flex flex-col items-center text-gray-500 w-full"
+              }
             >
               <Menu className="h-5 w-5" />
               <span className="text-xs mt-1">More</span>
