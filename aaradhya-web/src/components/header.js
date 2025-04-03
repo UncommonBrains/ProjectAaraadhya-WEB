@@ -1,4 +1,4 @@
-import { NavLink, Link  } from "react-router-dom";
+import { NavLink,Link } from "react-router-dom";
 import {
   Bell,
   Settings,
@@ -10,8 +10,6 @@ import {
   Share2,
   Menu,
   ChevronDown,
-  HomeIcon,
-  Users,
   Home,
   ShoppingBag,
   MapPlus,
@@ -715,149 +713,6 @@ const Header = () => {
             </button>
           </div>
         </div>
-
-        {/* Mobile menu - only visible when toggled on mobile */}
-        {showMobileMenu && (
-          <div
-            className="md:hidden mt-4 bg-white rounded-md shadow-md border border-amber-100 p-2 z-40"
-            ref={mobileMenuRef}
-          >
-            <nav className="flex flex-col space-y-2">
-              <NavLink
-                to="/"
-                className={({ isActive }) =>
-                  isActive
-                    ? "text-orange-600 font-bold p-2"
-                    : "text-gray-600 hover:text-amber-900 p-2"
-                }
-                onClick={() => setShowMobileMenu(false)}
-              >
-                Home
-              </NavLink>
-              <NavLink
-                to="/my-temples"
-                className={({ isActive }) =>
-                  isActive
-                    ? "text-orange-600 font-bold p-2"
-                    : "text-gray-600 hover:text-amber-900 p-2"
-                }
-                onClick={() => setShowMobileMenu(false)}
-              >
-                My Temples
-              </NavLink>
-              <NavLink
-                to="/upcoming-poojas"
-                className={({ isActive }) =>
-                  isActive
-                    ? "text-orange-600 font-bold p-2"
-                    : "text-gray-600 hover:text-amber-900 p-2"
-                }
-                onClick={() => setShowMobileMenu(false)}
-              >
-                Upcoming Poojas
-              </NavLink>
-              <NavLink
-                to="/explore-temples"
-                className={({ isActive }) =>
-                  isActive
-                    ? "text-orange-600 font-bold p-2"
-                    : "text-gray-600 hover:text-amber-900 p-2"
-                }
-                onClick={() => setShowMobileMenu(false)}
-              >
-                Explore Temples
-              </NavLink>
-              <NavLink
-                to="/devotee-store"
-                className={({ isActive }) =>
-                  isActive
-                    ? "text-orange-600 font-bold p-2"
-                    : "text-gray-600 hover:text-amber-900 p-2"
-                }
-                onClick={() => setShowMobileMenu(false)}
-              >
-                Devotee Store
-              </NavLink>
-              <NavLink
-                to="/community"
-                className={({ isActive }) =>
-                  isActive
-                    ? "block text-orange-600 font-bold p-2"
-                    : "block text-gray-600 hover:text-amber-900 p-2"
-                }
-                onClick={() => setShowMobileMenu(false)}
-              >
-                Community
-              </NavLink>
-              <NavLink
-                to="/astrology"
-                className={({ isActive }) =>
-                  isActive
-                    ? "block text-orange-600 font-bold p-2"
-                    : "block text-gray-600 hover:text-amber-900 p-2"
-                }
-                onClick={() => setShowMobileMenu(false)}
-              >
-                Astrology
-              </NavLink>
-              <NavLink
-                to="/divine-seva"
-                className={({ isActive }) =>
-                  isActive
-                    ? "block text-orange-600 font-bold p-2"
-                    : "block text-gray-600 hover:text-amber-900 p-2"
-                }
-                onClick={() => setShowMobileMenu(false)}
-              >
-                DivineSeva
-              </NavLink>
-
-              {/* More dropdown for mobile */}
-            </nav>
-          </div>
-        )}
-      </div>
-      {/* Mobile Bottom Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-amber-100 flex justify-around py-2">
-        <Link to="/" className="flex flex-col items-center text-amber-900">
-          <HomeIcon className="h-5 w-5" />
-          <span className="text-xs mt-1">Home</span>
-        </Link>
-        <Link
-          to="/my-temples"
-          className="flex flex-col items-center text-gray-500"
-        >
-          <HomeIcon className="h-5 w-5" />
-          <span className="text-xs mt-1">My Temples</span>
-        </Link>
-        <Link
-          to="/my-bookings"
-          className="flex flex-col items-center text-gray-500"
-        >
-          <Calendar className="h-5 w-5" />
-          <span className="text-xs mt-1">My Bookings</span>
-        </Link>
-        <Link
-          to="/temple-store"
-          className="flex flex-col items-center text-gray-500"
-        >
-          <ShoppingBag className="h-5 w-5" />
-          <span className="text-xs mt-1">Devotee Store</span>
-        </Link>
-        <Link
-          to="/community"
-          className="flex flex-col items-center text-gray-500"
-        >
-          <Users className="h-5 w-5" />
-          <span className="text-xs mt-1">More</span>
-        </Link>
-        <Link
-          to="/community"
-          className="flex flex-col items-center text-gray-500"
-        >
-          <Users className="h-5 w-5" />
-          <span className="text-xs mt-1">More</span>
-        </Link>
       </div>
     </>
   );
