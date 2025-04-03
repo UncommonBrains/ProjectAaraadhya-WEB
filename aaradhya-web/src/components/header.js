@@ -93,7 +93,7 @@ const Header = () => {
           <div className="flex items-center justify-between">
             {/* Mobile menu button - visible only on mobile */}
             <button
-              className="md:hidden mr-3 text-amber-900"
+              className="md:!hidden mr-3 text-amber-900"
               onClick={() => setShowMobileMenu(!showMobileMenu)}
             >
               <Menu className="h-6 w-6" />
