@@ -7,7 +7,8 @@ const templesData = [
     id: 1,
     name: "ISKCON Temple",
     location: "New Delhi, India",
-    hours: "5:00 AM - 9:00 PM",
+    morhours: "5:00 - 9:00",
+    evehours: "5:00 - 9:00",
     rating: 4,
     reviews: 124,
     favorite: true,
@@ -22,7 +23,8 @@ const templesData = [
     id: 2,
     name: "Meenakshi Temple",
     location: "Madurai, Tamil Nadu",
-    hours: "5:00 AM - 10:00 PM",
+    morhours: "5:00 - 9:00",
+    evehours: "5:00 - 9:00",
     rating: 5,
     reviews: 203,
     favorite: true,
@@ -38,7 +40,8 @@ const templesData = [
     id: 3,
     name: "Kashi Vishwanath",
     location: "Varanasi, Uttar Pradesh",
-    hours: "3:00 AM - 11:00 PM",
+    morhours: "5:00 - 9:00",
+    evehours: "5:00 - 9:00",
     rating: 4,
     reviews: 156,
     favorite: true,
@@ -54,7 +57,8 @@ const templesData = [
     id: 4,
     name: "Tirupati Balaji",
     location: "Tirupati, Andhra Pradesh",
-    hours: "3:00 AM - 10:00 PM",
+    morhours: "5:00 - 9:00",
+    evehours: "5:00 - 9:00",
     rating: 5,
     reviews: 297,
     favorite: true,
@@ -70,7 +74,8 @@ const templesData = [
     id: 5,
     name: "Somnath Temple",
     location: "Somnath, Gujarat",
-    hours: "6:00 AM - 9:00 PM",
+    morhours: "5:00 - 9:00",
+    evehours: "5:00 - 9:00",
     rating: 4,
     reviews: 98,
     favorite: false,
@@ -86,7 +91,8 @@ const templesData = [
     id: 6,
     name: "Golden Temple",
     location: "Amritsar, Punjab",
-    hours: "24 hours",
+    morhours: "5:00 - 9:00",
+    evehours: "5:00 - 9:00",
     rating: 5,
     reviews: 248,
     favorite: false,
@@ -102,7 +108,8 @@ const templesData = [
     id: 7,
     name: "Badrinath Temple",
     location: "Badrinath, Uttarakhand",
-    hours: "4:30 AM - 9:00 PM",
+    morhours: "5:00 - 9:00",
+    evehours: "5:00 - 9:00",
     rating: 5,
     reviews: 189,
     favorite: false,
@@ -118,7 +125,8 @@ const templesData = [
     id: 8,
     name: "Rameshwaram Temple",
     location: "Rameshwaram, Tamil Nadu",
-    hours: "5:00 AM - 9:00 PM",
+    morhours: "5:00 - 9:00",
+    evehours: "5:00 - 9:00",
     rating: 5,
     reviews: 212,
     favorite: true,
@@ -134,7 +142,8 @@ const templesData = [
     id: 9,
     name: "Jagannath Temple",
     location: "Puri, Odisha",
-    hours: "6:00 AM - 10:00 PM",
+    morhours: "5:00 - 9:00",
+    evehours: "5:00 - 9:00",
     rating: 4,
     reviews: 176,
     favorite: false,
@@ -150,7 +159,8 @@ const templesData = [
     id: 10,
     name: "Vaishno Devi Temple",
     location: "Katra, Jammu and Kashmir",
-    hours: "24 hours",
+    morhours: "5:00 - 9:00",
+    evehours: "5:00 - 9:00",
     rating: 5,
     reviews: 324,
     favorite: true,
@@ -166,7 +176,8 @@ const templesData = [
     id: 11,
     name: "Kedarnath Temple",
     location: "Kedarnath, Uttarakhand",
-    hours: "5:00 AM - 8:30 PM",
+    morhours: "5:00 - 9:00",
+    evehours: "5:00 - 9:00",
     rating: 5,
     reviews: 198,
     favorite: false,
@@ -182,7 +193,8 @@ const templesData = [
     id: 12,
     name: "Mahakaleshwar Temple",
     location: "Ujjain, Madhya Pradesh",
-    hours: "4:00 AM - 11:00 PM",
+    morhours: "5:00 - 9:00",
+    evehours: "5:00 - 9:00",
     rating: 4,
     reviews: 145,
     favorite: false,
@@ -245,23 +257,23 @@ const TempleGrid = () => {
             className="h-48 relative bg-cover bg-center"
             style={{ backgroundImage: `url(${temple.imagePath})` }}
           >
-           <div>
-           <div className="absolute top-2 right-2">
-              <span className="bg-amber-100/80 rounded-full p-1">
-                <Heart
-                  className={`h-4 w-4 ${
-                    temple.favorite
-                      ? "text-red-500 fill-current"
-                      : "text-gray-400"
-                  }`}
-                />
-              </span>
+            <div>
+              <div className="absolute top-2 right-2">
+                <span className="bg-amber-100/80 rounded-full p-1">
+                  <Heart
+                    className={`h-4 w-4 ${
+                      temple.favorite
+                        ? "text-red-500 fill-current"
+                        : "text-gray-400"
+                    }`}
+                  />
+                </span>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t  from-amber-950/100 to-transparent p-3">
+                <h3 className="text-white font-medium">{temple.name}</h3>
+                <p className="text-amber-50 text-xs">{temple.location}</p>
+              </div>
             </div>
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t  from-amber-950/100 to-transparent p-3">
-              <h3 className="text-white font-medium">{temple.name}</h3>
-              <p className="text-amber-50 text-xs">{temple.location}</p>
-            </div>
-           </div>
           </div>
           <div className="p-3">
             <div className="flex items-center text-xs text-gray-600 mb-2">

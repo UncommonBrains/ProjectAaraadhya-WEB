@@ -106,7 +106,6 @@ const ExploreTemples = () => {
   return (
     <div className="bg-amber-50 min-h-screen font-sans">
       <SearchBar />
-      
 
       {/* Main Content */}
       <main className="container mx-auto p-4 grid grid-cols-1 md:grid-cols-4 gap-6 relative">
@@ -144,7 +143,7 @@ const ExploreTemples = () => {
                 </button>
               </div>
             )}
-           
+
             {/* Welcome Section */}
             <div>
               <h2 className=" text-xl font-serif text-amber-900">
@@ -405,7 +404,10 @@ const ExploreTemples = () => {
                 className="bg-white rounded-lg shadow-sm border border-amber-100 overflow-hidden"
               >
                 <a href={`/temple-details`} className="block">
-                  <div className="bg-amber-200/30 h-40 relative">
+                  <div
+                    className="h-60 relative bg-cover bg-center"
+                    style={{ backgroundImage: "url('/temple-images/2.jpg')" }} // Temple image
+                  >
                     {temple.specialEvent && (
                       <div className="absolute top-2 left-2">
                         <span className="bg-orange-500 text-white text-xs px-2 py-0.5 rounded-full">

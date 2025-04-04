@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import MyTemples from "./pages/MyTemples";
 import ExploreTemples from "./pages/ExploreTemples";
 import TempleDetails from "./pages/TempleDetails";
+import PoojaBooking from "./pages/PoojaBooking";
 import UpcomingPoojas from "./pages/UpcomingPoojas";
 import TempleStore from "./pages/TempleStore";
 import DevoteeStore from "./pages/DevoteeStore";
@@ -29,6 +30,7 @@ function Layout() {
         <Route path="/my-temples" element={<MyTemples />} />
         <Route path="/feed" element={<Home />} />
         <Route path="/temple-details" element={<TempleDetails />} />
+        <Route path="/temple-details/pooja-booking" element={<PoojaBooking />} />
         <Route path="/upcoming-poojas" element={<UpcomingPoojas />} />
         <Route path="/temple-store" element={<TempleStore />} />
         <Route path="/devotee-store" element={<DevoteeStore />} />

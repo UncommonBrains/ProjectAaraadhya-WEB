@@ -8,7 +8,6 @@ import {
   Share,
   Calendar,
   Info,
-  Camera,
   Image,
   MessageSquare,
   Phone,
@@ -67,10 +66,7 @@ const TempleDetails = () => {
       {/* Header with back button */}
       <header className="bg-white shadow-sm p-4 sticky top-0 z-10">
         <div className="container mx-auto flex justify-between items-center">
-          <a
-            href="/explore-temples"
-            className="flex items-center text-amber-900"
-          >
+          <a href="/" className="flex items-center text-amber-900">
             <ChevronLeft className="h-5 w-5 mr-2" />
             <span>Back</span>
           </a>
@@ -95,7 +91,10 @@ const TempleDetails = () => {
       {/* Main content wrapper with max-width for larger screens */}
       <div className="max-w-4xl mx-auto">
         {/* Hero Image Section */}
-        <div className="relative h-60 md:h-80 bg-amber-200/30 overflow-hidden">
+        <div
+          className="relative h-80 md:h-80 bg-cover bg-center overflow-hidden"
+          style={{ backgroundImage: "url('/temple-images/2.jpg')" }}
+        >
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-amber-950/90 to-transparent p-6">
             <div className="container mx-auto">
               <div className="flex flex-col text-white">
@@ -126,22 +125,20 @@ const TempleDetails = () => {
               <div className="flex flex-col items-center p-3 bg-amber-50 rounded">
                 <Clock className="h-5 w-5 text-orange-500 mb-1" />
                 <span className="text-xs md:text-sm text-gray-600">
-                  Open Hours
+                  Morning Hours:
                 </span>
                 <span className="text-sm md:text-base font-medium text-amber-900">
-                  Morning: {temple.hours}
-                </span>
-                <span className="text-sm md:text-base font-medium text-amber-900">
-                  Evening: {temple.hours}
+                  {temple.morhours}
                 </span>
               </div>
               <div className="flex flex-col items-center p-3 bg-amber-50 rounded">
                 <Calendar className="h-5 w-5 text-orange-500 mb-1" />
                 <span className="text-xs md:text-sm text-gray-600">
-                  Best Time to Visit
+                  Evening Hours:{" "}
                 </span>
+
                 <span className="text-sm md:text-base font-medium text-amber-900">
-                  Oct-Mar
+                  {temple.evehours}
                 </span>
               </div>
               <div className="flex flex-col items-center p-3 bg-amber-50 rounded">
@@ -159,19 +156,22 @@ const TempleDetails = () => {
 
         {/* Action Buttons */}
         <div className="container mx-auto p-4">
-          <div className="grid grid-cols-3 gap-3 md:gap-4">
-            <button className="bg-orange-500 text-white rounded-lg py-3 flex items-center justify-center font-medium text-xs md:text-sm">
+          <div className="grid grid-cols-2 gap-3 md:gap-4">
+            {/* <button className="bg-orange-500 text-white rounded-lg py-3 flex items-center justify-center font-medium text-xs md:text-sm">
               <Camera className="h-5 w-5 mr-1" />
               Virtual Tour
-            </button>
+            </button> */}
             <button
-              className="bg-amber-600 text-white rounded-lg py-3 flex items-center justify-center font-medium text-xs md:text-sm"
-              onClick={navigateToBooking}
+              className="bg-amber-600 text-white rounded-lg py-3 flex items-center justify-center font-medium text-md md:text-md"
+              onClick={() =>
+                (window.location.href = "/temple-details/pooja-booking")
+              }
             >
               <Gift className="h-5 w-5 mr-1" />
               Book Pooja
             </button>
-            <button className="bg-amber-100 text-amber-900 rounded-lg py-3 flex items-center justify-center font-medium text-xs md:text-sm">
+
+            <button className="bg-amber-100 text-amber-900 rounded-lg py-3 flex items-center justify-center font-medium text-md md:text-md">
               <Phone className="h-5 w-5 mr-1" />
               Contact
             </button>
