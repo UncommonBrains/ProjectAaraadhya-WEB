@@ -368,7 +368,7 @@ const PoojaBooking = () => {
               </div>
 
               {/* Date and Calendar */}
-              <div className="grid grid-cols-[4fr_2fr] gap-3 mb-6">
+              <div className="grid grid-cols-[2fr_2fr] gap-3 mb-6">
                 {/* Date Input (75%) */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
