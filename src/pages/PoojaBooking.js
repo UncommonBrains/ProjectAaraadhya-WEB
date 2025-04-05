@@ -625,7 +625,7 @@ const PoojaBooking = () => {
                     </h3>
                   </div>
 
-                  <div className="space-y-3">
+                  <div className="gap-3 grid grid-cols-2 md:grid-cols-3">
                     {getPoojasByDeity(selectedDeity.id)
                       .filter((pooja) =>
                         pooja.name
