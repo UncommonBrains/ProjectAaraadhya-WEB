@@ -10,6 +10,7 @@ import {
   Camera,
   Check,
   X,
+  Heart
 } from "lucide-react";
 
 import temples from "../datas/temples"; // Adjust path if needed
@@ -317,7 +318,7 @@ const ExploreTemples = () => {
         </div>
 
         {/* Center & Right Columns (Temple Content) */}
-        <div className="md:col-span-3 space-y-6">
+        <div className="md:col-span-3 space-y-3">
           {/* Page Header */}
           <div className="flex justify-between items-center">
             <div>
@@ -410,14 +411,12 @@ const ExploreTemples = () => {
                     )}
                     <div className="absolute top-2 right-2">
                       {!temple.favorite ? (
-                        <button className="bg-orange-500 text-white px-4 py-1 rounded flex items-center space-x-1">
-                          <Plus className="h-4 w-4" />
-                          <span>Add to My Temples</span>
+                        <button className=" text-white px-4 py-1 rounded flex items-center space-x-1">
+                          <Heart className=" text-red-500 h-4 w-4 fill-current" />
                         </button>
                       ) : (
-                        <button className="bg-red-500 text-white px-4 py-1 rounded flex items-center space-x-1">
-                          <Check className="h-4 w-4" />
-                          <span>Added</span>
+                        <button className="text-gray-400 text-white px-4 py-1 rounded flex items-center space-x-1">
+                          <Heart className="h-4 w-4" />
                         </button>
                       )}
                     </div>
