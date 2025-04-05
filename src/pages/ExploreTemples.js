@@ -10,7 +10,7 @@ import {
   Camera,
   Check,
   X,
-  Heart
+  Heart,
 } from "lucide-react";
 
 import temples from "../datas/temples"; // Adjust path if needed
@@ -400,7 +400,7 @@ const ExploreTemples = () => {
                 <a href={`/temple-details`} className="block">
                   <div
                     className="h-40 relative bg-cover bg-center"
-                    style={{ backgroundImage: "url('/temple-images/2.jpg')" }} 
+                    style={{ backgroundImage: "url('/temple-images/2.jpg')" }}
                   >
                     {temple.specialEvent && (
                       <div className="absolute top-2 left-2">
@@ -441,7 +441,6 @@ const ExploreTemples = () => {
                         <Clock className="h-3 w-3 mr-1" />
                         <span>Evening: {temple.evehours}</span>
                       </div>
-                     
                     </div>
 
                     <div className="flex items-center justify-between mb-3">
