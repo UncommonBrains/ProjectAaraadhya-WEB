@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import {
-  Plus,
   Star,
   Filter,
   Map,
@@ -8,7 +7,6 @@ import {
   MapPin,
   ArrowUpDown,
   Camera,
-  Check,
   X,
   Heart,
 } from "lucide-react";
