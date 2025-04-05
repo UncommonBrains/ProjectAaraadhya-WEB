@@ -29,20 +29,50 @@ const LoginRegister = () => {
     // Reset status states
     setError(null);
     setSuccess(null);
+    setLoading(true);
     
-    if (activeTab === "login") {
-      console.log("Logging in with:", formData.email, formData.password);
-      // Handle login logic - this remains as a placeholder
-    } else {
-      // Check if passwords match
-      if (formData.password !== formData.confirmPassword) {
-        setError("Passwords do not match");
-        return;
-      }
-      
-      setLoading(true);
-      
-      try {
+    try {
+      if (activeTab === "login") {
+        // Login logic
+        const loginData = {
+          email: formData.email,
+          password: formData.password
+        };
+        
+        // Make API call to login endpoint
+        const response = await fetch("http://localhost:5000/api/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(loginData),
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.message || "Login failed. Please check your credentials.");
+        }
+        
+        // Login success
+        setSuccess("Login successful!");
+        
+        // Here you would typically store the auth token in localStorage or sessionStorage
+        if (data.token) {
+          localStorage.setItem("authToken", data.token);
+          // You could redirect to dashboard or home page here
+          window.location.href = "/";
+        }
+        
+      } else {
+        // Register logic
+        // Check if passwords match
+        if (formData.password !== formData.confirmPassword) {
+          setError("Passwords do not match");
+          setLoading(false);
+          return;
+        }
+        
         // Prepare data for API
         const registrationData = {
           name: formData.name,
@@ -70,23 +100,21 @@ const LoginRegister = () => {
         setSuccess("Account created successfully! You can now log in.");
         
         // Reset form if successful
-        if (response.ok) {
-          setFormData({
-            email: "",
-            password: "",
-            name: "",
-            phone: "",
-            confirmPassword: "",
-          });
-          
-          // Switch to login tab after successful registration
-          setActiveTab("login");
-        }
-      } catch (err) {
-        setError(err.message || "An error occurred during registration");
-      } finally {
-        setLoading(false);
+        setFormData({
+          email: "",
+          password: "",
+          name: "",
+          phone: "",
+          confirmPassword: "",
+        });
+        
+        // Switch to login tab after successful registration
+        setActiveTab("login");
       }
+    } catch (err) {
+      setError(err.message || `An error occurred during ${activeTab === "login" ? "login" : "registration"}`);
+    } finally {
+      setLoading(false);
     }
   };
 
