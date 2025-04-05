@@ -11,6 +11,9 @@ const LoginRegister = () => {
     phone: "",
     confirmPassword: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -20,14 +23,70 @@ const LoginRegister = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Reset status states
+    setError(null);
+    setSuccess(null);
+    
     if (activeTab === "login") {
       console.log("Logging in with:", formData.email, formData.password);
-      // Handle login logic
+      // Handle login logic - this remains as a placeholder
     } else {
-      console.log("Registering with:", formData);
-      // Handle registration logic
+      // Check if passwords match
+      if (formData.password !== formData.confirmPassword) {
+        setError("Passwords do not match");
+        return;
+      }
+      
+      setLoading(true);
+      
+      try {
+        // Prepare data for API
+        const registrationData = {
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          phone: formData.phone
+        };
+        
+        // Make API call to register endpoint
+        const response = await fetch("http://localhost:5000/api/auth/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(registrationData),
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.message || "Registration failed");
+        }
+        
+        // Registration success
+        setSuccess("Account created successfully! You can now log in.");
+        
+        // Reset form if successful
+        if (response.ok) {
+          setFormData({
+            email: "",
+            password: "",
+            name: "",
+            phone: "",
+            confirmPassword: "",
+          });
+          
+          // Switch to login tab after successful registration
+          setActiveTab("login");
+        }
+      } catch (err) {
+        setError(err.message || "An error occurred during registration");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -36,7 +95,6 @@ const LoginRegister = () => {
       {/* Main content wrapper */}
       <div className="max-w-md mx-auto p-4">
         
-
         {/* Login/Register Tabs */}
         <div className="bg-white rounded-lg shadow-md overflow-hidden mb-4">
           <div className="flex border-b border-amber-200">
@@ -63,6 +121,20 @@ const LoginRegister = () => {
           </div>
 
           <div className="p-6">
+            {/* Display success message */}
+            {success && (
+              <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
+                {success}
+              </div>
+            )}
+            
+            {/* Display error message */}
+            {error && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+                {error}
+              </div>
+            )}
+            
             <form onSubmit={handleSubmit}>
               {activeTab === "register" && (
                 <>
@@ -191,9 +263,14 @@ const LoginRegister = () => {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-amber-600 text-white rounded-lg py-3 font-medium text-md hover:bg-amber-700 transition-colors"
+                className={`w-full bg-amber-600 text-white rounded-lg py-3 font-medium text-md hover:bg-amber-700 transition-colors ${
+                  loading ? "opacity-70 cursor-not-allowed" : ""
+                }`}
+                disabled={loading}
               >
-                {activeTab === "login" ? "Login" : "Create Account"}
+                {activeTab === "login" 
+                  ? (loading ? "Logging in..." : "Login") 
+                  : (loading ? "Creating Account..." : "Create Account")}
               </button>
             </form>
 
