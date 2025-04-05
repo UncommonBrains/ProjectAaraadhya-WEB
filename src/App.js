@@ -4,6 +4,7 @@ import React from "react";
 import Header from "./components/header"; 
 import Footer from "./components/footer"; 
 import Home from "./pages/Home";
+import LoginRegister from "./pages/LoginRegister";
 import MyTemples from "./pages/MyTemples";
 import ExploreTemples from "./pages/ExploreTemples";
 import TempleDetails from "./pages/TempleDetails";
@@ -27,6 +28,7 @@ function Layout() {
       {!hideHeaderFooter && <Header />}
       <Routes>
         <Route path="/" element={<ExploreTemples />} />
+        <Route path="/login" element={<LoginRegister />} />
         <Route path="/my-temples" element={<MyTemples />} />
         <Route path="/feed" element={<Home />} />
         <Route path="/temple-details" element={<TempleDetails />} />
