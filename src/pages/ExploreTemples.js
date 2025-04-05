@@ -145,8 +145,8 @@ const ExploreTemples = () => {
             )}
 
             {/* Welcome Section */}
-            <div>
-              <h2 className=" text-xl font-serif text-amber-900">
+            <div className="hidden md:!block">
+              <h2 className="  text-xl font-serif text-amber-900">
                 Namaste, Rahul!
               </h2>
               <p className="text-gray-600 text-sm">
