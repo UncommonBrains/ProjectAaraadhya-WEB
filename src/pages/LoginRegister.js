@@ -33,13 +33,11 @@ const LoginRegister = () => {
     
     try {
       if (activeTab === "login") {
-        // Login logic
         const loginData = {
           email: formData.email,
           password: formData.password
         };
-        
-        // Make API call to login endpoint
+      
         const response = await fetch("http://localhost:5000/api/auth/login", {
           method: "POST",
           headers: {
@@ -47,21 +45,24 @@ const LoginRegister = () => {
           },
           body: JSON.stringify(loginData),
         });
-        
+      
         const data = await response.json();
-        
+      
         if (!response.ok) {
           throw new Error(data.message || "Login failed. Please check your credentials.");
         }
-        
-        // Login success
+      
+        // ✅ Login success
         setSuccess("Login successful!");
-        
-        // Here you would typically store the auth token in localStorage or sessionStorage
+      
+        // ✅ Store JWT token
         if (data.token) {
           localStorage.setItem("authToken", data.token);
-          // You could redirect to dashboard or home page here
+          console.log("JWT Token stored:", data.token); // optional, for debug
+          // Redirect user
           window.location.href = "/";
+        } else {
+          throw new Error("No token received from server.");
         }
         
       } else {
@@ -215,7 +216,7 @@ const LoginRegister = () => {
                   <input
                     type="email"
                     name="email"
-                    value={formData.email}
+                    value={formData.email }
                     onChange={handleInputChange}
                     className="w-full p-3 !pl-10 border border-amber-200 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400"
                     placeholder="Enter your email address"
