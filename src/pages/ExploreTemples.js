@@ -398,8 +398,8 @@ const ExploreTemples = () => {
               >
                 <a href={`/temple-details`} className="block">
                   <div
-                    className="h-60 relative bg-cover bg-center"
-                    style={{ backgroundImage: "url('/temple-images/2.jpg')" }} // Temple image
+                    className="h-40 relative bg-cover bg-center"
+                    style={{ backgroundImage: "url('/temple-images/2.jpg')" }} 
                   >
                     {temple.specialEvent && (
                       <div className="absolute top-2 left-2">
@@ -428,14 +428,21 @@ const ExploreTemples = () => {
                   </div>
 
                   <div className="p-3">
-                    <div className="flex justify-between items-center mb-2">
+                    <div className="flex justify-between items-center ">
                       <div className="flex items-center text-xs text-gray-600">
                         <Clock className="h-3 w-3 mr-1" />
-                        <span>Open: {temple.hours}</span>
+                        <span>Morning: {temple.morhours}</span>
                       </div>
                       <span className="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">
                         {temple.category}
                       </span>
+                    </div>
+                    <div className="flex justify-between items-center mb-2">
+                      <div className="flex items-center text-xs text-gray-600">
+                        <Clock className="h-3 w-3 mr-1" />
+                        <span>Evening: {temple.evehours}</span>
+                      </div>
+                     
                     </div>
 
                     <div className="flex items-center justify-between mb-3">
