@@ -316,7 +316,6 @@ const ExploreTemples = () => {
           </div>
         </div>
 
-        {/* Rest of the component remains unchanged */}
         {/* Center & Right Columns (Temple Content) */}
         <div className="md:col-span-3 space-y-6">
           {/* Page Header */}
@@ -346,27 +345,21 @@ const ExploreTemples = () => {
           {/* Category Filters - Touch scroll with no visible scrollbar */}
           <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
             <div className="flex space-x-3 mb-2 text-sm whitespace-nowrap touch-pan-x">
-              {[
-                "All",
-                "North Indian",
-                "South Indian",
-                "Vishnu",
-                "Shiva",
-                "Shakti",
-                "Favorites",
-              ].map((filter) => (
-                <button
-                  key={filter}
-                  className={`${
-                    activeFilter === filter
-                      ? "bg-orange-500 text-white"
-                      : "bg-white text-gray-600 hover:bg-amber-100"
-                  } px-4 py-2 rounded-full flex-shrink-0 transition-colors`}
-                  onClick={() => setActiveFilter(filter)}
-                >
-                  {filter}
-                </button>
-              ))}
+              {["All", "Favorites", "Vishnu", "Shiva", "Shakti"].map(
+                (filter) => (
+                  <button
+                    key={filter}
+                    className={`${
+                      activeFilter === filter
+                        ? "bg-orange-500 text-white"
+                        : "bg-white text-gray-600 hover:bg-amber-100"
+                    } px-4 py-2 rounded-full flex-shrink-0 transition-colors`}
+                    onClick={() => setActiveFilter(filter)}
+                  >
+                    {filter}
+                  </button>
+                )
+              )}
             </div>
           </div>
 
@@ -433,64 +426,65 @@ const ExploreTemples = () => {
                       <p className="text-amber-50 text-xs">{temple.location}</p>
                     </div>
                   </div>
-                </a>
-                <div className="p-3">
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="flex items-center text-xs text-gray-600">
-                      <Clock className="h-3 w-3 mr-1" />
-                      <span>Open: {temple.hours}</span>
-                    </div>
-                    <span className="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">
-                      {temple.category}
-                    </span>
-                  </div>
 
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center">
-                      {renderRating(temple.rating)}
-                      <span className="text-xs text-gray-600 ml-1">
-                        ({temple.reviews})
+                  <div className="p-3">
+                    <div className="flex justify-between items-center mb-2">
+                      <div className="flex items-center text-xs text-gray-600">
+                        <Clock className="h-3 w-3 mr-1" />
+                        <span>Open: {temple.hours}</span>
+                      </div>
+                      <span className="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">
+                        {temple.category}
                       </span>
                     </div>
-                    <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded">
-                      {temple.distance}
-                    </span>
-                  </div>
 
-                  {/* Amenities */}
-                  <div className="flex flex-wrap gap-1 mb-3">
-                    {temple.amenities &&
-                      temple.amenities.slice(0, 3).map((amenity, index) => (
-                        <span
-                          key={index}
-                          className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded"
-                        >
-                          {amenity}
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center">
+                        {renderRating(temple.rating)}
+                        <span className="text-xs text-gray-600 ml-1">
+                          ({temple.reviews})
                         </span>
-                      ))}
-                    {temple.amenities && temple.amenities.length > 3 && (
-                      <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
-                        +{temple.amenities.length - 3}
+                      </div>
+                      <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded">
+                        {temple.distance}
                       </span>
-                    )}
-                  </div>
+                    </div>
 
-                  <div className="flex justify-between">
-                    <a
-                      href={`/temple/${temple.id}`}
-                      className="text-amber-900 bg-amber-100 text-xs px-3 py-1 rounded flex items-center"
-                    >
-                      <Camera className="h-3 w-3 mr-1" />
-                      Virtual Tour
-                    </a>
-                    <a
-                      href={`/temple/${temple.id}`}
-                      className="text-orange-500 bg-orange-100 text-xs px-3 py-1 rounded"
-                    >
-                      View Details
-                    </a>
+                    {/* Amenities */}
+                    <div className="flex flex-wrap gap-1 mb-3">
+                      {temple.amenities &&
+                        temple.amenities.slice(0, 3).map((amenity, index) => (
+                          <span
+                            key={index}
+                            className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded"
+                          >
+                            {amenity}
+                          </span>
+                        ))}
+                      {temple.amenities && temple.amenities.length > 3 && (
+                        <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+                          +{temple.amenities.length - 3}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex justify-between">
+                      <a
+                        href={`/temple/${temple.id}`}
+                        className="text-amber-900 bg-amber-100 text-xs px-3 py-1 rounded flex items-center"
+                      >
+                        <Camera className="h-3 w-3 mr-1" />
+                        Virtual Tour
+                      </a>
+                      <a
+                        href={`/temple/${temple.id}`}
+                        className="text-orange-500 bg-orange-100 text-xs px-3 py-1 rounded"
+                      >
+                        View Details
+                      </a>
+                    </div>
                   </div>
-                </div>
+                </a>
               </div>
             ))}
           </div>
