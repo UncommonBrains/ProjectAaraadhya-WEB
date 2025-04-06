@@ -5,9 +5,9 @@ const Logout = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    localStorage.removeItem("authToken"); // Remove the stored token
-    alert("Logout successful!"); // ✅ Show alert
-    navigate("/login"); // Redirect to login page
+    localStorage.removeItem("authToken"); 
+    localStorage.removeItem("user"); 
+    navigate("/login"); 
   }, [navigate]);
 
   return null;
