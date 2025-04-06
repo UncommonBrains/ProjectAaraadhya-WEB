@@ -58,6 +58,7 @@ const LoginRegister = () => {
         // ✅ Store JWT token
         if (data.token) {
           localStorage.setItem("authToken", data.token);
+          localStorage.setItem("user", data.user);
           console.log("JWT Token stored:", data.token); // optional, for debug
           // Redirect user
           window.location.href = "/";

@@ -2,11 +2,13 @@ import { NavLink } from "react-router-dom";
 import { MdTempleHindu } from "react-icons/md";
 import { AiFillHeart } from "react-icons/ai";
 import { FaPeopleGroup } from "react-icons/fa6";
+import { FaUser } from "react-icons/fa6";
 
 import {
   Bell,
   Settings,
   LogOut,
+  LogIn,
   Phone,
   Info,
   Calendar,
@@ -30,6 +32,30 @@ const Header = () => {
   const mobileMenuRef = useRef(null);
   const moreDropdownRef = useRef(null);
   const mobileMoreMenuRef = useRef(null);
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userData, setUserData] = useState({ name: "", email: "" });
+
+  // useEffect to check authentication status on component mount
+  useEffect(() => {
+    const checkAuth = () => {
+      const token = localStorage.getItem("authToken");
+      if (token) {
+        setIsAuthenticated(true);
+        // Here you would typically decode the token or fetch user data
+        // For now we'll just set placeholder data
+        setUserData({
+          name: "Rahul Kumar", // Replace with actual user data from token or additional API call
+          email: "rahul@example.com",
+        });
+      } else {
+        setIsAuthenticated(false);
+        setUserData({ name: "", email: "" });
+      }
+    };
+
+    checkAuth();
+  }, []);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -114,8 +140,6 @@ const Header = () => {
 
             {/* Navigation - hidden on mobile, visible on desktop */}
             <nav className="hidden md:flex space-x-6 text-sm">
-              
-
               <NavLink
                 to="/"
                 className={({ isActive }) =>
@@ -230,113 +254,224 @@ const Header = () => {
                     3
                   </span>
                 </div>
-                <div className="relative pl-5" ref={dropdownRef}>
-                  <button
-                    className="bg-amber-600 rounded-full w-9 h-9 flex items-center justify-center text-white font-medium focus:outline-none"
-                    onClick={handleProfileClick}
-                  >
-                    R
-                  </button>
 
-                  {/* Profile Dropdown - ONLY shown on desktop */}
-                  {showDropdown && window.innerWidth >= 768 && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-amber-100 transform -translate-y-1">
-                      <div className="px-4 py-3 border-b border-amber-100">
-                        <p className="text-sm font-medium text-amber-900">
-                          Rahul Kumar
-                        </p>
-                        <p className="text-xs text-gray-500 truncate">
-                          rahul@example.com
-                        </p>
+                {isAuthenticated ? (
+                  <div className="relative pl-5" ref={dropdownRef}>
+                    <button
+                      className="bg-amber-600 rounded-full w-9 h-9 flex items-center justify-center text-white font-medium focus:outline-none"
+                      onClick={handleProfileClick}
+                    >
+                      {userData.name.charAt(0)}
+                    </button>
+
+                    {/* Profile Dropdown - ONLY shown on desktop */}
+                    {showDropdown && window.innerWidth >= 768 && (
+                      <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-amber-100 transform -translate-y-1">
+                        <div className="px-4 py-3 border-b border-amber-100">
+                          <p className="text-sm font-medium text-amber-900">
+                            {userData.name}
+                          </p>
+                          <p className="text-xs text-gray-500 truncate">
+                            {userData.email}
+                          </p>
+                        </div>
+
+                        <ul className="py-1">
+                          <li>
+                            <NavLink
+                              to="/settings"
+                              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                            >
+                              <Settings className="mr-3 h-4 w-4 text-gray-500" />
+                              Settings
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to="/my-temples"
+                              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                            >
+                              <AiFillHeart className="mr-3 h-4 w-4 text-gray-500" />
+                              My Temples
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to="/my-bookings"
+                              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                            >
+                              <Calendar className="mr-3 h-4 w-4 text-gray-500" />
+                              My Bookings
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to="/contact-us"
+                              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                            >
+                              <Phone className="mr-3 h-4 w-4 text-gray-500" />
+                              Contact Us
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to="/about"
+                              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                            >
+                              <Info className="mr-3 h-4 w-4 text-gray-500" />
+                              About
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to="/refer-temple"
+                              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                            >
+                              <Share2 className="mr-3 h-4 w-4 text-gray-500" />
+                              Refer a Temple
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to="/feedback"
+                              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                            >
+                              <Star className="mr-3 h-4 w-4 text-gray-500" />
+                              Feedback
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to="/temple-store"
+                              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                            >
+                              <ShoppingBag className="mr-3 h-4 w-4 text-gray-500" />
+                              Temple Store
+                            </NavLink>
+                          </li>
+                        </ul>
+
+                        <div className="py-1 border-t border-amber-100">
+                          <NavLink
+                            to="/logout"
+                            className="flex items-center px-4 py-2 text-sm text-red-500 hover:bg-amber-50"
+                            onClick={() => {
+                              localStorage.removeItem("authToken");
+                              setIsAuthenticated(false);
+                              setUserData({ name: "", email: "" });
+                            }}
+                          >
+                            <LogOut className="mr-3 h-4 w-4 text-red-500" />
+                            Logout
+                          </NavLink>
+                        </div>
                       </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="relative pl-5" ref={dropdownRef}>
+                    <button
+                      className="bg-amber-600 rounded-full w-9 h-9 flex items-center justify-center text-white font-medium focus:outline-none"
+                      onClick={handleProfileClick}
+                    >
+                      {userData?.name ? (
+                        userData.name.charAt(0).toUpperCase()
+                      ) : (
+                        <FaUser className="text-white text-sm" />
+                      )}
+                    </button>
 
-                      <ul className="py-1">
-                        <li>
+                    {/* Profile Dropdown - ONLY shown on desktop */}
+                    {showDropdown && window.innerWidth >= 768 && (
+                      <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-amber-100 transform -translate-y-1">
+                        <div className="py-1 border-b border-amber-100">
                           <NavLink
-                            to="/settings"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                            to="/login"
+                            className="flex items-center px-4 py-2 text-sm text-amber-600 hover:bg-amber-50"
                           >
-                            <Settings className="mr-3 h-4 w-4 text-gray-500" />
-                            Settings
+                            <LogIn className="mr-3 h-4 w-4 text-amber-600" />
+                            Login / Register
                           </NavLink>
-                        </li>
-                        <li>
-                          <NavLink
-                            to="/my-temples"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
-                          >
-                            <AiFillHeart className="mr-3 h-4 w-4 text-gray-500" />
-                            My Temples
-                          </NavLink>
-                        </li>
-                        <li>
-                          <NavLink
-                            to="/my-bookings"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
-                          >
-                            <Calendar className="mr-3 h-4 w-4 text-gray-500" />
-                            My Bookings
-                          </NavLink>
-                        </li>
-                        <li>
-                          <NavLink
-                            to="/contact-us"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
-                          >
-                            <Phone className="mr-3 h-4 w-4 text-gray-500" />
-                            Contact Us
-                          </NavLink>
-                        </li>
-                        <li>
-                          <NavLink
-                            to="/about"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
-                          >
-                            <Info className="mr-3 h-4 w-4 text-gray-500" />
-                            About
-                          </NavLink>
-                        </li>
-                        <li>
-                          <NavLink
-                            to="/refer-temple"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
-                          >
-                            <Share2 className="mr-3 h-4 w-4 text-gray-500" />
-                            Refer a Temple
-                          </NavLink>
-                        </li>
-                        <li>
-                          <NavLink
-                            to="/feedback"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
-                          >
-                            <Star className="mr-3 h-4 w-4 text-gray-500" />
-                            Feedback
-                          </NavLink>
-                        </li>
-                        <li>
-                          <NavLink
-                            to="/temple-store"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
-                          >
-                            <ShoppingBag className="mr-3 h-4 w-4 text-gray-500" />
-                            Temple Store
-                          </NavLink>
-                        </li>
-                      </ul>
+                        </div>
 
-                      <div className="py-1 border-t border-amber-100">
-                        <NavLink
-                          to="/logout"
-                          className="flex items-center px-4 py-2 text-sm text-red-500 hover:bg-amber-50"
-                        >
-                          <LogOut className="mr-3 h-4 w-4 text-red-500" />
-                          Logout
-                        </NavLink>
+                        <ul className="py-1">
+                          <li>
+                            <NavLink
+                              to="/settings"
+                              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                            >
+                              <Settings className="mr-3 h-4 w-4 text-gray-500" />
+                              Settings
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to="/my-temples"
+                              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                            >
+                              <AiFillHeart className="mr-3 h-4 w-4 text-gray-500" />
+                              My Temples
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to="/my-bookings"
+                              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                            >
+                              <Calendar className="mr-3 h-4 w-4 text-gray-500" />
+                              My Bookings
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to="/contact-us"
+                              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                            >
+                              <Phone className="mr-3 h-4 w-4 text-gray-500" />
+                              Contact Us
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to="/about"
+                              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                            >
+                              <Info className="mr-3 h-4 w-4 text-gray-500" />
+                              About
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to="/refer-temple"
+                              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                            >
+                              <Share2 className="mr-3 h-4 w-4 text-gray-500" />
+                              Refer a Temple
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to="/feedback"
+                              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                            >
+                              <Star className="mr-3 h-4 w-4 text-gray-500" />
+                              Feedback
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to="/temple-store"
+                              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                            >
+                              <ShoppingBag className="mr-3 h-4 w-4 text-gray-500" />
+                              Temple Store
+                            </NavLink>
+                          </li>
+                        </ul>
                       </div>
-                    </div>
-                  )}
-                </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -507,19 +642,33 @@ const Header = () => {
             className="fixed top-0 right-0 h-full w-64 bg-white shadow-lg z-50 transform transition-transform duration-300 ease-in-out"
           >
             <div className="flex justify-between items-center p-4 border-b border-amber-100">
-              <div className="flex items-center">
-                <div className="bg-amber-600 rounded-full w-8 h-8 flex items-center justify-center text-white font-medium">
-                  R
+              {isAuthenticated ? (
+                <div className="flex items-center">
+                  <div className="bg-amber-600 rounded-full w-8 h-8 flex items-center justify-center text-white font-medium">
+                    {userData.name.charAt(0)}
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-amber-900">
+                      {userData.name}
+                    </p>
+                    <p className="text-xs text-gray-500 truncate">
+                      {userData.email}
+                    </p>
+                  </div>
                 </div>
-                <div className="ml-3">
-                  <p className="text-sm font-medium text-amber-900">
-                    Rahul Kumar
-                  </p>
-                  <p className="text-xs text-gray-500 truncate">
-                    rahul@example.com
-                  </p>
+              ) : (
+                <div className="flex items-center">
+                  <div className="ml-3">
+                    <NavLink
+                      to="/login"
+                      className="bg-amber-600 text-white px-4 py-2 rounded-md hover:bg-amber-700 text-sm font-medium"
+                      onClick={() => setShowMobileMoreMenu(false)}
+                    >
+                      Login / Register
+                    </NavLink>
+                  </div>
                 </div>
-              </div>
+              )}
               <button
                 onClick={() => setShowMobileMoreMenu(false)}
                 className="text-gray-500 hover:text-amber-900"
@@ -640,16 +789,24 @@ const Header = () => {
                 Contact Us
               </NavLink>
 
-              <div className="border-t border-amber-300 mt-2 pt-2">
-                <NavLink
-                  to="/logout"
-                  className="flex items-center text-red-500 p-3"
-                  onClick={() => setShowMobileMoreMenu(false)}
-                >
-                  <LogOut className="mr-3 h-5 w-5" />
-                  Logout
-                </NavLink>
-              </div>
+              {/* Conditionally render logout option only if authenticated */}
+              {isAuthenticated && (
+                <div className="border-t border-amber-300 mt-2 pt-2">
+                  <NavLink
+                    to="/logout"
+                    className="flex items-center text-red-500 p-3"
+                    onClick={() => {
+                      localStorage.removeItem("authToken");
+                      setIsAuthenticated(false);
+                      setUserData({ name: "", email: "" });
+                      setShowMobileMoreMenu(false);
+                    }}
+                  >
+                    <LogOut className="mr-3 h-5 w-5" />
+                    Logout
+                  </NavLink>
+                </div>
+              )}
             </nav>
           </div>
         </>
@@ -658,8 +815,6 @@ const Header = () => {
       {/* Bottom navigation bar for mobile */}
       <div className="fixed md:hidden bottom-0 left-0 right-0 bg-white border-t border-amber-100 z-40">
         <div className="flex justify-between px-2 py-2">
-          
-
           <NavLink
             to="/"
             className={({ isActive }) =>
