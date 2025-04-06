@@ -40,13 +40,15 @@ const Header = () => {
   useEffect(() => {
     const checkAuth = () => {
       const token = localStorage.getItem("authToken");
+      const user = JSON.parse(localStorage.getItem("user"));
+
       if (token) {
         setIsAuthenticated(true);
         // Here you would typically decode the token or fetch user data
         // For now we'll just set placeholder data
         setUserData({
-          name: "Rahul Kumar", // Replace with actual user data from token or additional API call
-          email: "rahul@example.com",
+          name: user.name, // Replace with actual user data from token or additional API call
+          email:user.email,
         });
       } else {
         setIsAuthenticated(false);
