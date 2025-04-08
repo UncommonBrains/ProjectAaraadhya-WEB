@@ -35,13 +35,13 @@ const ResetPassword = () => {
   }, [location]);
 
   // Simulate token validation
-  const validateToken = async (token) => {
+  const validateToken = async (tokenToValidate) => {
     try {
       // In a real app, you would call your API to validate the token
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // For demo purposes, consider all tokens valid except "invalid"
-      if (token === "invalid") {
+      if (tokenToValidate === "invalid") {
         setIsTokenValid(false);
         setErrorMessage("This password reset link has expired or is invalid. Please request a new one.");
       } else {
@@ -68,12 +68,14 @@ const ResetPassword = () => {
     
     try {
       // Simulate API call to verify OTP
+      // In a real app, you would send both the token and OTP to verify
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // For demo purposes, consider all OTPs valid except "000000"
       if (otp === "000000") {
         setErrorMessage("Invalid OTP. Please check your email and try again.");
       } else {
+        console.log(`OTP verified successfully with token: ${token}`);
         setIsOtpVerified(true);
         setErrorMessage("");
       }
@@ -104,14 +106,29 @@ const ResetPassword = () => {
     
     try {
       // Simulate API call to reset password
+      // In a real app, you would send the token along with the new password
       await new Promise(resolve => setTimeout(resolve, 1500));
       
+      console.log(`Password reset successfully with token: ${token}`);
       // Success
       setIsSuccess(true);
     } catch (error) {
       setErrorMessage("Failed to reset password. Please try again.");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  // Function to resend OTP
+  const handleResendOtp = async () => {
+    try {
+      // In a real app, you would call your API to resend OTP using the token
+      console.log(`Resending OTP with token: ${token}`);
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      alert("New OTP sent to your email!");
+    } catch (error) {
+      alert("Failed to resend OTP. Please try again.");
     }
   };
 
@@ -232,10 +249,7 @@ const ResetPassword = () => {
                       <button 
                         type="button"
                         className="text-amber-700 hover:text-amber-900 text-sm"
-                        onClick={() => {
-                          // Simulate resending OTP
-                          alert("New OTP sent to your email!");
-                        }}
+                        onClick={handleResendOtp}
                       >
                         Didn't receive the code? Resend OTP
                       </button>

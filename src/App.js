@@ -24,7 +24,7 @@ import LiveEvents from "./pages/LiveEvents";
 
 function Layout() {
   const location = useLocation();
-  const hideHeaderFooter = ["/devotee-store", "/login", "/forgot-password", "/reset-password"].includes(location.pathname);
+  const hideHeaderFooter = ["/devotee-store", "/forgot-password", "/reset-password"].includes(location.pathname);
 
   return (
     <>
