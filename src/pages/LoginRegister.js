@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Mail, Lock, User, Phone, Eye, EyeOff } from "lucide-react";
+import { useNavigate } from "react-router-dom"; // Import for navigation
 
 const LoginRegister = () => {
   const [activeTab, setActiveTab] = useState("login");
@@ -11,6 +12,10 @@ const LoginRegister = () => {
     phone: "",
     confirmPassword: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // For navigation after form submission
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -20,14 +25,36 @@ const LoginRegister = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (activeTab === "login") {
-      console.log("Logging in with:", formData.email, formData.password);
-      // Handle login logic
-    } else {
-      console.log("Registering with:", formData);
-      // Handle registration logic
+    setIsSubmitting(true);
+    
+    try {
+      if (activeTab === "login") {
+        console.log("Logging in with:", formData.email, formData.password);
+        // Handle login logic
+        
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Navigate to dashboard or home page after successful login
+        // navigate("/dashboard");
+      } else {
+        console.log("Registering with:", formData);
+        // Handle registration logic
+        
+        // Simulate API call for registration
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        // After successful registration, navigate to email verification page
+        // Pass email as query parameter to be used on the verification page
+        navigate(`/verify-email?email=${encodeURIComponent(formData.email)}`);
+      }
+    } catch (error) {
+      console.error("Error during form submission:", error);
+      // Handle errors (display error message, etc.)
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -191,9 +218,17 @@ const LoginRegister = () => {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-amber-600 text-white rounded-lg py-3 font-medium text-md hover:bg-amber-700 transition-colors"
+                disabled={isSubmitting}
+                className="w-full bg-amber-600 text-white rounded-lg py-3 font-medium text-md hover:bg-amber-700 transition-colors disabled:bg-amber-300 flex items-center justify-center"
               >
-                {activeTab === "login" ? "Login" : "Create Account"}
+                {isSubmitting ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                    {activeTab === "login" ? "Logging in..." : "Creating Account..."}
+                  </>
+                ) : (
+                  activeTab === "login" ? "Login" : "Create Account"
+                )}
               </button>
             </form>
 
@@ -227,12 +262,7 @@ const LoginRegister = () => {
                 </svg>
                 Continue with Google
               </button>
-              <button className="w-full bg-blue-600 rounded-lg py-3 font-medium text-md text-white hover:bg-blue-700 transition-colors flex items-center justify-center">
-                <svg className="h-5 w-5 mr-2 fill-current" viewBox="0 0 24 24">
-                  <path d="M22,12.1c0-3.2-1.3-6.2-3.5-8.4C16.3,1.5,13.3,0.1,10.1,0C6.8,0,3.7,1.4,1.5,3.7C-0.4,5.8-0.5,9,1.2,11.3c0.1,0.1,0.2,0.3,0.3,0.4c1.7,2.1,4.2,3.4,6.8,3.7c0.5,0,0.9,0.2,1.3,0.5c0.3,0.2,0.6,0.5,0.9,0.7c0.5,0.4,1.1,0.6,1.7,0.6c0.6,0,1.1-0.2,1.6-0.5c0.4-0.3,0.8-0.6,1.2-0.9c0.3-0.2,0.6-0.3,0.9-0.3c2.6-0.3,5-1.6,6.7-3.7c0.1-0.1,0.2-0.2,0.3-0.4C22,11.5,22,11.3,22,12.1z" />
-                </svg>
-                Continue with Facebook
-              </button>
+             
             </div>
           </div>
         </div>
