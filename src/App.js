@@ -5,6 +5,7 @@ import Header from "./components/header";
 import Footer from "./components/footer"; 
 import Home from "./pages/Home";
 import LoginRegister from "./pages/LoginRegister";
+import VerifyEmail from "./pages/VerifyEmail";
 import MyTemples from "./pages/MyTemples";
 import ExploreTemples from "./pages/ExploreTemples";
 import TempleDetails from "./pages/TempleDetails";
@@ -21,7 +22,7 @@ import LiveEvents from "./pages/LiveEvents";
 
 function Layout() {
   const location = useLocation();
-  const hideHeaderFooter = location.pathname === "/devotee-store";
+  const hideHeaderFooter = ["/devotee-store", "/login"].includes(location.pathname);
 
   return (
     <>
@@ -29,6 +30,7 @@ function Layout() {
       <Routes>
         <Route path="/" element={<ExploreTemples />} />
         <Route path="/login" element={<LoginRegister />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/my-temples" element={<MyTemples />} />
         <Route path="/feed" element={<Home />} />
         <Route path="/temple-details" element={<TempleDetails />} />
