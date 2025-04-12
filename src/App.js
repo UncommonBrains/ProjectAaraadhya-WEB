@@ -4,7 +4,10 @@ import React from "react";
 import Header from "./components/header"; 
 import Footer from "./components/footer"; 
 import Home from "./pages/Home";
+import { AuthProvider } from "./contexts/authContext"; // ✅ Add this line
+
 import LoginRegister from "./pages/auth/LoginRegister";
+import Logout from "./pages/auth/Logout";
 import VerifyEmail from "./pages/auth/VerifyEmail";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
@@ -32,6 +35,7 @@ function Layout() {
       <Routes>
         <Route path="/" element={<ExploreTemples />} />
         <Route path="/login" element={<LoginRegister />} />
+        <Route path="/logout" element={<Logout />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
@@ -57,9 +61,11 @@ function Layout() {
 
 function App() {
   return (
-    <Router>
-      <Layout /> 
-    </Router>
+    <AuthProvider> 
+      <Router>
+        <Layout />
+      </Router>
+    </AuthProvider>
   );
 }
 
