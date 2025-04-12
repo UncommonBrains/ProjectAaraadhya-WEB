@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Mail, Lock, User, Phone, Eye, EyeOff } from "lucide-react";
-import { useNavigate, Navigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import {
   doSignInWithEmailAndPassword,
   doCreateUserWithEmailAndPassword,
@@ -26,7 +27,7 @@ const LoginRegister = () => {
   const [errorMessage, setErrorMessage] = useState("");
   // Added verification state
   const [verificationSent, setVerificationSent] = useState(false);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
