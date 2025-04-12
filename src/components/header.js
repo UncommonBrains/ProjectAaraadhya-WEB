@@ -20,8 +20,10 @@ import {
   Video,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
+import { useAuth } from "../contexts/authContext/";
 
 const Header = () => {
+  const { userLoggedIn } = useAuth();
   const [showDropdown, setShowDropdown] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showMoreDropdown, setShowMoreDropdown] = useState(false);
@@ -114,8 +116,6 @@ const Header = () => {
 
             {/* Navigation - hidden on mobile, visible on desktop */}
             <nav className="hidden md:flex space-x-6 text-sm">
-              
-
               <NavLink
                 to="/"
                 className={({ isActive }) =>
@@ -241,91 +241,194 @@ const Header = () => {
                   {/* Profile Dropdown - ONLY shown on desktop */}
                   {showDropdown && window.innerWidth >= 768 && (
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-amber-100 transform -translate-y-1">
-                      <div className="px-4 py-3 border-b border-amber-100">
-                        <p className="text-sm font-medium text-amber-900">
-                          Rahul Kumar
-                        </p>
-                        <p className="text-xs text-gray-500 truncate">
-                          rahul@example.com
-                        </p>
-                      </div>
+                      {userLoggedIn ? (
+                        // Show this content when user is logged in
+                        <>
+                          <div className="px-4 py-3 border-b border-amber-100">
+                            <p className="text-sm font-medium text-amber-900">
+                              Rahul Kumar
+                            </p>
+                            <p className="text-xs text-gray-500 truncate">
+                              rahul@example.com
+                            </p>
+                          </div>
 
-                      <ul className="py-1">
-                        <li>
-                          <NavLink
-                            to="/settings"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
-                          >
-                            <Settings className="mr-3 h-4 w-4 text-gray-500" />
-                            Settings
-                          </NavLink>
-                        </li>
-                        <li>
-                          <NavLink
-                            to="/my-temples"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
-                          >
-                            <AiFillHeart className="mr-3 h-4 w-4 text-gray-500" />
-                            My Temples
-                          </NavLink>
-                        </li>
-                        <li>
-                          <NavLink
-                            to="/my-bookings"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
-                          >
-                            <Calendar className="mr-3 h-4 w-4 text-gray-500" />
-                            My Bookings
-                          </NavLink>
-                        </li>
-                        <li>
-                          <NavLink
-                            to="/contact-us"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
-                          >
-                            <Phone className="mr-3 h-4 w-4 text-gray-500" />
-                            Contact Us
-                          </NavLink>
-                        </li>
-                        <li>
-                          <NavLink
-                            to="/about"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
-                          >
-                            <Info className="mr-3 h-4 w-4 text-gray-500" />
-                            About
-                          </NavLink>
-                        </li>
-                        <li>
-                          <NavLink
-                            to="/refer-temple"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
-                          >
-                            <Share2 className="mr-3 h-4 w-4 text-gray-500" />
-                            Refer a Temple
-                          </NavLink>
-                        </li>
-                        <li>
-                          <NavLink
-                            to="/feedback"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
-                          >
-                            <Star className="mr-3 h-4 w-4 text-gray-500" />
-                            Feedback
-                          </NavLink>
-                        </li>
-                        <li>
-                          <NavLink
-                            to="/temple-store"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
-                          >
-                            <ShoppingBag className="mr-3 h-4 w-4 text-gray-500" />
-                            Temple Store
-                          </NavLink>
-                        </li>
-                      </ul>
+                          <ul className="py-1">
+                            <li>
+                              <NavLink
+                                to="/settings"
+                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                              >
+                                <Settings className="mr-3 h-4 w-4 text-gray-500" />
+                                Settings
+                              </NavLink>
+                            </li>
+                            <li>
+                              <NavLink
+                                to="/my-temples"
+                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                              >
+                                <AiFillHeart className="mr-3 h-4 w-4 text-gray-500" />
+                                My Temples
+                              </NavLink>
+                            </li>
+                            <li>
+                              <NavLink
+                                to="/my-bookings"
+                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                              >
+                                <Calendar className="mr-3 h-4 w-4 text-gray-500" />
+                                My Bookings
+                              </NavLink>
+                            </li>
+                            <li>
+                              <NavLink
+                                to="/contact-us"
+                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                              >
+                                <Phone className="mr-3 h-4 w-4 text-gray-500" />
+                                Contact Us
+                              </NavLink>
+                            </li>
+                            <li>
+                              <NavLink
+                                to="/about"
+                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                              >
+                                <Info className="mr-3 h-4 w-4 text-gray-500" />
+                                About
+                              </NavLink>
+                            </li>
+                            <li>
+                              <NavLink
+                                to="/refer-temple"
+                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                              >
+                                <Share2 className="mr-3 h-4 w-4 text-gray-500" />
+                                Refer a Temple
+                              </NavLink>
+                            </li>
+                            <li>
+                              <NavLink
+                                to="/feedback"
+                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                              >
+                                <Star className="mr-3 h-4 w-4 text-gray-500" />
+                                Feedback
+                              </NavLink>
+                            </li>
+                            <li>
+                              <NavLink
+                                to="/temple-store"
+                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                              >
+                                <ShoppingBag className="mr-3 h-4 w-4 text-gray-500" />
+                                Temple Store
+                              </NavLink>
+                            </li>
+                          </ul>
 
-                      <div className="py-1 border-t border-amber-100">
+                          <div className="py-1 border-t border-amber-100">
+                            <NavLink
+                              to="/logout"
+                              className="flex items-center px-4 py-2 text-sm text-red-500 hover:bg-amber-50"
+                            >
+                              <LogOut className="mr-3 h-4 w-4 text-red-500" />
+                              Logout
+                            </NavLink>
+                          </div>
+                        </>
+                      ) : (
+                        // Show this content when user is not logged in
+                        <div className="py-1">
+                          <NavLink
+                            to="/login"
+                            className="flex items-center px-4 py-2 text-sm text-amber-700 hover:bg-amber-50"
+                          >
+                            <LogOut className="mr-3 h-4 w-4 text-amber-700" />
+                            Login / Register
+                          </NavLink>
+
+                          <ul className="py-1">
+                            <li>
+                              <NavLink
+                                to="/settings"
+                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                              >
+                                <Settings className="mr-3 h-4 w-4 text-gray-500" />
+                                Settings
+                              </NavLink>
+                            </li>
+                            <li>
+                              <NavLink
+                                to="/my-temples"
+                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                              >
+                                <AiFillHeart className="mr-3 h-4 w-4 text-gray-500" />
+                                My Temples
+                              </NavLink>
+                            </li>
+                            <li>
+                              <NavLink
+                                to="/my-bookings"
+                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                              >
+                                <Calendar className="mr-3 h-4 w-4 text-gray-500" />
+                                My Bookings
+                              </NavLink>
+                            </li>
+                            <li>
+                              <NavLink
+                                to="/contact-us"
+                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                              >
+                                <Phone className="mr-3 h-4 w-4 text-gray-500" />
+                                Contact Us
+                              </NavLink>
+                            </li>
+                            <li>
+                              <NavLink
+                                to="/about"
+                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                              >
+                                <Info className="mr-3 h-4 w-4 text-gray-500" />
+                                About
+                              </NavLink>
+                            </li>
+                            <li>
+                              <NavLink
+                                to="/refer-temple"
+                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                              >
+                                <Share2 className="mr-3 h-4 w-4 text-gray-500" />
+                                Refer a Temple
+                              </NavLink>
+                            </li>
+                            <li>
+                              <NavLink
+                                to="/feedback"
+                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                              >
+                                <Star className="mr-3 h-4 w-4 text-gray-500" />
+                                Feedback
+                              </NavLink>
+                            </li>
+                            <li>
+                              <NavLink
+                                to="/temple-store"
+                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                              >
+                                <ShoppingBag className="mr-3 h-4 w-4 text-gray-500" />
+                                Temple Store
+                              </NavLink>
+                            </li>
+                          </ul>
+                        </div>
+
+                        
+                      )}
+
+                      {/* <div className="py-1 border-t border-amber-100">
                         <NavLink
                           to="/logout"
                           className="flex items-center px-4 py-2 text-sm text-red-500 hover:bg-amber-50"
@@ -333,7 +436,7 @@ const Header = () => {
                           <LogOut className="mr-3 h-4 w-4 text-red-500" />
                           Logout
                         </NavLink>
-                      </div>
+                      </div> */}
                     </div>
                   )}
                 </div>
@@ -658,8 +761,6 @@ const Header = () => {
       {/* Bottom navigation bar for mobile */}
       <div className="fixed md:hidden bottom-0 left-0 right-0 bg-white border-t border-amber-100 z-40">
         <div className="flex justify-between px-2 py-2">
-          
-
           <NavLink
             to="/"
             className={({ isActive }) =>
