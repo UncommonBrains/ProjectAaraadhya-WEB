@@ -258,6 +258,7 @@ const Header = () => {
                               <NavLink
                                 to="/settings"
                                 className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                                onClick={() => setShowDropdown(false)}
                               >
                                 <Settings className="mr-3 h-4 w-4 text-gray-500" />
                                 Settings
@@ -267,6 +268,7 @@ const Header = () => {
                               <NavLink
                                 to="/my-temples"
                                 className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                                onClick={() => setShowDropdown(false)}
                               >
                                 <AiFillHeart className="mr-3 h-4 w-4 text-gray-500" />
                                 My Temples
@@ -276,6 +278,7 @@ const Header = () => {
                               <NavLink
                                 to="/my-bookings"
                                 className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                                onClick={() => setShowDropdown(false)}
                               >
                                 <Calendar className="mr-3 h-4 w-4 text-gray-500" />
                                 My Bookings
@@ -285,6 +288,7 @@ const Header = () => {
                               <NavLink
                                 to="/contact-us"
                                 className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                                onClick={() => setShowDropdown(false)}
                               >
                                 <Phone className="mr-3 h-4 w-4 text-gray-500" />
                                 Contact Us
@@ -294,6 +298,7 @@ const Header = () => {
                               <NavLink
                                 to="/about"
                                 className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                                onClick={() => setShowDropdown(false)}
                               >
                                 <Info className="mr-3 h-4 w-4 text-gray-500" />
                                 About
@@ -303,6 +308,7 @@ const Header = () => {
                               <NavLink
                                 to="/refer-temple"
                                 className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                                onClick={() => setShowDropdown(false)}
                               >
                                 <Share2 className="mr-3 h-4 w-4 text-gray-500" />
                                 Refer a Temple
@@ -312,6 +318,7 @@ const Header = () => {
                               <NavLink
                                 to="/feedback"
                                 className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                                onClick={() => setShowDropdown(false)}
                               >
                                 <Star className="mr-3 h-4 w-4 text-gray-500" />
                                 Feedback
@@ -321,6 +328,7 @@ const Header = () => {
                               <NavLink
                                 to="/temple-store"
                                 className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                                onClick={() => setShowDropdown(false)}
                               >
                                 <ShoppingBag className="mr-3 h-4 w-4 text-gray-500" />
                                 Temple Store
@@ -332,6 +340,7 @@ const Header = () => {
                             <NavLink
                               to="/logout"
                               className="flex items-center px-4 py-2 text-sm text-red-500 hover:bg-amber-50"
+                              onClick={() => setShowDropdown(false)}
                             >
                               <LogOut className="mr-3 h-4 w-4 text-red-500" />
                               Logout
@@ -344,43 +353,18 @@ const Header = () => {
                           <NavLink
                             to="/login"
                             className="flex items-center px-4 py-2 text-sm text-amber-700 hover:bg-amber-50"
+                            onClick={() => setShowDropdown(false)}
                           >
                             <LogOut className="mr-3 h-4 w-4 text-amber-700" />
                             Login / Register
                           </NavLink>
 
-                          <ul className="py-1">
-                            <li>
-                              <NavLink
-                                to="/settings"
-                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
-                              >
-                                <Settings className="mr-3 h-4 w-4 text-gray-500" />
-                                Settings
-                              </NavLink>
-                            </li>
-                            <li>
-                              <NavLink
-                                to="/my-temples"
-                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
-                              >
-                                <AiFillHeart className="mr-3 h-4 w-4 text-gray-500" />
-                                My Temples
-                              </NavLink>
-                            </li>
-                            <li>
-                              <NavLink
-                                to="/my-bookings"
-                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
-                              >
-                                <Calendar className="mr-3 h-4 w-4 text-gray-500" />
-                                My Bookings
-                              </NavLink>
-                            </li>
+                          <ul className="py-1"> 
                             <li>
                               <NavLink
                                 to="/contact-us"
                                 className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                                onClick={() => setShowDropdown(false)}
                               >
                                 <Phone className="mr-3 h-4 w-4 text-gray-500" />
                                 Contact Us
@@ -390,6 +374,7 @@ const Header = () => {
                               <NavLink
                                 to="/about"
                                 className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                                onClick={() => setShowDropdown(false)}
                               >
                                 <Info className="mr-3 h-4 w-4 text-gray-500" />
                                 About
@@ -399,6 +384,7 @@ const Header = () => {
                               <NavLink
                                 to="/refer-temple"
                                 className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                                onClick={() => setShowDropdown(false)}
                               >
                                 <Share2 className="mr-3 h-4 w-4 text-gray-500" />
                                 Refer a Temple
@@ -408,35 +394,25 @@ const Header = () => {
                               <NavLink
                                 to="/feedback"
                                 className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                                onClick={() => setShowDropdown(false)}
                               >
                                 <Star className="mr-3 h-4 w-4 text-gray-500" />
                                 Feedback
                               </NavLink>
                             </li>
-                            <li>
+                            {/* <li>
                               <NavLink
                                 to="/temple-store"
                                 className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
+                                onClick={() => setShowDropdown(false)}
                               >
                                 <ShoppingBag className="mr-3 h-4 w-4 text-gray-500" />
                                 Temple Store
                               </NavLink>
-                            </li>
+                            </li> */}
                           </ul>
                         </div>
-
-                        
                       )}
-
-                      {/* <div className="py-1 border-t border-amber-100">
-                        <NavLink
-                          to="/logout"
-                          className="flex items-center px-4 py-2 text-sm text-red-500 hover:bg-amber-50"
-                        >
-                          <LogOut className="mr-3 h-4 w-4 text-red-500" />
-                          Logout
-                        </NavLink>
-                      </div> */}
                     </div>
                   )}
                 </div>
