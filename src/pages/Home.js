@@ -4,11 +4,8 @@ import ActionButton from "../components/ActionButton";
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/authContext/";
 
-
-
-
 const Home = () => {
-  const { userData } = useAuth();
+  const { userData, userLoggedIn } = useAuth();
   const firstName = userData.displayName?.split(" ")[0];
 
   return (
@@ -16,100 +13,107 @@ const Home = () => {
       <div className="">
         <SearchBar />
         {/* Welcome Section for Mobile - Centered */}
-        <div className="md:hidden text-center p-4">
-          <h2 className="text-xl font-serif text-amber-900">Namaste, {firstName}!</h2>
-          <p className="text-gray-600 text-sm">
-            Wishing you spiritual blessings today
-          </p>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <main className="container mx-auto p-4 grid grid-cols-1 md:grid-cols-4 gap-6">
-        {/* Left Column */}
-        <div className="!hidden  md:!block  space-y-6">
-          {/* Welcome Section */}
-          <div>
-            <h2 className=" text-xl font-serif text-amber-900">
+        {userLoggedIn && (
+          <div className="md:hidden text-center p-4">
+            <h2 className="text-xl font-serif text-amber-900">
               Namaste, {firstName}!
             </h2>
             <p className="text-gray-600 text-sm">
               Wishing you spiritual blessings today
             </p>
           </div>
+        )}
+      </div>
 
-          {/* My Temples */}
-          <div className="bg-white rounded-lg shadow-sm border border-amber-100 p-4">
-            <Link to="/my-temples">
-              <h3 className="font-serif text-amber-900 mb-4">My Temples</h3>
-            </Link>
-            <ul className="space-y-4">
-              {[
-                "ISKCON Temple",
-                "Meenakshi Temple",
-                "Kashi Vishwanath",
-                "Tirupati Balaji",
-              ].map((temple, index) => (
-                <li key={index} className="flex items-center">
-                  <div className="bg-amber-100 rounded-full w-8 h-8"></div>
-                  <span className="ml-3 text-gray-700">{temple}</span>
-                </li>
-              ))}
-            </ul>
-            <a
-              href="/"
-              className="text-orange-500 flex items-center mt-4 text-sm"
-            >
-              See all temples <ChevronRight className="h-4 w-4" />
-            </a>
-          </div>
-
-          {/* My Bookings */}
-          <div className="bg-white rounded-lg shadow-sm border border-amber-100 p-4">
-            <Link to="/my-bookings">
-              <h3 className="font-serif text-amber-900 mb-4 cursor-pointer hover:text-amber-700">
-                My Bookings
-              </h3>
-            </Link>
-
-            <div className="space-y-3">
-              <div className="bg-amber-50 rounded p-3 flex justify-between items-center">
-                <div>
-                  <p className="text-gray-700 text-sm font-medium">
-                    Ganesh Abhishekam
-                  </p>
-                  <p className="text-gray-500 text-xs">
-                    Tomorrow, 10:30 AM • ISKCON
-                  </p>
-                </div>
-                <div className="bg-green-100 rounded-md p-1">
-                  <Check className="h-4 w-4 text-green-600" />
-                </div>
-              </div>
-
-              <div className="bg-amber-50 rounded p-3 flex justify-between items-center">
-                <div>
-                  <p className="text-gray-700 text-sm font-medium">
-                    VIP Darshan Pass
-                  </p>
-                  <p className="text-gray-500 text-xs">
-                    March 18, 4:00 PM • Tirupati
-                  </p>
-                </div>
-                <div className="bg-orange-100 rounded-md p-1">
-                  <Clock className="h-4 w-4 text-orange-500" />
-                </div>
-              </div>
+      {/* Main Content */}
+      <main className="container mx-auto p-4 grid grid-cols-1 md:grid-cols-4 gap-6">
+        {/* Left Column */}
+        {userLoggedIn && (
+          <div className="!hidden  md:!block  space-y-6">
+            {/* Welcome Section */}
+            <div>
+              <h2 className=" text-xl font-serif text-amber-900">
+                Namaste, {firstName}!
+              </h2>
+              <p className="text-gray-600 text-sm">
+                Wishing you spiritual blessings today
+              </p>
             </div>
 
-            <a
-              href="/"
-              className="text-orange-500 flex items-center mt-4 text-sm"
-            >
-              View all bookings <ChevronRight className="h-4 w-4" />
-            </a>
-          </div>
+            {/* My Temples */}
+            <div className="bg-white rounded-lg shadow-sm border border-amber-100 p-4">
+              <Link to="/my-temples">
+                <h3 className="font-serif text-amber-900 mb-4">My Temples</h3>
+              </Link>
+              <ul className="space-y-4">
+                {[
+                  "ISKCON Temple",
+                  "Meenakshi Temple",
+                  "Kashi Vishwanath",
+                  "Tirupati Balaji",
+                ].map((temple, index) => (
+                  <li key={index} className="flex items-center">
+                    <div className="bg-amber-100 rounded-full w-8 h-8"></div>
+                    <span className="ml-3 text-gray-700">{temple}</span>
+                  </li>
+                ))}
+              </ul>
+              <a
+                href="/"
+                className="text-orange-500 flex items-center mt-4 text-sm"
+              >
+                See all temples <ChevronRight className="h-4 w-4" />
+              </a>
+            </div>
 
+            {/* My Bookings */}
+            <div className="bg-white rounded-lg shadow-sm border border-amber-100 p-4">
+              <Link to="/my-bookings">
+                <h3 className="font-serif text-amber-900 mb-4 cursor-pointer hover:text-amber-700">
+                  My Bookings
+                </h3>
+              </Link>
+
+              <div className="space-y-3">
+                <div className="bg-amber-50 rounded p-3 flex justify-between items-center">
+                  <div>
+                    <p className="text-gray-700 text-sm font-medium">
+                      Ganesh Abhishekam
+                    </p>
+                    <p className="text-gray-500 text-xs">
+                      Tomorrow, 10:30 AM • ISKCON
+                    </p>
+                  </div>
+                  <div className="bg-green-100 rounded-md p-1">
+                    <Check className="h-4 w-4 text-green-600" />
+                  </div>
+                </div>
+
+                <div className="bg-amber-50 rounded p-3 flex justify-between items-center">
+                  <div>
+                    <p className="text-gray-700 text-sm font-medium">
+                      VIP Darshan Pass
+                    </p>
+                    <p className="text-gray-500 text-xs">
+                      March 18, 4:00 PM • Tirupati
+                    </p>
+                  </div>
+                  <div className="bg-orange-100 rounded-md p-1">
+                    <Clock className="h-4 w-4 text-orange-500" />
+                  </div>
+                </div>
+              </div>
+
+              <a
+                href="/"
+                className="text-orange-500 flex items-center mt-4 text-sm"
+              >
+                View all bookings <ChevronRight className="h-4 w-4" />
+              </a>
+            </div>
+          </div>
+        )}
+        <div className="!hidden  md:!block  space-y-6">
           {/* Community */}
           <div className="bg-white rounded-lg shadow-sm border border-amber-100 p-4">
             <Link to="/community">
@@ -136,6 +140,15 @@ const Home = () => {
             >
               Explore communities <ChevronRight className="h-4 w-4" />
             </a>
+          </div>
+          {/* Live Events */}
+          <div className="bg-white rounded-lg shadow-sm border border-amber-100 p-4">
+            <h3 className="font-serif text-amber-900 mb-4">Live Events</h3>
+
+            {/* Coming Soon Placeholder */}
+            <div className="bg-gray-100 text-gray-600 text-center text-sm py-4 rounded-lg">
+              Coming Soon...
+            </div>
           </div>
         </div>
 
@@ -383,7 +396,7 @@ const Home = () => {
 
           {/* Temple Store Preview */}
           <div className="bg-white rounded-lg shadow-sm border border-amber-100 p-4">
-            <Link to="/temple-store">
+            <Link to="/devotee-store">
               <h3 className="font-serif text-amber-900 mb-4">Temple Store</h3>
             </Link>
 
@@ -428,21 +441,11 @@ const Home = () => {
             </div>
 
             <a
-              href="/temple-store"
+              href="/devotee-store"
               className="text-orange-500 flex items-center mt-4 text-sm"
             >
               Explore more items <ChevronRight className="h-4 w-4" />
             </a>
-          </div>
-
-          {/* Live Events */}
-          <div className="bg-white rounded-lg shadow-sm border border-amber-100 p-4">
-            <h3 className="font-serif text-amber-900 mb-4">Live Events</h3>
-
-            {/* Coming Soon Placeholder */}
-            <div className="bg-gray-100 text-gray-600 text-center text-sm py-4 rounded-lg">
-              Coming Soon...
-            </div>
           </div>
         </div>
       </main>
