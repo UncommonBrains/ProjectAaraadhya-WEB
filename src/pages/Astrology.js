@@ -323,11 +323,11 @@ const Astrology = () => {
                   <span className="font-medium text-gray-700">
                     Select Your Nakshatra:
                   </span>
-                  <select className="bg-white text-orange-500 rounded-full px-3 py-1 text-sm border border-orange-200">
+                  <select defaultValue="Ashwini" className="bg-white text-orange-500 rounded-full px-3 py-1 text-sm border border-orange-200">
                     <option>Ashwini</option>
                     <option>Bharani</option>
                     <option>Krittika</option>
-                    <option selected>Rohini</option>
+                    <option >Rohini</option>
                     <option>Mrigashira</option>
                     <option>Ardra</option>
                     <option>Punarvasu</option>
