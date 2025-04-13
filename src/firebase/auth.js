@@ -1,10 +1,31 @@
 import { createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, updatePassword, GoogleAuthProvider } from "firebase/auth";
-import {auth } from "./firebase";
-// import { GoogleAuthProvider } from "firebase/auth/web-extension";
+import {auth, db } from "./firebase";
+import { doc, setDoc, serverTimestamp  } from 'firebase/firestore';
 
-export const doCreateUserWithEmailAndPassword = async (email, password) => {
-  return createUserWithEmailAndPassword (auth, email, password);
+
+export const doCreateUserWithEmailAndPassword = async (email, password, name, phone) => {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+    
+    // Create user document in Firestore
+    await setDoc(doc(db, "users", user.uid), {
+      uid: user.uid,
+      email: user.email,
+      createdAt: serverTimestamp(),      // Firestore server timestamp
+      isVerified: user.emailVerified,    // Firebase User property
+      name: name,                          // You can fill this later from a form
+      phone: phone,                         // Same here
+      role: "devotee",                   // Default role
+      status: "active"                   // Default status
+    });
+
+    return userCredential;
+  } catch (error) {
+    throw error;
+  }
 };
+
 
 export const doSignInWithEmailAndPassword = (email, password) => {
   return signInWithEmailAndPassword (auth, email, password);
