@@ -17,16 +17,14 @@ import SearchBar from "../components/searchBar";
 import ActionButton from "../components/ActionButton";
 import { useAuth } from "../contexts/authContext/";
 
-
 const UpcomingPoojas = () => {
   const [activeFilter, setActiveFilter] = useState("All");
   const [activeSortBy, setActiveSortBy] = useState("Date");
   const [showMyPoojas, setShowMyPoojas] = useState(false);
   const [showMobileFilter, setShowMobileFilter] = useState(false);
-  const { userData } = useAuth();
+  const { userData, userLoggedIn } = useAuth();
   const firstName = userData.displayName?.split(" ")[0];
   const firstLetter = userData.displayName?.charAt(0).toUpperCase();
-
 
   // Sample data for my temple poojas
   const myPoojas = [
@@ -279,10 +277,12 @@ const UpcomingPoojas = () => {
         {/* Left Column - Desktop Filter Sidebar */}
         <div className="space-y-6 hidden md:!block">
           {/* Profile Section */}
+          {userLoggedIn && (
+
           <div className="bg-white rounded-lg shadow-sm border border-amber-100 p-4">
             <div className="flex items-center">
               <div className="bg-amber-600 rounded-full w-10 h-10 flex items-center justify-center text-white font-medium">
-              {firstLetter}
+                {firstLetter}
               </div>
               <div className="ml-3">
                 <h3 className="font-serif text-amber-900">{firstName}</h3>
@@ -304,6 +304,7 @@ const UpcomingPoojas = () => {
               </div>
             </div>
           </div>
+          )}
 
           {/* Calendar Widget */}
           <div className="bg-white rounded-lg shadow-sm border border-amber-100 p-4">
@@ -631,90 +632,96 @@ const UpcomingPoojas = () => {
             </div>
           </div>
           {/* My Booked Poojas Section with Toggle Button */}
-          <div className="mb-8 bg-white rounded-lg shadow-sm border border-amber-100 overflow-hidden">
-            {/* Toggle Header */}
-            <div
-              className="flex justify-between items-center p-4 cursor-pointer bg-amber-50/50"
-              onClick={toggleMyPoojas}
-            >
-              <h3 className="text-lg font-serif text-amber-900 flex items-center">
-                My Booked Poojas
-                <span className="ml-2 text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">
-                  {filteredMyPoojas.length}
-                </span>
-              </h3>
-              <button className="text-amber-900 hover:bg-amber-100 p-1 rounded-full transition-colors duration-200">
-                {showMyPoojas ? (
-                  <ChevronUp className="h-5 w-5" />
-                ) : (
-                  <ChevronDown className="h-5 w-5" />
-                )}
-              </button>
-            </div>
+          {userLoggedIn && (
+            <div className="mb-8 bg-white rounded-lg shadow-sm border border-amber-100 overflow-hidden">
+              {/* Toggle Header */}
+              <div
+                className="flex justify-between items-center p-4 cursor-pointer bg-amber-50/50"
+                onClick={toggleMyPoojas}
+              >
+                <h3 className="text-lg font-serif text-amber-900 flex items-center">
+                  My Booked Poojas
+                  <span className="ml-2 text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">
+                    {filteredMyPoojas.length}
+                  </span>
+                </h3>
+                <button className="text-amber-900 hover:bg-amber-100 p-1 rounded-full transition-colors duration-200">
+                  {showMyPoojas ? (
+                    <ChevronUp className="h-5 w-5" />
+                  ) : (
+                    <ChevronDown className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
 
-            {/* Collapsible Content */}
-            {showMyPoojas && (
-              <div className="p-4 grid xm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
-                {getSortedMyPoojas().map((pooja) => (
-                  <div
-                    key={pooja.id}
-                    className="bg-white rounded-lg shadow-sm border border-amber-100 overflow-hidden"
-                  >
-                    <div className="p-4 border-l-4 border-orange-500">
-                      <div className="flex justify-between">
-                        <h4 className="font-medium text-amber-900">
-                          {pooja.name}
-                        </h4>
-                        <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full">
-                          Booked
-                        </span>
-                      </div>
-
-                      <div className="mt-2">
-                        <p className="text-sm text-gray-600 mb-1">
-                          {pooja.temple}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {pooja.location}
-                        </p>
-                      </div>
-
-                      <div className="grid grid-cols-3 gap-2 mt-3">
-                        <div className="bg-amber-50 rounded p-2">
-                          <p className="text-xs text-gray-500">Date</p>
-                          <p className="text-sm text-amber-900">{pooja.date}</p>
+              {/* Collapsible Content */}
+              {showMyPoojas && (
+                <div className="p-4 grid xm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
+                  {getSortedMyPoojas().map((pooja) => (
+                    <div
+                      key={pooja.id}
+                      className="bg-white rounded-lg shadow-sm border border-amber-100 overflow-hidden"
+                    >
+                      <div className="p-4 border-l-4 border-orange-500">
+                        <div className="flex justify-between">
+                          <h4 className="font-medium text-amber-900">
+                            {pooja.name}
+                          </h4>
+                          <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full">
+                            Booked
+                          </span>
                         </div>
-                        <div className="bg-amber-50 rounded p-2">
-                          <p className="text-xs text-gray-500">Time</p>
-                          <p className="text-sm text-amber-900">{pooja.time}</p>
-                        </div>
-                        <div className="bg-amber-50 rounded p-2">
-                          <p className="text-xs text-gray-500">Price</p>
-                          <p className="text-sm text-amber-900">
-                            {pooja.price}
+
+                        <div className="mt-2">
+                          <p className="text-sm text-gray-600 mb-1">
+                            {pooja.temple}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {pooja.location}
                           </p>
                         </div>
-                      </div>
 
-                      <div className="flex justify-between items-center mt-4">
-                        <span className="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">
-                          {pooja.deity}
-                        </span>
-                        <div className="flex space-x-2">
-                          <button className="text-gray-600 bg-gray-100 text-xs px-3 py-1 rounded">
-                            Modify
-                          </button>
-                          <button className="text-orange-500 bg-orange-100 text-xs px-3 py-1 rounded">
-                            View Details
-                          </button>
+                        <div className="grid grid-cols-3 gap-2 mt-3">
+                          <div className="bg-amber-50 rounded p-2">
+                            <p className="text-xs text-gray-500">Date</p>
+                            <p className="text-sm text-amber-900">
+                              {pooja.date}
+                            </p>
+                          </div>
+                          <div className="bg-amber-50 rounded p-2">
+                            <p className="text-xs text-gray-500">Time</p>
+                            <p className="text-sm text-amber-900">
+                              {pooja.time}
+                            </p>
+                          </div>
+                          <div className="bg-amber-50 rounded p-2">
+                            <p className="text-xs text-gray-500">Price</p>
+                            <p className="text-sm text-amber-900">
+                              {pooja.price}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex justify-between items-center mt-4">
+                          <span className="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">
+                            {pooja.deity}
+                          </span>
+                          <div className="flex space-x-2">
+                            <button className="text-gray-600 bg-gray-100 text-xs px-3 py-1 rounded">
+                              Modify
+                            </button>
+                            <button className="text-orange-500 bg-orange-100 text-xs px-3 py-1 rounded">
+                              View Details
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
           {/* Upcoming Poojas Section */}
           <div>
             <div className="flex justify-between items-center ">
