@@ -6,15 +6,21 @@ import {
   signInWithPopup, 
   updatePassword, 
   GoogleAuthProvider, 
+  updateProfile,  // Add this import
 } from "firebase/auth";
 import {auth, db } from "./firebase";
-import { doc, setDoc, serverTimestamp  } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 
 
 export const doCreateUserWithEmailAndPassword = async (name, phone, email, password) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
+    
+    // Update user's display name immediately after creation
+    await updateProfile(user, {
+      displayName: name
+    });
     
     // Create user document in Firestore
     await setDoc(doc(db, "users", user.uid), {
@@ -27,6 +33,7 @@ export const doCreateUserWithEmailAndPassword = async (name, phone, email, passw
       role: "devotee",
       status: "active"
     });
+    
     console.log("User document created in Firestore:", user.uid, user.email, name);
     return userCredential;
   } catch (error) {
@@ -36,8 +43,32 @@ export const doCreateUserWithEmailAndPassword = async (name, phone, email, passw
 };
 
 
-export const doSignInWithEmailAndPassword = (email, password) => {
-  return signInWithEmailAndPassword (auth, email, password);
+export const doSignInWithEmailAndPassword = async (email, password) => {
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+    
+    // Update user's last login in Firestore
+    await setDoc(doc(db, "users", user.uid), {
+      lastLogin: serverTimestamp(),
+    }, { merge: true });
+    
+    // If display name is not set, get it from Firestore
+    if (!user.displayName) {
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      if (userDoc.exists() && userDoc.data().name) {
+        await updateProfile(user, {
+          displayName: userDoc.data().name
+        });
+      }
+    }
+    
+    console.log("User signed in and document updated:", user.uid, user.email);
+    return userCredential;
+  } catch (error) {
+    console.error("Error in doSignInWithEmailAndPassword:", error);
+    throw error;
+  }
 };
 
 export const doSignInWithGoogle = async () => {

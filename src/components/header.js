@@ -23,8 +23,9 @@ import {
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../contexts/authContext/";
 
+// Add loading state to imports from useAuth
 const Header = () => {
-  const { userLoggedIn } = useAuth();
+  const { userLoggedIn, userData, loading } = useAuth();  // Add loading here
   const [showDropdown, setShowDropdown] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showMoreDropdown, setShowMoreDropdown] = useState(false);
@@ -91,10 +92,39 @@ const Header = () => {
     }
   };
 
-  const { userData } = useAuth();
-  const name = userData.displayName;
-  const email = userData.email;
-  const firstLetter = name.charAt(0).toUpperCase();
+  // Add useEffect to handle user data updates
+  useEffect(() => {
+    if (!loading && userData) {
+      console.log("User data updated:", userData);
+    }
+  }, [loading, userData]);
+
+  // Update how name and email are accessed
+  const name = (!loading && userData?.displayName) ? userData.displayName : "User";
+  const email = (!loading && userData?.email) ? userData.email : "";
+  const firstLetter =  userData.displayName.charAt(0).toUpperCase() ;
+
+  // Add loading state UI
+  if (loading) {
+    return (
+      <header className="bg-amber-50/100 border-b border-amber-100 p-4 md:grid-cols-4 sticky top-0 z-50">
+        <div className="max-w-[92rem] mx-auto">
+          <div className="flex items-center justify-between">
+            {/* Show minimal header while loading */}
+            <div className="flex items-center">
+              <a href="/">
+                <img
+                  src="/AaraadhyaLogo.png"
+                  alt="Aaradhya Logo"
+                  className="w-44"
+                />
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+    );
+  }
 
   return (
     <>

@@ -2,6 +2,9 @@ import React from "react";
 import { useState, useContext, useEffect, createContext } from "react";
 import { auth } from "../../firebase/firebase"
 import {onAuthStateChanged} from "firebase/auth"
+import { doc,   getDoc } from 'firebase/firestore';
+import {db } from "../../firebase/firebase";
+
 
 
 const AuthContext = createContext();
@@ -22,12 +25,14 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, initializeUser)
-    return unsubscribe
+    return unsubscribe 
   }, [])
 
   async function initializeUser(user) {
     if (user) {
-      setCurrentUser({ ...user });
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+
+      setCurrentUser({ ...user,...userDoc.data() });
       setUserLoggedIn(true);
       // Update userData when user logs in
       setUserData({
