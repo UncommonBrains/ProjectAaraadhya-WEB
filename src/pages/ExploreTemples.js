@@ -395,7 +395,6 @@ const ExploreTemples = () => {
                 key={temple.id}
                 className="bg-white rounded-lg shadow-sm border border-amber-100 overflow-hidden"
               >
-                <a href={`/temple-details`} className="block">
                   <div
                     className="h-40 relative bg-cover bg-center"
                     style={{ backgroundImage: "url('/temple-images/2.jpg')" }}
@@ -487,7 +486,6 @@ const ExploreTemples = () => {
                       </a>
                     </div>
                   </div>
-                </a>
               </div>
             ))}
           </div>
