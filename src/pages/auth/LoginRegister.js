@@ -57,6 +57,8 @@ const LoginRegister = () => {
 
         // Implemented actual Firebase registration
         await doCreateUserWithEmailAndPassword(
+          formData.name,
+          formData.phone,
           formData.email,
           formData.password
         );
