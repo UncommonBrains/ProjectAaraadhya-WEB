@@ -5,6 +5,7 @@ import { FaPeopleGroup } from "react-icons/fa6";
 
 import {
   Bell,
+  User,
   Settings,
   LogOut,
   Phone,
@@ -240,7 +241,7 @@ const Header = () => {
                     className="bg-amber-600 rounded-full w-9 h-9 flex items-center justify-center text-white font-medium focus:outline-none"
                     onClick={handleProfileClick}
                   >
-                    {firstLetter}
+                    {firstLetter }
                   </button>
 
                   {/* Profile Dropdown - ONLY shown on desktop */}
@@ -593,7 +594,7 @@ const Header = () => {
             <div className="flex justify-between items-center p-4 border-b border-amber-100">
               <div className="flex items-center">
                 <div className="bg-amber-600 rounded-full w-8 h-8 flex items-center justify-center text-white font-medium">
-                {firstLetter}
+                  {firstLetter ? firstLetter : <User className="w-4 h-4" />}
                 </div>
                 <div className="ml-3">
                   <p className="text-sm font-medium text-amber-900">{name} </p>
