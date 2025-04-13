@@ -11,7 +11,7 @@ import {auth, db } from "./firebase";
 import { doc, setDoc, serverTimestamp  } from 'firebase/firestore';
 
 
-export const doCreateUserWithEmailAndPassword = async (email, password, name, phone) => {
+export const doCreateUserWithEmailAndPassword = async (name, phone, email, password) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
@@ -20,16 +20,17 @@ export const doCreateUserWithEmailAndPassword = async (email, password, name, ph
     await setDoc(doc(db, "users", user.uid), {
       uid: user.uid,
       email: user.email,
-      createdAt: serverTimestamp(),      // Firestore server timestamp
-      isVerified: user.emailVerified,    // Firebase User property
-      name: name,                          // You can fill this later from a form
-      phone: phone,                         // Same here
-      role: "devotee",                   // Default role
-      status: "active"                   // Default status
+      createdAt: serverTimestamp(),
+      isVerified: user.emailVerified,
+      name: name,
+      phone: phone,
+      role: "devotee",
+      status: "active"
     });
-    console.log("User document created in Firestore:", user.uid, user.email, user.name);
+    console.log("User document created in Firestore:", user.uid, user.email, name);
     return userCredential;
   } catch (error) {
+    console.error("Error in doCreateUserWithEmailAndPassword:", error);
     throw error;
   }
 };
