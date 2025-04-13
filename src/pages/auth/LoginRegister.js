@@ -72,12 +72,25 @@ const LoginRegister = () => {
         // After successful registration, you may want to update the user profile with name and phone
         // This would need additional Firebase functionality in your auth.js file
       }
-    } catch (error) {
+    }  catch (error) {
       console.error("Error during form submission:", error);
-      // Show error message to user
-      setErrorMessage(
-        error.message || "An error occurred during authentication"
-      );
+      // Improve error message handling
+      let errorMsg = "An error occurred during authentication";
+      
+      if (error.code === "auth/invalid-email") {
+        errorMsg = "Please enter a valid email address";
+      } else if (error.code === "auth/email-already-in-use") {
+        errorMsg = "This email is already registered";
+      } else if (error.code === "auth/invalid-credential") {
+        errorMsg = "No account found with this email. Please register first.";
+      } else if (error.message) {
+        errorMsg = error.message;
+
+      } else if (error.message) {
+        errorMsg = error.message;
+      }
+      
+      setErrorMessage(errorMsg);
     } finally {
       setIsSubmitting(false);
     }
