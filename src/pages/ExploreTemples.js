@@ -14,6 +14,10 @@ import {
 import temples from "../datas/temples"; // Adjust path if needed
 import SearchBar from "../components/searchBar";
 import ActionButton from "../components/ActionButton";
+import { useAuth } from "../contexts/authContext/";
+
+
+
 
 const ExploreTemples = () => {
   const [activeFilter, setActiveFilter] = useState("All");
@@ -102,6 +106,11 @@ const ExploreTemples = () => {
     return stars;
   };
 
+  const { userData } = useAuth();
+  const firstName = userData.displayName?.split(" ")[0];
+
+
+
   return (
     <div className="bg-amber-50 min-h-screen font-sans">
       <SearchBar />
@@ -146,7 +155,7 @@ const ExploreTemples = () => {
             {/* Welcome Section */}
             <div className="hidden md:!block">
               <h2 className="  text-xl font-serif text-amber-900">
-                Namaste, Rahul!
+                Namaste, {firstName}!
               </h2>
               <p className="text-gray-600 text-sm">
                 Wishing you spiritual blessings today

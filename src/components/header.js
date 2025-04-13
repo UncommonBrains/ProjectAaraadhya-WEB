@@ -90,6 +90,11 @@ const Header = () => {
     }
   };
 
+  const { userData } = useAuth();
+  const name = userData.displayName;
+  const email = userData.email;
+  const firstLetter = name.charAt(0).toUpperCase();
+
   return (
     <>
       <header className="bg-amber-50/100 border-b border-amber-100 p-4 md:grid-cols-4 sticky top-0 z-50">
@@ -235,7 +240,7 @@ const Header = () => {
                     className="bg-amber-600 rounded-full w-9 h-9 flex items-center justify-center text-white font-medium focus:outline-none"
                     onClick={handleProfileClick}
                   >
-                    R
+                    {firstLetter}
                   </button>
 
                   {/* Profile Dropdown - ONLY shown on desktop */}
@@ -246,10 +251,10 @@ const Header = () => {
                         <>
                           <div className="px-4 py-3 border-b border-amber-100">
                             <p className="text-sm font-medium text-amber-900">
-                              Rahul Kumar
+                              {name}
                             </p>
                             <p className="text-xs text-gray-500 truncate">
-                              rahul@example.com
+                              {email}
                             </p>
                           </div>
 
@@ -359,7 +364,7 @@ const Header = () => {
                             Login / Register
                           </NavLink>
 
-                          <ul className="py-1"> 
+                          <ul className="py-1">
                             <li>
                               <NavLink
                                 to="/contact-us"
@@ -588,15 +593,11 @@ const Header = () => {
             <div className="flex justify-between items-center p-4 border-b border-amber-100">
               <div className="flex items-center">
                 <div className="bg-amber-600 rounded-full w-8 h-8 flex items-center justify-center text-white font-medium">
-                  R
+                {firstLetter}
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm font-medium text-amber-900">
-                    Rahul Kumar
-                  </p>
-                  <p className="text-xs text-gray-500 truncate">
-                    rahul@example.com
-                  </p>
+                  <p className="text-sm font-medium text-amber-900">{name} </p>
+                  <p className="text-xs text-gray-500 truncate">{email}</p>
                 </div>
               </div>
               <button

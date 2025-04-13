@@ -4,8 +4,15 @@ import SearchBar from "../components/searchBar";
 import TempleGrid from "../components/myTemplesData";
 import { Link } from "react-router-dom";
 import ActionButton from "../components/ActionButton";
+import { useAuth } from "../contexts/authContext/";
+
 
 const MyTemples = () => {
+  const { userData } = useAuth();
+  const firstName = userData.displayName?.split(" ")[0];
+  const firstLetter = userData.displayName?.charAt(0).toUpperCase();
+
+
   const [activeFilter, setActiveFilter] = useState("All");
 
   return (
@@ -20,10 +27,10 @@ const MyTemples = () => {
           <div className="bg-white rounded-lg shadow-sm border border-amber-100 p-4">
             <div className="flex items-center">
               <div className="bg-amber-600 rounded-full w-10 h-10 flex items-center justify-center text-white font-medium">
-                R
+              {firstLetter}
               </div>
               <div className="ml-3">
-                <h3 className="font-serif text-amber-900">Rahul</h3>
+                <h3 className="font-serif text-amber-900">{firstName}</h3>
                 <p className="text-gray-600 text-xs">Active Devotee</p>
               </div>
             </div>

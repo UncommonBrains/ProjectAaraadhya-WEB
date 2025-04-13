@@ -2,15 +2,22 @@ import { ChevronRight, Plus, Check, Clock } from "lucide-react";
 import SearchBar from "../components/searchBar";
 import ActionButton from "../components/ActionButton";
 import { Link } from "react-router-dom";
+import { useAuth } from "../contexts/authContext/";
+
+
+
 
 const Home = () => {
+  const { userData } = useAuth();
+  const firstName = userData.displayName?.split(" ")[0];
+
   return (
     <div className="bg-amber-50 min-h-screen font-sans">
       <div className="">
         <SearchBar />
         {/* Welcome Section for Mobile - Centered */}
         <div className="md:hidden text-center p-4">
-          <h2 className="text-xl font-serif text-amber-900">Namaste, Rahul!</h2>
+          <h2 className="text-xl font-serif text-amber-900">Namaste, {firstName}!</h2>
           <p className="text-gray-600 text-sm">
             Wishing you spiritual blessings today
           </p>
@@ -24,7 +31,7 @@ const Home = () => {
           {/* Welcome Section */}
           <div>
             <h2 className=" text-xl font-serif text-amber-900">
-              Namaste, Rahul!
+              Namaste, {firstName}!
             </h2>
             <p className="text-gray-600 text-sm">
               Wishing you spiritual blessings today
