@@ -33,13 +33,15 @@ export function AuthProvider({ children }) {
       const userDoc = await getDoc(doc(db, "users", user.uid));
 
       setCurrentUser({ ...user,...userDoc.data() });
-      setUserLoggedIn(true);
+      if(userDoc.isVerified){
+        setUserLoggedIn(true);
+      }
       // Update userData when user logs in
       setUserData({
         displayName: user.displayName || '',
         email: user.email || '',
         phone: user.phoneNumber || '',
-        isVerified: user.isVerified || false,
+        isVerified: user.isVerified || '',
       });
     } else {
       setCurrentUser(null);
@@ -49,7 +51,7 @@ export function AuthProvider({ children }) {
         displayName: '',
         email: '',
         phone: '',
-        isVerified: false,
+        isVerified: '',
 
       });
       
