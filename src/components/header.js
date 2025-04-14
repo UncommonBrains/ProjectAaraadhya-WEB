@@ -271,7 +271,11 @@ const Header = () => {
                     className="bg-amber-600 rounded-full w-9 h-9 flex items-center justify-center text-white font-medium focus:outline-none"
                     onClick={handleProfileClick}
                   >
-                    {firstLetter ? firstLetter : <User className="w-4 h-4" />}
+                    {userLoggedIn && firstLetter ? (
+                      firstLetter
+                    ) : (
+                      <User className="w-4 h-4" />
+                    )}
                   </button>
 
                   {/* Profile Dropdown - ONLY shown on desktop */}
