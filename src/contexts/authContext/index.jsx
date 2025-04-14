@@ -39,6 +39,7 @@ export function AuthProvider({ children }) {
         displayName: user.displayName || '',
         email: user.email || '',
         phone: user.phoneNumber || '',
+        isVerified: user.isVerified || false,
       });
     } else {
       setCurrentUser(null);
@@ -48,6 +49,8 @@ export function AuthProvider({ children }) {
         displayName: '',
         email: '',
         phone: '',
+        isVerified: false,
+
       });
       
     }
