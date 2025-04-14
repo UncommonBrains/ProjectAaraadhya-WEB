@@ -391,7 +391,7 @@ const Header = () => {
                         // Show this content when user is not logged in
                         <div className="py-1">
                           <NavLink
-                            to="/login"
+                            to="/auth"
                             className="flex items-center px-4 py-2 text-sm text-amber-700 hover:bg-amber-50"
                             onClick={() => setShowDropdown(false)}
                           >

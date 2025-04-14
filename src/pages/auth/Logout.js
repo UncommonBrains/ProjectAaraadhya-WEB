@@ -9,11 +9,11 @@ const Logout = () => {
   useEffect(() => {
     doSignOut()
       .then(() => {
-        navigate("/login"); // redirect after sign out
+        navigate("/auth"); // redirect after sign out
       })
       .catch((error) => {
         console.error("Error signing out:", error);
-        navigate("/login"); // optionally handle error better
+        navigate("/auth"); // optionally handle error better
       });
   }, [navigate]);
 

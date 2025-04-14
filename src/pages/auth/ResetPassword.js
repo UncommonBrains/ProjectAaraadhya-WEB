@@ -147,7 +147,7 @@ const ResetPassword = () => {
                 Your password has been successfully reset. You can now log in with your new password.
               </p>
               <button
-                onClick={() => navigate("/login")}
+                onClick={() => navigate("/auth")}
                 className="w-full bg-amber-600 text-white rounded-lg py-3 font-medium text-md hover:bg-amber-700 transition-colors"
               >
                 Go to Login
@@ -167,7 +167,7 @@ const ResetPassword = () => {
           <div className="p-8">
             {/* Back button */}
             <button 
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/auth")}
               className="flex items-center text-gray-600 hover:text-amber-700 mb-6 text-sm font-medium"
             >
               <ArrowLeft className="h-4 w-4 mr-1" />

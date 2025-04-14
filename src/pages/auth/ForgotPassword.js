@@ -83,7 +83,7 @@ const ForgotPassword = () => {
   // Handle back button
   const handleBack = () => {
     if (step === "request") {
-      navigate("/login");
+      navigate("/auth");
     } else {
       setStep("request");
     }
@@ -190,7 +190,7 @@ const ForgotPassword = () => {
                   
                   {/* Go to login */}
                   <button
-                    onClick={() => navigate("/login")}
+                    onClick={() => navigate("/auth")}
                     className="w-full bg-amber-600 text-white rounded-lg py-3 font-medium text-md hover:bg-amber-700 transition-colors"
                   >
                     Back to Login

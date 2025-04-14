@@ -23,7 +23,7 @@ const VerifyEmail = () => {
     
     try {
       await auth.currentUser.sendEmailVerification({
-        url: `${window.location.origin}/login`
+        url: `${window.location.origin}/auth`
       });
       setResendCooldown(60); // 60 second cooldown
     } catch (error) {

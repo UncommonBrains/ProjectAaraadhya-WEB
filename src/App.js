@@ -34,7 +34,7 @@ function Layout() {
       {!hideHeaderFooter && <Header />}
       <Routes>
         <Route path="/" element={<ExploreTemples />} />
-        <Route path="/login" element={<LoginRegister />} />
+        <Route path="/auth" element={<LoginRegister />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
