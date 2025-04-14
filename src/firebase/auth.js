@@ -21,13 +21,15 @@ export const doCreateUserWithEmailAndPassword = async (name, phone, email, passw
     await updateProfile(user, {
       displayName: name
     });
+
+    await sendEmailVerification(user);
     
     // Create user document in Firestore
     await setDoc(doc(db, "users", user.uid), {
       uid: user.uid,
       email: user.email,
       createdAt: serverTimestamp(),
-      isVerified: user.emailVerified,
+      isVerified: false,
       name: name,
       phone: phone,
       role: "devotee",
