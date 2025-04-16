@@ -19,6 +19,7 @@ import {
   Smartphone,
   Moon,
 } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
 const Settings = () => {
   const [activeSection, setActiveSection] = useState("profile");
@@ -90,11 +91,10 @@ const Settings = () => {
                 <li key={section.id}>
                   <button
                     onClick={() => setActiveSection(section.id)}
-                    className={`w-full flex items-center px-4 py-3 rounded-md text-left transition-colors ${
-                      activeSection === section.id
-                        ? "bg-amber-100 text-amber-900 font-medium"
-                        : "text-gray-600 hover:bg-amber-100/50"
-                    }`}
+                    className={`w-full flex items-center px-4 py-3 rounded-md text-left transition-colors ${activeSection === section.id
+                      ? "bg-amber-100 text-amber-900 font-medium"
+                      : "text-gray-600 hover:bg-amber-100/50"
+                      }`}
                   >
                     <span className="mr-3">{section.icon}</span>
                     <span>{section.title}</span>
@@ -154,11 +154,13 @@ const ProfileSettings = () => {
             description="Update your name, email, phone number and profile picture"
           />
 
-          <SettingsCard
-            title="Change Password"
-            icon={<Key className="w-5 h-5" />}
-            description="Update your account password and security question"
-          />
+          <NavLink to="/reset-password">
+            <SettingsCard
+              title="Change Password"
+              icon={<Key className="w-5 h-5" />}
+              description="Securely update your password to keep your account safe"
+            />
+          </NavLink>
 
           <SettingsCard
             title="Manage Linked Accounts"
@@ -403,24 +405,21 @@ const SettingsCard = ({
 
   return (
     <div
-      className={`p-4 border rounded-lg ${
-        danger ? "border-red-100" : "border-amber-100"
-      } hover:shadow-sm transition-shadow`}
+      className={`p-4 border rounded-lg ${danger ? "border-red-100" : "border-amber-100"
+        } hover:shadow-sm transition-shadow`}
     >
       <div className="flex items-start justify-between">
         <div className="flex items-start space-x-3">
           <div
-            className={`mt-0.5 p-2 rounded-full ${
-              danger ? "bg-red-50" : "bg-amber-50"
-            }`}
+            className={`mt-0.5 p-2 rounded-full ${danger ? "bg-red-50" : "bg-amber-50"
+              }`}
           >
             {icon}
           </div>
           <div>
             <h3
-              className={`font-medium ${
-                danger ? "text-red-500" : "text-amber-900"
-              }`}
+              className={`font-medium ${danger ? "text-red-500" : "text-amber-900"
+                }`}
             >
               {title}
             </h3>
@@ -429,22 +428,19 @@ const SettingsCard = ({
         </div>
         {toggle ? (
           <button
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-              isEnabled ? "bg-amber-500" : "bg-gray-200"
-            }`}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${isEnabled ? "bg-amber-500" : "bg-gray-200"
+              }`}
             onClick={() => setIsEnabled(!isEnabled)}
           >
             <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                isEnabled ? "translate-x-6" : "translate-x-1"
-              }`}
+              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${isEnabled ? "translate-x-6" : "translate-x-1"
+                }`}
             />
           </button>
         ) : (
           <button
-            className={`p-2 rounded-full hover:bg-amber-50 transition-colors ${
-              danger ? "text-red-500" : "text-amber-700"
-            }`}
+            className={`p-2 rounded-full hover:bg-amber-50 transition-colors ${danger ? "text-red-500" : "text-amber-700"
+              }`}
           >
             <ChevronRight className="w-4 h-4" />
           </button>

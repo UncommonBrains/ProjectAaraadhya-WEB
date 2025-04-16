@@ -1,8 +1,15 @@
 import React, { useState } from "react";
 import { Mail, Lock, User, Phone, Eye, EyeOff } from "lucide-react";
-import { useNavigate } from "react-router-dom"; // Import for navigation
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { auth, db } from '../../firebase/firebase';
+import { useAuth } from "../../contexts/auth/AuthContext";
+import { LOGIN } from "../../contexts/auth/authActionTypes";
+import { useToast } from "../../contexts/toast/ToastContext";
 
 const LoginRegister = () => {
+  const { dispatch } = useAuth();
+  const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState("login");
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -13,9 +20,6 @@ const LoginRegister = () => {
     confirmPassword: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  // For navigation after form submission
-  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -28,61 +32,148 @@ const LoginRegister = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     try {
       if (activeTab === "login") {
-        console.log("Logging in with:", formData.email, formData.password);
-        // Handle login logic
-        
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Navigate to dashboard or home page after successful login
-        // navigate("/dashboard");
+        const res = await signInWithEmailAndPassword(auth, formData.email, formData.password);
+        dispatch({ type: LOGIN, payload: res.user });
       } else {
-        console.log("Registering with:", formData);
-        // Handle registration logic
-        
-        // Simulate API call for registration
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
-        // After successful registration, navigate to email verification page
-        // Pass email as query parameter to be used on the verification page
-        navigate(`/verify-email?email=${encodeURIComponent(formData.email)}`);
+        if (formData.password !== formData.confirmPassword) {
+          return showToast("Passwords do not match", "error");
+        }
+
+        const res = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+        dispatch({ type: LOGIN, payload: res.user });
+        await setDoc(doc(db, "users", res.user.uid), {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+        });
       }
     } catch (error) {
-      console.error("Error during form submission:", error);
-      // Handle errors (display error message, etc.)
+      let errorMessage = "An unexpected error occurred";
+
+      switch (error.code) {
+        // Login-related
+        case "auth/invalid-credential":
+          errorMessage = "Invalid email or password";
+          break;
+        case "auth/user-disabled":
+          errorMessage = "This user account has been disabled";
+          break;
+        case "auth/too-many-requests":
+          errorMessage = "Too many failed attempts. Please try again later";
+          break;
+        case "auth/network-request-failed":
+          errorMessage = "Network error. Please check your internet connection";
+          break;
+
+        // Signup-related
+        case "auth/email-already-in-use":
+          errorMessage = "This email is already registered";
+          break;
+        case "auth/weak-password":
+          errorMessage = "Password should be at least 6 characters";
+          break;
+        case "auth/missing-password":
+          errorMessage = "Please enter your password";
+          break;
+
+        // Shared
+        case "auth/invalid-email":
+          errorMessage = "Invalid email address";
+          break;
+        case "auth/operation-not-allowed":
+          errorMessage = "Email/password accounts are not enabled";
+          break;
+
+        // Fallback
+        default:
+          errorMessage = error.message || "An unknown error occurred";
+      }
+
+      showToast(errorMessage, "error");
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const handleSigninWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({
+      prompt: 'select_account',
+    });
+
+    try {
+      const res = await signInWithPopup(auth, provider);
+      console.log("Google sign-in successful:", res.user);
+
+      const user = await getDoc(doc(db, "users", res.user.uid));
+
+      if (!user.exists()) {
+        await setDoc(doc(db, "users", res.user.uid), {
+          name: res.user.displayName,
+          email: res.user.email,
+          phone: null,
+        });
+      }
+    } catch (error) {
+      let errorMessage = "Google sign-in failed";
+
+      switch (error.code) {
+        case "auth/popup-closed-by-user":
+          errorMessage = "Sign-in popup was closed before completing";
+          break;
+        case "auth/cancelled-popup-request":
+          errorMessage = "Sign-in was canceled due to another popup request";
+          break;
+        case "auth/popup-blocked":
+          errorMessage = "Sign-in popup was blocked by the browser";
+          break;
+        case "auth/account-exists-with-different-credential":
+          errorMessage = "An account already exists with a different credential";
+          break;
+        case "auth/invalid-credential":
+          errorMessage = "Invalid credentials provided for Google sign-in";
+          break;
+        case "auth/operation-not-allowed":
+          errorMessage = "Google sign-in is not enabled in Firebase Console";
+          break;
+        case "auth/network-request-failed":
+          errorMessage = "Network error. Please check your internet connection";
+          break;
+        default:
+          errorMessage = error.message || "An unknown error occurred during Google sign-in";
+      }
+
+      showToast(`Error: ${errorMessage}`, 'error');
+    }
+  };
+
+
   return (
-    <div className="bg-amber-50 min-h-screen font-sans">
+    <div className="flex items-center justify-center bg-amber-50 min-h-screen font-sans">
       {/* Main content wrapper */}
       <div className="max-w-md mx-auto p-4">
-        
+
 
         {/* Login/Register Tabs */}
         <div className="bg-white rounded-lg shadow-md overflow-hidden mb-4">
           <div className="flex border-b border-amber-200">
             <button
-              className={`flex-1 py-4 text-center text-sm font-medium ${
-                activeTab === "login"
-                  ? "text-amber-600 border-b-2 border-amber-600"
-                  : "text-gray-600"
-              }`}
+              className={`flex-1 py-4 text-center text-sm font-medium ${activeTab === "login"
+                ? "text-amber-600 border-b-2 border-amber-600"
+                : "text-gray-600"
+                }`}
               onClick={() => setActiveTab("login")}
             >
               Login
             </button>
             <button
-              className={`flex-1 py-4 text-center text-sm font-medium ${
-                activeTab === "register"
-                  ? "text-amber-600 border-b-2 border-amber-600"
-                  : "text-gray-600"
-              }`}
+              className={`flex-1 py-4 text-center text-sm font-medium ${activeTab === "register"
+                ? "text-amber-600 border-b-2 border-amber-600"
+                : "text-gray-600"
+                }`}
               onClick={() => setActiveTab("register")}
             >
               Register
@@ -241,7 +332,7 @@ const LoginRegister = () => {
 
             {/* Social Login Buttons */}
             <div className="space-y-3">
-              <button className="w-full bg-white border border-gray-300 rounded-lg py-3 font-medium text-md text-gray-700 hover:bg-gray-50 transition-colors flex items-center justify-center">
+              <button onClick={handleSigninWithGoogle} className="w-full bg-white border border-gray-300 rounded-lg py-3 font-medium text-md text-gray-700 hover:bg-gray-50 transition-colors flex items-center justify-center">
                 <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24">
                   <path
                     fill="#4285F4"
@@ -262,7 +353,7 @@ const LoginRegister = () => {
                 </svg>
                 Continue with Google
               </button>
-             
+
             </div>
           </div>
         </div>

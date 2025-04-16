@@ -1,40 +1,41 @@
 import React, { useState } from "react";
 import { Mail, ArrowLeft, CheckCircle, RefreshCw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { sendPasswordResetEmail } from "firebase/auth";
+import { auth } from "../../firebase/firebase";
+import { useToast } from "../../contexts/toast/ToastContext";
 
 const ForgotPassword = () => {
+  const { showToast } = useToast();
   const [email, setEmail] = useState("");
   const [step, setStep] = useState("request"); // request, sent, error
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
   const [resendCooldown, setResendCooldown] = useState(0);
-  
+
   const navigate = useNavigate();
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Basic email validation
     if (!email || !email.includes('@') || !email.includes('.')) {
-      setErrorMessage("Please enter a valid email address");
+      showToast("Please enter a valid email address", "error");
       return;
     }
-    
+
     setIsSubmitting(true);
-    setErrorMessage("");
-    
+
     try {
-      // Simulate API call to send reset password email
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      await sendPasswordResetEmail(auth, email);
+
       // Success - move to confirmation step
       setStep("sent");
-      
+
       // Start resend cooldown
       setResendCooldown(60);
       const timer = setInterval(() => {
-        setResendCooldown(prev => {
+        setResendCooldown((prev) => {
           if (prev <= 1) {
             clearInterval(timer);
             return 0;
@@ -42,29 +43,47 @@ const ForgotPassword = () => {
           return prev - 1;
         });
       }, 1000);
-      
     } catch (error) {
-      // Handle error
-      setErrorMessage("Failed to send reset link. Please try again.");
+      let errorMessage = "Failed to send reset link. Please try again.";
+
+      switch (error.code) {
+        case "auth/user-not-found":
+          errorMessage = "No account found with this email address";
+          break;
+        case "auth/invalid-email":
+          errorMessage = "The email address is not valid";
+          break;
+        case "auth/too-many-requests":
+          errorMessage = "Too many attempts. Please wait before trying again";
+          break;
+        case "auth/network-request-failed":
+          errorMessage = "Network error. Please check your connection";
+          break;
+        default:
+          errorMessage = error.message || errorMessage;
+      }
+
+      showToast(`Error: ${errorMessage}`, "error");
     } finally {
       setIsSubmitting(false);
     }
   };
+
 
   // Handle resend reset link
   const handleResend = async () => {
     if (resendCooldown > 0 || isSubmitting) return;
-    
+
     setIsSubmitting(true);
-    
+
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      await sendPasswordResetEmail(auth, email);
+
       // Reset cooldown timer
       setResendCooldown(60);
       const timer = setInterval(() => {
-        setResendCooldown(prev => {
+        setResendCooldown((prev) => {
           if (prev <= 1) {
             clearInterval(timer);
             return 0;
@@ -72,18 +91,38 @@ const ForgotPassword = () => {
           return prev - 1;
         });
       }, 1000);
-      
+
     } catch (error) {
-      setErrorMessage("Failed to resend reset link. Please try again.");
+      let errorMessage = "Failed to resend reset link. Please try again.";
+
+      switch (error.code) {
+        case "auth/user-not-found":
+          errorMessage = "No account found with this email address";
+          break;
+        case "auth/invalid-email":
+          errorMessage = "The email address is not valid";
+          break;
+        case "auth/too-many-requests":
+          errorMessage = "Too many attempts. Please wait before trying again";
+          break;
+        case "auth/network-request-failed":
+          errorMessage = "Network error. Please check your connection";
+          break;
+        default:
+          errorMessage = error.message || errorMessage;
+      }
+
+      showToast(`Error: ${errorMessage}`, "error");
     } finally {
       setIsSubmitting(false);
     }
   };
 
+
   // Handle back button
   const handleBack = () => {
     if (step === "request") {
-      navigate("/login");
+      navigate("/auth");
     } else {
       setStep("request");
     }
@@ -96,14 +135,14 @@ const ForgotPassword = () => {
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
           <div className="p-8">
             {/* Back button */}
-            <button 
+            <button
               onClick={handleBack}
               className="flex items-center text-gray-600 hover:text-amber-700 mb-6 text-sm font-medium"
             >
               <ArrowLeft className="h-4 w-4 mr-1" />
               Back to {step === "request" ? "Login" : "Reset Password"}
             </button>
-            
+
             {step === "request" ? (
               <>
                 <div className="text-center mb-6">
@@ -127,21 +166,12 @@ const ForgotPassword = () => {
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className={`w-full p-3 !pl-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400 ${
-                          errorMessage ? "border-red-300" : "border-amber-200"
-                        }`}
+                        className="w-full p-3 !pl-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400 border-amber-200"
                         placeholder="Enter your email address"
                         required
                       />
                       <Mail className="absolute top-4 left-3 h-5 w-5 text-amber-500" />
                     </div>
-                    
-                    {/* Error message */}
-                    {errorMessage && (
-                      <p className="mt-2 text-sm text-red-600">
-                        {errorMessage}
-                      </p>
-                    )}
                   </div>
 
                   {/* Submit Button */}
@@ -172,7 +202,7 @@ const ForgotPassword = () => {
                     We've sent a password reset link to<br />
                     <span className="font-medium">{email}</span>
                   </p>
-                  
+
                   {/* Resend link */}
                   <div className="mb-6">
                     <p className="text-gray-600 text-sm mb-2">
@@ -187,7 +217,7 @@ const ForgotPassword = () => {
                       {resendCooldown > 0 ? `Resend link in ${resendCooldown}s` : "Resend Link"}
                     </button>
                   </div>
-                  
+
                   {/* Go to login */}
                   <button
                     onClick={() => navigate("/login")}
@@ -200,7 +230,7 @@ const ForgotPassword = () => {
             )}
           </div>
         </div>
-        
+
         {/* Help link */}
         <p className="text-center text-xs text-gray-600 mt-6">
           Having trouble? <a href="/contact" className="text-amber-700 hover:text-amber-900">Contact Support</a>
