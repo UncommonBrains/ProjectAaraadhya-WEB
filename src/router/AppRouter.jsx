@@ -28,12 +28,12 @@ function AppRouter() {
       <Route element={<PublicRoutes />}>
         <Route path="/auth" element={<LoginRegister />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
       </Route>
       <Route path="/verify-email" element={<VerifyEmail />} />
       <Route element={<PrivateRoutes />} >
         <Route path="/" element={<ExploreTemples />} />
         <Route path="/logout" element={<Logout />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/my-temples" element={<MyTemples />} />
         <Route path="/feed" element={<Home />} />
         <Route path="/temple-details" element={<TempleDetails />} />

@@ -5,9 +5,11 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, db } from '../../firebase/firebase';
 import { useAuth } from "../../contexts/auth/AuthContext";
 import { LOGIN } from "../../contexts/auth/authActionTypes";
+import { useToast } from "../../contexts/toast/ToastContext";
 
 const LoginRegister = () => {
   const { dispatch } = useAuth();
+  const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState("login");
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -36,6 +38,10 @@ const LoginRegister = () => {
         const res = await signInWithEmailAndPassword(auth, formData.email, formData.password);
         dispatch({ type: LOGIN, payload: res.user });
       } else {
+        if (formData.password !== formData.confirmPassword) {
+          return showToast("Passwords do not match", "error");
+        }
+
         const res = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
         dispatch({ type: LOGIN, payload: res.user });
         await setDoc(doc(db, "users", res.user.uid), {
@@ -45,8 +51,48 @@ const LoginRegister = () => {
         });
       }
     } catch (error) {
-      console.error("Error during form submission:", error);
-      // Handle errors (display error message, etc.)
+      let errorMessage = "An unexpected error occurred";
+
+      switch (error.code) {
+        // Login-related
+        case "auth/invalid-credential":
+          errorMessage = "Invalid email or password";
+          break;
+        case "auth/user-disabled":
+          errorMessage = "This user account has been disabled";
+          break;
+        case "auth/too-many-requests":
+          errorMessage = "Too many failed attempts. Please try again later";
+          break;
+        case "auth/network-request-failed":
+          errorMessage = "Network error. Please check your internet connection";
+          break;
+
+        // Signup-related
+        case "auth/email-already-in-use":
+          errorMessage = "This email is already registered";
+          break;
+        case "auth/weak-password":
+          errorMessage = "Password should be at least 6 characters";
+          break;
+        case "auth/missing-password":
+          errorMessage = "Please enter your password";
+          break;
+
+        // Shared
+        case "auth/invalid-email":
+          errorMessage = "Invalid email address";
+          break;
+        case "auth/operation-not-allowed":
+          errorMessage = "Email/password accounts are not enabled";
+          break;
+
+        // Fallback
+        default:
+          errorMessage = error.message || "An unknown error occurred";
+      }
+
+      showToast(errorMessage, "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -64,7 +110,7 @@ const LoginRegister = () => {
 
       const user = await getDoc(doc(db, "users", res.user.uid));
 
-      if (!user.exists) {
+      if (!user.exists()) {
         await setDoc(doc(db, "users", res.user.uid), {
           name: res.user.displayName,
           email: res.user.email,
@@ -72,10 +118,38 @@ const LoginRegister = () => {
         });
       }
     } catch (error) {
-      console.error("Google sign-in error:", error);
-      throw error;
+      let errorMessage = "Google sign-in failed";
+
+      switch (error.code) {
+        case "auth/popup-closed-by-user":
+          errorMessage = "Sign-in popup was closed before completing";
+          break;
+        case "auth/cancelled-popup-request":
+          errorMessage = "Sign-in was canceled due to another popup request";
+          break;
+        case "auth/popup-blocked":
+          errorMessage = "Sign-in popup was blocked by the browser";
+          break;
+        case "auth/account-exists-with-different-credential":
+          errorMessage = "An account already exists with a different credential";
+          break;
+        case "auth/invalid-credential":
+          errorMessage = "Invalid credentials provided for Google sign-in";
+          break;
+        case "auth/operation-not-allowed":
+          errorMessage = "Google sign-in is not enabled in Firebase Console";
+          break;
+        case "auth/network-request-failed":
+          errorMessage = "Network error. Please check your internet connection";
+          break;
+        default:
+          errorMessage = error.message || "An unknown error occurred during Google sign-in";
+      }
+
+      showToast(`Error: ${errorMessage}`, 'error');
     }
-  }
+  };
+
 
   return (
     <div className="flex items-center justify-center bg-amber-50 min-h-screen font-sans">

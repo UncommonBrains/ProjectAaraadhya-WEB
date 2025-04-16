@@ -6,16 +6,19 @@ import reportWebVitals from './reportWebVitals';
 import './index.css';
 import './output.css';
 import { AuthProvider } from './contexts/auth/AuthContext';
+import { ToastProvider } from './contexts/toast/ToastContext';
 
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <React.StrictMode>
-        <AuthProvider>
-            <App />
-        </AuthProvider>
-    </React.StrictMode>
+  <React.StrictMode>
+    <ToastProvider>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </ToastProvider>
+  </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

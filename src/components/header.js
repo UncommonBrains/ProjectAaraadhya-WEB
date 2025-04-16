@@ -20,8 +20,15 @@ import {
   Video,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
+import ConfirmationDialog from "./ConfirmationDialog";
+import { useAuth } from "../contexts/auth/AuthContext";
+import { signOut } from "firebase/auth";
+import { LOGOUT } from "../contexts/auth/authActionTypes";
+import { auth } from "../firebase/firebase";
 
 const Header = () => {
+  const { dispatch } = useAuth();
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showMoreDropdown, setShowMoreDropdown] = useState(false);
@@ -88,6 +95,15 @@ const Header = () => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      dispatch({ type: LOGOUT });
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  }
+
   return (
     <>
       <header className="bg-amber-50/100 border-b border-amber-100 p-4 md:grid-cols-4 sticky top-0 z-50">
@@ -114,7 +130,7 @@ const Header = () => {
 
             {/* Navigation - hidden on mobile, visible on desktop */}
             <nav className="hidden md:flex space-x-6 text-sm">
-              
+
 
               <NavLink
                 to="/"
@@ -324,11 +340,10 @@ const Header = () => {
                           </NavLink>
                         </li>
                       </ul>
-
                       <div className="py-1 border-t border-amber-100">
                         <NavLink
-                          to="/logout"
                           className="flex items-center px-4 py-2 text-sm text-red-500 hover:bg-amber-50"
+                          onClick={() => setShowLogoutDialog(true)}
                         >
                           <LogOut className="mr-3 h-4 w-4 text-red-500" />
                           Logout
@@ -342,6 +357,14 @@ const Header = () => {
           </div>
         </div>
       </header>
+
+      <ConfirmationDialog
+        isOpen={showLogoutDialog}
+        title="Logout"
+        message="Are you sure you want to logout ?"
+        onConfirm={handleLogout}
+        onClose={() => setShowLogoutDialog(false)}
+      />
 
       {/* Mobile side menu overlay */}
       {showMobileMenu && (
@@ -658,7 +681,7 @@ const Header = () => {
       {/* Bottom navigation bar for mobile */}
       <div className="fixed md:hidden bottom-0 left-0 right-0 bg-white border-t border-amber-100 z-40">
         <div className="flex justify-between px-2 py-2">
-          
+
 
           <NavLink
             to="/"

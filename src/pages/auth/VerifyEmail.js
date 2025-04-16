@@ -3,9 +3,11 @@ import { Mail, CheckCircle, XCircle, RefreshCw } from "lucide-react";
 import { useAuth } from "../../contexts/auth/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { sendEmailVerification } from "firebase/auth";
+import { useToast } from "../../contexts/toast/ToastContext";
 
 const VerifyEmail = () => {
   const { user, loading } = useAuth();
+  const { showToast } = useToast();
 
   // States for email confirmation process
   const [verificationStatus, setVerificationStatus] = useState("pending"); // pending, success, error
@@ -34,12 +36,13 @@ const VerifyEmail = () => {
 
     try {
       await sendEmailVerification(user);
+      showToast("Verification email sent successfully", "success");
       setVerificationStatus("success");
       setResendCooldown(60); // 60 second cooldown
 
       // Start countdown timer
       const timer = setInterval(() => {
-        setResendCooldown(prev => {
+        setResendCooldown((prev) => {
           if (prev <= 1) {
             clearInterval(timer);
             return 0;
@@ -48,25 +51,71 @@ const VerifyEmail = () => {
         });
       }, 1000);
     } catch (error) {
-      console.error("Error sending verification email:", error);
+      let errorMessage = "Failed to send verification email. Please try again.";
+
+      switch (error.code) {
+        case "auth/too-many-requests":
+          errorMessage = "Too many attempts. Please wait before trying again";
+          break;
+        case "auth/network-request-failed":
+          errorMessage = "Network error. Please check your internet connection";
+          break;
+        case "auth/user-not-found":
+          errorMessage = "User not found. Please sign in again.";
+          break;
+        case "auth/invalid-user-token":
+        case "auth/user-token-expired":
+          errorMessage = "Session expired. Please sign in again.";
+          break;
+        default:
+          errorMessage = error.message || errorMessage;
+      }
+
+      showToast(`Error: ${errorMessage}`, "error");
       setVerificationStatus("error");
     } finally {
       setIsSending(false);
     }
   };
 
+
   const handleVerificationCheck = async () => {
     setIsChecking(true);
+
     try {
       await user.reload();
-      if (user.emailVerified) navigate('/');
+
+      if (user.emailVerified) {
+        showToast("Email verified successfully", "success");
+        navigate('/');
+      } else {
+        showToast("Email is not verified yet. Please check your inbox.", "info");
+      }
     } catch (error) {
-      console.error("Error checking verification status:", error);
+      let errorMessage = "Failed to check verification status. Please try again.";
+
+      switch (error.code) {
+        case "auth/network-request-failed":
+          errorMessage = "Network error. Please check your internet connection.";
+          break;
+        case "auth/user-token-expired":
+        case "auth/invalid-user-token":
+          errorMessage = "Session expired. Please sign in again.";
+          break;
+        case "auth/user-not-found":
+          errorMessage = "User not found. Please sign in again.";
+          break;
+        default:
+          errorMessage = error.message || errorMessage;
+      }
+
+      showToast(`Error: ${errorMessage}`, "error");
       setVerificationStatus("error");
     } finally {
       setIsChecking(false);
     }
   };
+
 
   // Render different content based on verification status
   const renderContent = () => {

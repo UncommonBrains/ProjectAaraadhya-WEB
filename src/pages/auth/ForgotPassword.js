@@ -3,12 +3,13 @@ import { Mail, ArrowLeft, CheckCircle, RefreshCw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../../firebase/firebase";
+import { useToast } from "../../contexts/toast/ToastContext";
 
 const ForgotPassword = () => {
+  const { showToast } = useToast();
   const [email, setEmail] = useState("");
   const [step, setStep] = useState("request"); // request, sent, error
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
   const [resendCooldown, setResendCooldown] = useState(0);
 
   const navigate = useNavigate();
@@ -19,12 +20,11 @@ const ForgotPassword = () => {
 
     // Basic email validation
     if (!email || !email.includes('@') || !email.includes('.')) {
-      setErrorMessage("Please enter a valid email address");
+      showToast("Please enter a valid email address", "error");
       return;
     }
 
     setIsSubmitting(true);
-    setErrorMessage("");
 
     try {
       await sendPasswordResetEmail(auth, email);
@@ -35,7 +35,7 @@ const ForgotPassword = () => {
       // Start resend cooldown
       setResendCooldown(60);
       const timer = setInterval(() => {
-        setResendCooldown(prev => {
+        setResendCooldown((prev) => {
           if (prev <= 1) {
             clearInterval(timer);
             return 0;
@@ -43,14 +43,32 @@ const ForgotPassword = () => {
           return prev - 1;
         });
       }, 1000);
-
     } catch (error) {
-      // Handle error
-      setErrorMessage("Failed to send reset link. Please try again.");
+      let errorMessage = "Failed to send reset link. Please try again.";
+
+      switch (error.code) {
+        case "auth/user-not-found":
+          errorMessage = "No account found with this email address";
+          break;
+        case "auth/invalid-email":
+          errorMessage = "The email address is not valid";
+          break;
+        case "auth/too-many-requests":
+          errorMessage = "Too many attempts. Please wait before trying again";
+          break;
+        case "auth/network-request-failed":
+          errorMessage = "Network error. Please check your connection";
+          break;
+        default:
+          errorMessage = error.message || errorMessage;
+      }
+
+      showToast(`Error: ${errorMessage}`, "error");
     } finally {
       setIsSubmitting(false);
     }
   };
+
 
   // Handle resend reset link
   const handleResend = async () => {
@@ -60,12 +78,12 @@ const ForgotPassword = () => {
 
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await sendPasswordResetEmail(auth, email);
 
       // Reset cooldown timer
       setResendCooldown(60);
       const timer = setInterval(() => {
-        setResendCooldown(prev => {
+        setResendCooldown((prev) => {
           if (prev <= 1) {
             clearInterval(timer);
             return 0;
@@ -75,11 +93,31 @@ const ForgotPassword = () => {
       }, 1000);
 
     } catch (error) {
-      setErrorMessage("Failed to resend reset link. Please try again.");
+      let errorMessage = "Failed to resend reset link. Please try again.";
+
+      switch (error.code) {
+        case "auth/user-not-found":
+          errorMessage = "No account found with this email address";
+          break;
+        case "auth/invalid-email":
+          errorMessage = "The email address is not valid";
+          break;
+        case "auth/too-many-requests":
+          errorMessage = "Too many attempts. Please wait before trying again";
+          break;
+        case "auth/network-request-failed":
+          errorMessage = "Network error. Please check your connection";
+          break;
+        default:
+          errorMessage = error.message || errorMessage;
+      }
+
+      showToast(`Error: ${errorMessage}`, "error");
     } finally {
       setIsSubmitting(false);
     }
   };
+
 
   // Handle back button
   const handleBack = () => {
@@ -128,20 +166,12 @@ const ForgotPassword = () => {
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className={`w-full p-3 !pl-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400 ${errorMessage ? "border-red-300" : "border-amber-200"
-                          }`}
+                        className="w-full p-3 !pl-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400 border-amber-200"
                         placeholder="Enter your email address"
                         required
                       />
                       <Mail className="absolute top-4 left-3 h-5 w-5 text-amber-500" />
                     </div>
-
-                    {/* Error message */}
-                    {errorMessage && (
-                      <p className="mt-2 text-sm text-red-600">
-                        {errorMessage}
-                      </p>
-                    )}
                   </div>
 
                   {/* Submit Button */}

@@ -13,12 +13,12 @@ const toastStyles = {
   info: 'border-l-4 border-blue-500 bg-blue-50',
 };
 
-const Toast = ({ 
-  message, 
-  type = 'info', 
-  isVisible, 
+const Toast = ({
+  message,
+  type = 'info',
+  isVisible,
   onClose,
-  duration = 3000 
+  duration = 5000
 }) => {
   useEffect(() => {
     if (isVisible && duration) {
@@ -32,9 +32,9 @@ const Toast = ({
   if (!isVisible) return null;
 
   return (
-    <div className="fixed z-50 p-4 
-      md:bottom-4 md:right-4 
-      bottom-0 left-0 md:left-auto 
+    <div className="fixed z-50 p-4
+      md:bottom-4 md:right-4
+      bottom-0 left-0 md:left-auto
       md:w-auto w-full
       animate-fade-in">
       <div className={`
@@ -47,7 +47,7 @@ const Toast = ({
           {toastIcons[type]}
           <p className="text-gray-700">{message}</p>
         </div>
-        <button 
+        <button
           onClick={onClose}
           className="text-gray-400 hover:text-gray-600"
         >

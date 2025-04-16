@@ -1,13 +1,13 @@
 import React from 'react';
 
-const ConfirmationDialog = ({ 
-  isOpen, 
-  onClose, 
-  onConfirm, 
-  title, 
+const ConfirmationDialog = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  title,
   message,
   confirmText = "Confirm",
-  cancelText = "Cancel" 
+  cancelText = "Cancel"
 }) => {
   if (!isOpen) return null;
 
@@ -16,7 +16,7 @@ const ConfirmationDialog = ({
       <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4 shadow-xl border border-amber-100">
         <h3 className="text-xl font-serif text-amber-900 mb-2">{title}</h3>
         <p className="text-gray-600 mb-6">{message}</p>
-        
+
         <div className="flex justify-end space-x-3">
           <button
             onClick={onClose}
@@ -37,4 +37,3 @@ const ConfirmationDialog = ({
 };
 
 export default ConfirmationDialog;
-
