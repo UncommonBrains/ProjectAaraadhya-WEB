@@ -38,36 +38,3 @@ const ConfirmationDialog = ({
 
 export default ConfirmationDialog;
 
-// How to use
-// import { useState } from 'react';
-// import ConfirmationDialog from '../components/ConfirmationDialog';
-
-// const YourComponent = () => {
-//   const [showDialog, setShowDialog] = useState(false);
-
-  // const handleConfirm = () => {
-    // Handle confirmation action
-  //   setShowDialog(false);
-  // };
-
-//   return (
-//     <>
-//       <button 
-//         onClick={() => setShowDialog(true)}
-//         className="bg-orange-500 text-white px-4 py-2 rounded-md"
-//       >
-//         Delete Temple
-//       </button>
-
-//       <ConfirmationDialog
-//         isOpen={showDialog}
-//         onClose={() => setShowDialog(false)}
-//         onConfirm={handleConfirm}
-//         title="Delete Temple"
-//         message="Are you sure you want to remove this temple from your list? This action cannot be undone."
-//         confirmText="Delete"
-//         cancelText="Cancel"
-//       />
-//     </>
-//   );
-// };

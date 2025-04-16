@@ -12,17 +12,3 @@ const LoadingSpinner = ({ message = "Loading..." }) => {
 export default LoadingSpinner;
 
 
-// How to implement it into anther page
-// import LoadingSpinner from '../components/LoadingSpinner';
-
-// Inside your component:
-// const YourComponent = () => {
-//   const [isLoading, setIsLoading] = useState(true);
-
-  // return (
-  //   <>
-  //     {isLoading && <LoadingSpinner />}
-      {/* rest of your component */}
-//     </>
-//   );
-// };
