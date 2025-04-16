@@ -14,7 +14,7 @@ const ResetPassword = () => {
   const [otp, setOtp] = useState("");
   const [isOtpVerified, setIsOtpVerified] = useState(false);
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
-  
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -22,10 +22,10 @@ const ResetPassword = () => {
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const tokenParam = searchParams.get("token");
-    
+
     if (tokenParam) {
       setToken(tokenParam);
-      
+
       // Validate token (simulated)
       validateToken(tokenParam);
     } else {
@@ -39,7 +39,7 @@ const ResetPassword = () => {
     try {
       // In a real app, you would call your API to validate the token
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // For demo purposes, consider all tokens valid except "invalid"
       if (tokenToValidate === "invalid") {
         setIsTokenValid(false);
@@ -56,21 +56,21 @@ const ResetPassword = () => {
   // Handle OTP verification
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    
+
     // Basic validation
     if (otp.length !== 6 || !/^\d+$/.test(otp)) {
       setErrorMessage("Please enter a valid 6-digit OTP");
       return;
     }
-    
+
     setIsVerifyingOtp(true);
     setErrorMessage("");
-    
+
     try {
       // Simulate API call to verify OTP
       // In a real app, you would send both the token and OTP to verify
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // For demo purposes, consider all OTPs valid except "000000"
       if (otp === "000000") {
         setErrorMessage("Invalid OTP. Please check your email and try again.");
@@ -89,26 +89,26 @@ const ResetPassword = () => {
   // Handle password reset form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Basic validation
     if (password.length < 8) {
       setErrorMessage("Password must be at least 8 characters long");
       return;
     }
-    
+
     if (password !== confirmPassword) {
       setErrorMessage("Passwords do not match");
       return;
     }
-    
+
     setIsSubmitting(true);
     setErrorMessage("");
-    
+
     try {
       // Simulate API call to reset password
       // In a real app, you would send the token along with the new password
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
+
       console.log(`Password reset successfully with token: ${token}`);
       // Success
       setIsSuccess(true);
@@ -166,21 +166,21 @@ const ResetPassword = () => {
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
           <div className="p-8">
             {/* Back button */}
-            <button 
+            <button
               onClick={() => navigate("/login")}
               className="flex items-center text-gray-600 hover:text-amber-700 mb-6 text-sm font-medium"
             >
               <ArrowLeft className="h-4 w-4 mr-1" />
               Back to Login
             </button>
-            
+
             <div className="text-center mb-6">
               <div className="mx-auto w-16 h-16 mb-6 flex items-center justify-center rounded-full bg-amber-100">
                 <Lock className="h-10 w-10 text-amber-500" />
               </div>
               <h3 className="text-xl font-semibold text-gray-800 mb-2">Reset Your Password</h3>
               <p className="text-gray-600">
-                {isOtpVerified 
+                {isOtpVerified
                   ? "Please enter your new password below."
                   : "Enter the OTP sent to your email address."
                 }
@@ -219,7 +219,7 @@ const ResetPassword = () => {
                         />
                         <Mail className="absolute top-4 left-3 h-5 w-5 text-amber-500" />
                       </div>
-                      
+
                       {/* Error message */}
                       {errorMessage && (
                         <p className="mt-2 text-sm text-red-600">
@@ -243,10 +243,10 @@ const ResetPassword = () => {
                         "Verify OTP"
                       )}
                     </button>
-                    
+
                     {/* Resend OTP link */}
                     <div className="text-center mt-4">
-                      <button 
+                      <button
                         type="button"
                         className="text-amber-700 hover:text-amber-900 text-sm"
                         onClick={handleResendOtp}
@@ -303,7 +303,7 @@ const ResetPassword = () => {
                         />
                         <Lock className="absolute top-4 left-3 h-5 w-5 text-amber-500" />
                       </div>
-                      
+
                       {/* Error message */}
                       {errorMessage && (
                         <p className="mt-2 text-sm text-red-600">
@@ -333,7 +333,7 @@ const ResetPassword = () => {
             )}
           </div>
         </div>
-        
+
         {/* Help link */}
         <p className="text-center text-xs text-gray-600 mt-6">
           Having trouble? <a href="/contact" className="text-amber-700 hover:text-amber-900">Contact Support</a>
