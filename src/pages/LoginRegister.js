@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Mail, Lock, User, Phone, Eye, EyeOff } from "lucide-react";
-import { useNavigate } from "react-router-dom"; // Import for navigation
+// import { useNavigate } from "react-router-dom"; // Import for navigation
 
 const LoginRegister = () => {
   const [activeTab, setActiveTab] = useState("login");
@@ -12,10 +12,10 @@ const LoginRegister = () => {
     phone: "",
     confirmPassword: "",
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // const [isSubmitting, setIsSubmitting] = useState(false);
   
   // For navigation after form submission
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
