@@ -28,6 +28,23 @@ const VerifyEmail = () => {
     }
   }, [user, loading, navigate]);
 
+  useEffect(() => {
+    let interval;
+    if (verificationStatus === "success") {
+      if (user && !user.emailVerified) {
+        interval = setInterval(async () => {
+          await user.reload();
+          if (user.emailVerified) {
+            navigate('/');
+            showToast("Email verified successfully", "success");
+          }
+        }, 5000); // check every 5 seconds
+      }
+    }
+
+    return () => clearInterval(interval);
+  }, [user, verificationStatus, showToast, navigate]);
+
   // Handle send verification email
   const handleSendEmail = async () => {
     if (resendCooldown > 0 || isSending) return;
@@ -128,7 +145,7 @@ const VerifyEmail = () => {
             </div>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">Email Sent!</h3>
             <p className="text-gray-600 mb-6">
-              We've sent a verification email to <b>{user?.email}</b>. Please check your inbox and click the link to verify your email.
+              We've sent a verification email to <b>{user?.email}</b>. Please check your inbox and click the link to verify your email. after verification you will be redirected to home page. if not redirected click the Check Status button below.
             </p>
             <d class="flex">
               <button

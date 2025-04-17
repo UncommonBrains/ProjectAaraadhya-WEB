@@ -21,33 +21,38 @@ import DivineSeva from "../pages/DivineSeva";
 import LiveEvents from "../pages/LiveEvents";
 import PrivateRoutes from './PrivateRoutes';
 import PublicRoutes from './PublicRoutes';
+import AuthRoutes from './AuthRoutes';
+import NotFound from '../pages/NotFound';
 
 function AppRouter() {
   return (
     <Routes>
-      <Route element={<PublicRoutes />}>
+      <Route element={<AuthRoutes />}>
         <Route path="/auth" element={<LoginRegister />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
       </Route>
-      <Route path="/verify-email" element={<VerifyEmail />} />
-      <Route element={<PrivateRoutes />} >
+      <Route element={<PublicRoutes />}>
         <Route path="/" element={<ExploreTemples />} />
+        <Route path="/upcoming-poojas" element={<UpcomingPoojas />} />
+        <Route path="/feed" element={<Home />} />
+        <Route path="/divine-seva" element={<DivineSeva />} />
+        <Route path="/devotee-store" element={<DevoteeStore />} />
+        <Route path="/astrology" element={<Astrology />} />
+      </Route>
+      <Route element={<PrivateRoutes />} >
         <Route path="/logout" element={<Logout />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/my-temples" element={<MyTemples />} />
-        <Route path="/feed" element={<Home />} />
         <Route path="/temple-details" element={<TempleDetails />} />
         <Route path="/temple-details/pooja-booking" element={<PoojaBooking />} />
-        <Route path="/upcoming-poojas" element={<UpcomingPoojas />} />
         <Route path="/temple-store" element={<TempleStore />} />
-        <Route path="/devotee-store" element={<DevoteeStore />} />
         <Route path="/community" element={<Community />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/my-bookings" element={<MyBookings />} />
-        <Route path="/astrology" element={<Astrology />} />
-        <Route path="/divine-seva" element={<DivineSeva />} />
         <Route path="/live-events" element={<LiveEvents />} />
       </Route>
+      <Route path="/verify-email" element={<VerifyEmail />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
