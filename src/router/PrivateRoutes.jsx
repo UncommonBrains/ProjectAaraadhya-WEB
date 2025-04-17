@@ -1,3 +1,4 @@
+import React from 'react';
 import { Outlet, Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/auth/AuthContext";
 import Header from "../components/header";

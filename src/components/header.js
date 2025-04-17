@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { MdTempleHindu } from "react-icons/md";
 import { AiFillHeart } from "react-icons/ai";
 import { FaPeopleGroup } from "react-icons/fa6";
@@ -25,9 +25,11 @@ import { useAuth } from "../contexts/auth/AuthContext";
 import { signOut } from "firebase/auth";
 import { LOGOUT } from "../contexts/auth/authActionTypes";
 import { auth } from "../firebase/firebase";
+import { useToast } from "../contexts/toast/ToastContext";
 
 const Header = () => {
-  const { dispatch } = useAuth();
+  const { user, dispatch } = useAuth();
+  const { showToast } = useToast();
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -37,6 +39,7 @@ const Header = () => {
   const mobileMenuRef = useRef(null);
   const moreDropdownRef = useRef(null);
   const mobileMoreMenuRef = useRef(null);
+  const navigate = useNavigate();
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -97,12 +100,31 @@ const Header = () => {
 
   const handleLogout = async () => {
     try {
+      if (!user) {
+        return showToast("You are not logged in.");
+      }
+
       await signOut(auth);
       dispatch({ type: LOGOUT });
+      showToast("You have been logged out.", "success");
+      navigate("/auth");
     } catch (error) {
-      console.error("Error during logout:", error);
+      let errorMessage = "Something went wrong during logout. Please try again.";
+
+      switch (error.code) {
+        case "auth/network-request-failed":
+          errorMessage = "Network error. Please check your internet connection.";
+          break;
+        default:
+          errorMessage = error.message || errorMessage;
+      }
+
+      showToast(errorMessage, "error");
+    } finally {
+      setShowLogoutDialog(false);
     }
-  }
+  };
+
 
   return (
     <>
