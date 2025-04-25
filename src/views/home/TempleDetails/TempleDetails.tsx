@@ -1,0 +1,523 @@
+import { useState } from 'react';
+import {
+  ChevronLeft,
+  MapPin,
+  Clock,
+  Star,
+  Heart,
+  Share,
+  Calendar,
+  Info,
+  Image,
+  MessageSquare,
+  Phone,
+  Globe,
+  Check,
+  Gift,
+} from 'lucide-react';
+import temples from '../../../mock/data/temples';
+import FloatingActionButton from '../../../components/common/Button/FloatingActionButton';
+import { NavLink } from 'react-router-dom';
+
+const TempleDetails = () => {
+  // In a real app, you would get the temple ID from URL params
+  // Here we'll just use the first temple from the data for demonstration
+  const temple = temples[0];
+
+  const [activeTab, setActiveTab] = useState('about');
+  const [isFavorite, setIsFavorite] = useState(temple.favorite || false);
+
+  // Render stars based on rating
+  const renderRating = (rating: number) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+
+    for (let i = 0; i < 5; i++) {
+      if (i < fullStars) {
+        stars.push(<Star key={i} className="h-4 w-4 fill-current text-amber-500" />);
+      } else if (i === fullStars && hasHalfStar) {
+        stars.push(<Star key={i} className="h-4 w-4 fill-current text-amber-300" />);
+      } else {
+        stars.push(<Star key={i} className="h-4 w-4 fill-current text-amber-200" />);
+      }
+    }
+
+    return stars;
+  };
+
+  // Handle navigation to pooja booking page
+  const navigateToBooking = () => {
+    // In a real app, this would use router navigation
+    // For now we'll just log the action
+    console.log('Navigating to pooja booking page');
+    alert('Navigating to pooja booking page');
+    // Example: router.push(`/temples/${temple.id}/book-pooja`);
+  };
+
+  return (
+    <div className="min-h-screen bg-amber-50 font-sans">
+      {/* Header with back button */}
+      <header className="sticky top-0 z-10 bg-white p-4 shadow-sm">
+        <div className="container mx-auto flex items-center justify-between">
+          <NavLink to="/" className="flex items-center text-amber-900">
+            <ChevronLeft className="mr-2 h-5 w-5" />
+            <span>Back</span>
+          </NavLink>
+          <div className="flex space-x-3">
+            <button
+              className="rounded-full bg-amber-100 p-2 text-amber-900"
+              onClick={() => setIsFavorite(!isFavorite)}
+            >
+              <Heart className={`h-5 w-5 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`} />
+            </button>
+            <button className="rounded-full bg-amber-100 p-2 text-amber-900">
+              <Share className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Main content wrapper with max-width for larger screens */}
+      <div className="mx-auto max-w-4xl">
+        {/* Hero Image Section */}
+        <div
+          className="relative h-80 overflow-hidden bg-cover bg-center md:h-80"
+          style={{ backgroundImage: `url(${temple.backgroundImage})` }}
+        >
+          <div className="absolute right-0 bottom-0 left-0 bg-gradient-to-t from-amber-950/90 to-transparent p-6">
+            <div className="container mx-auto">
+              <div className="flex flex-col text-white">
+                <h1 className="mb-1 font-serif text-2xl md:text-3xl">{temple.name}</h1>
+                <div className="mb-2 flex items-center">
+                  <MapPin className="mr-1 h-4 w-4" />
+                  <span className="text-sm md:text-base">{temple.location}</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="mr-3 flex">{renderRating(temple.rating)}</div>
+                  <span className="text-sm md:text-base">
+                    {temple.rating} ({temple.reviews} reviews)
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Info Section */}
+        <div className="bg-white shadow-sm">
+          <div className="container mx-auto p-4">
+            <div className="grid grid-cols-3 gap-4">
+              <div className="flex flex-col items-center rounded bg-amber-50 p-3">
+                <Clock className="mb-1 h-5 w-5 text-orange-500" />
+                <span className="text-xs text-gray-600 md:text-sm">Morning Hours:</span>
+                <span className="text-sm font-medium text-amber-900 md:text-base">
+                  {temple.morhours}
+                </span>
+              </div>
+              <div className="flex flex-col items-center rounded bg-amber-50 p-3">
+                <Calendar className="mb-1 h-5 w-5 text-orange-500" />
+                <span className="text-xs text-gray-600 md:text-sm">Evening Hours: </span>
+
+                <span className="text-sm font-medium text-amber-900 md:text-base">
+                  {temple.evehours}
+                </span>
+              </div>
+              <div className="flex flex-col items-center rounded bg-amber-50 p-3">
+                <Globe className="mb-1 h-5 w-5 text-orange-500" />
+                <span className="text-xs text-gray-600 md:text-sm">Main Deity</span>
+                <span className="text-sm font-medium text-amber-900 md:text-base">
+                  {temple.category}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="container mx-auto p-4">
+          <div className="grid grid-cols-2 gap-3 md:gap-4">
+            {/* <button className="bg-orange-500 text-white rounded-lg py-3 flex items-center justify-center font-medium text-xs md:text-sm">
+              <Camera className="h-5 w-5 mr-1" />
+              Virtual Tour
+            </button> */}
+            <button
+              className="text-md md:text-md flex items-center justify-center rounded-lg bg-amber-600 py-3 font-medium text-white"
+              onClick={() => (window.location.href = '/temple-details/pooja-booking')}
+            >
+              <Gift className="mr-1 h-5 w-5" />
+              Book Pooja
+            </button>
+
+            <button className="text-md md:text-md flex items-center justify-center rounded-lg bg-amber-100 py-3 font-medium text-amber-900">
+              <Phone className="mr-1 h-5 w-5" />
+              Contact
+            </button>
+          </div>
+        </div>
+
+        {/* Tabs Navigation */}
+        <div className="container mx-auto px-4">
+          <div className="flex overflow-x-auto border-b border-amber-200 md:justify-center md:overflow-visible">
+            {['about', 'photos', 'events', 'reviews', 'nearby'].map((tab) => (
+              <button
+                key={tab}
+                className={`px-4 py-3 text-sm font-medium whitespace-nowrap ${
+                  activeTab === tab
+                    ? 'border-b-2 border-orange-500 text-orange-500'
+                    : 'text-gray-600'
+                }`}
+                onClick={() => setActiveTab(tab)}
+              >
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Tab Content */}
+        <div className="container mx-auto p-4">
+          {activeTab === 'about' && (
+            <div className="space-y-6">
+              {/* Description */}
+              <div className="rounded-lg border border-amber-100 bg-white p-4 shadow-sm md:p-6">
+                <h3 className="mb-3 font-serif text-lg text-amber-900 md:text-xl">
+                  About the Temple
+                </h3>
+                <p className="text-sm leading-relaxed text-gray-700 md:text-base">
+                  {temple.description ||
+                    `This magnificent temple dedicated to ${temple.category} is one of the most revered shrines in ${temple.location}. The temple showcases remarkable architecture with intricate carvings and sculptures that depict various mythological stories and deities.`}
+                </p>
+                <div className="mt-4 cursor-pointer text-sm font-medium text-orange-500">
+                  Read More
+                </div>
+              </div>
+
+              {/* Pooja Services */}
+              <div className="rounded-lg border border-amber-100 bg-white p-4 shadow-sm md:p-6">
+                <div className="mb-3 flex items-center justify-between">
+                  <h3 className="font-serif text-lg text-amber-900 md:text-xl">
+                    Available Pooja Services
+                  </h3>
+                  <button
+                    onClick={navigateToBooking}
+                    className="text-sm font-medium text-orange-500"
+                  >
+                    View All
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
+                  {[
+                    'Daily Archana',
+                    'Abhishekam',
+                    'Special Festival Poojas',
+                    'Family Blessing',
+                  ].map((pooja, index) => (
+                    <div key={index} className="flex rounded bg-amber-50 p-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-orange-500">
+                        <Gift className="h-5 w-5" />
+                      </div>
+                      <div className="ml-3">
+                        <h4 className="text-sm font-medium text-amber-900">{pooja}</h4>
+                        <p className="text-xs text-gray-600">
+                          From ₹{[101, 501, 1001, 2001][index]}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <button
+                  className="mt-4 flex w-full items-center justify-center rounded-lg bg-amber-600 px-4 py-3 text-sm font-medium text-white md:text-base"
+                  onClick={navigateToBooking}
+                >
+                  <Gift className="mr-2 h-4 w-4" />
+                  Book Pooja Service
+                </button>
+              </div>
+
+              {/* Features & Amenities */}
+              <div className="rounded-lg border border-amber-100 bg-white p-4 shadow-sm md:p-6">
+                <h3 className="mb-3 font-serif text-lg text-amber-900 md:text-xl">
+                  Features & Amenities
+                </h3>
+                <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
+                  {temple.amenities &&
+                    temple.amenities.map((amenity, index) => (
+                      <div key={index} className="flex items-center rounded bg-amber-50 p-2">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-100 text-orange-500">
+                          <Check className="h-4 w-4" />
+                        </div>
+                        <span className="ml-2 text-sm text-gray-700">{amenity}</span>
+                      </div>
+                    ))}
+                </div>
+              </div>
+
+              {/* History & Significance */}
+              <div className="rounded-lg border border-amber-100 bg-white p-4 shadow-sm md:p-6">
+                <h3 className="mb-3 font-serif text-lg text-amber-900 md:text-xl">
+                  History & Significance
+                </h3>
+                <p className="text-sm leading-relaxed text-gray-700 md:text-base">
+                  The temple has a rich history dating back to ancient times. It was built during
+                  the reign of a prominent dynasty and has withstood the test of time. The temple
+                  holds immense religious and cultural significance for devotees who visit from all
+                  parts of the country.
+                </p>
+                <div className="mt-4 cursor-pointer text-sm font-medium text-orange-500">
+                  Read More
+                </div>
+              </div>
+
+              {/* Location & How to Reach */}
+              <div className="rounded-lg border border-amber-100 bg-white p-4 shadow-sm md:p-6">
+                <h3 className="mb-3 font-serif text-lg text-amber-900 md:text-xl">
+                  Location & How to Reach
+                </h3>
+                <div className="relative mb-3 flex h-48 items-center justify-center overflow-hidden rounded-lg bg-amber-100 md:h-64">
+                  <div className="absolute inset-0 bg-amber-200/30"></div>
+                  <MapPin className="h-8 w-8 text-orange-500" />
+                </div>
+                <p className="text-sm leading-relaxed text-gray-700 md:text-base">
+                  The temple is located in {temple.location}. It is easily accessible by road and is
+                  about {temple.distance} from the city center. Local transport options include
+                  buses, taxis, and auto-rickshaws.
+                </p>
+                <button className="mt-3 w-full rounded bg-amber-100 px-4 py-2 text-sm font-medium text-amber-900 md:text-base">
+                  Get Directions
+                </button>
+              </div>
+
+              {/* Visiting Tips */}
+              <div className="rounded-lg border border-amber-100 bg-white p-4 shadow-sm md:p-6">
+                <h3 className="mb-3 font-serif text-lg text-amber-900 md:text-xl">Visiting Tips</h3>
+                <ul className="space-y-2 text-sm text-gray-700 md:space-y-3 md:text-base">
+                  <li className="flex items-start">
+                    <Info className="mt-0.5 mr-2 h-4 w-4 text-orange-500" />
+                    <span>
+                      Best time to visit is early morning or evening for peaceful darshan.
+                    </span>
+                  </li>
+                  <li className="flex items-start">
+                    <Info className="mt-0.5 mr-2 h-4 w-4 text-orange-500" />
+                    <span>Dress modestly and follow temple customs and traditions.</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Info className="mt-0.5 mr-2 h-4 w-4 text-orange-500" />
+                    <span>Photography might be restricted in certain areas of the temple.</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Info className="mt-0.5 mr-2 h-4 w-4 text-orange-500" />
+                    <span>
+                      Special prayers and rituals can be arranged by contacting the temple office.
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'photos' && (
+            <div className="space-y-4">
+              <h3 className="mb-2 font-serif text-lg text-amber-900 md:text-xl">Temple Gallery</h3>
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="relative flex h-40 items-center justify-center rounded-lg bg-amber-100 md:h-52"
+                  >
+                    <Image className="h-8 w-8 text-orange-500" />
+                  </div>
+                ))}
+              </div>
+              <button className="mt-3 flex w-full items-center justify-center rounded-lg bg-amber-100 px-4 py-3 text-sm font-medium text-amber-900 md:text-base">
+                <Image className="mr-2 h-4 w-4" />
+                View All Photos
+              </button>
+            </div>
+          )}
+
+          {activeTab === 'events' && (
+            <div className="space-y-4">
+              <h3 className="mb-2 font-serif text-lg text-amber-900 md:text-xl">
+                Upcoming Events & Festivals
+              </h3>
+              <div className="space-y-3 md:space-y-4">
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="rounded-lg border border-amber-100 bg-white p-3 shadow-sm md:p-4"
+                  >
+                    <div className="flex">
+                      <div className="flex min-w-16 flex-col items-center justify-center rounded-lg bg-orange-100 p-3 text-orange-500 md:min-w-20">
+                        <span className="text-sm font-bold md:text-base">
+                          {['APR', 'MAY', 'JUN'][index]}
+                        </span>
+                        <span className="text-lg font-bold md:text-xl">{[15, 24, 8][index]}</span>
+                      </div>
+                      <div className="ml-3 md:ml-4">
+                        <h4 className="text-sm font-medium text-amber-900 md:text-base">
+                          {
+                            [
+                              'Annual Temple Festival',
+                              'Chariot Procession',
+                              'Special Puja Ceremony',
+                            ][index]
+                          }
+                        </h4>
+                        <p className="mt-1 text-xs text-gray-600 md:text-sm">
+                          {
+                            [
+                              'A week-long celebration with cultural programs and special rituals.',
+                              'The grand chariot procession around the temple complex.',
+                              'Special prayers conducted by the head priest.',
+                            ][index]
+                          }
+                        </p>
+                        <div className="mt-2 flex items-center text-xs text-gray-600 md:text-sm">
+                          <Clock className="mr-1 h-3 w-3" />
+                          <span>
+                            {
+                              ['5:00 AM - 10:00 PM', '6:00 AM - 9:00 PM', '7:00 AM - 8:00 PM'][
+                                index
+                              ]
+                            }
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <button className="mt-3 flex w-full items-center justify-center rounded-lg bg-amber-100 px-4 py-3 text-sm font-medium text-amber-900 md:text-base">
+                <Calendar className="mr-2 h-4 w-4" />
+                View All Events
+              </button>
+            </div>
+          )}
+
+          {activeTab === 'reviews' && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-serif text-lg text-amber-900 md:text-xl">Reviews & Ratings</h3>
+                <button className="text-sm font-medium text-orange-500 md:text-base">
+                  Write a Review
+                </button>
+              </div>
+
+              <div className="rounded-lg border border-amber-100 bg-white p-4 shadow-sm md:p-6">
+                <div className="mb-4 flex items-center justify-between">
+                  <div>
+                    <div className="flex items-center">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-orange-500">
+                        <span className="font-medium">D</span>
+                      </div>
+                      <div className="ml-3">
+                        <h4 className="text-sm font-medium text-amber-900 md:text-base">
+                          Devesh Singh
+                        </h4>
+                        <p className="text-xs text-gray-600 md:text-sm">Visited 2 months ago</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex">{renderRating(4.5)}</div>
+                </div>
+                <p className="mb-3 text-sm text-gray-700 md:text-base">
+                  This temple is a must-visit for anyone interested in spiritual heritage. The
+                  architecture is breathtaking and the ambience is so peaceful. I spent hours here
+                  just taking in the beauty and serenity.
+                </p>
+                <div className="flex items-center justify-between text-xs md:text-sm">
+                  <div className="flex items-center text-gray-600">
+                    <Heart className="mr-1 h-3 w-3" />
+                    <span>24 Helpful</span>
+                  </div>
+                  <button className="text-orange-500">Reply</button>
+                </div>
+              </div>
+
+              <div className="rounded-lg border border-amber-100 bg-white p-4 shadow-sm md:p-6">
+                <div className="mb-4 flex items-center justify-between">
+                  <div>
+                    <div className="flex items-center">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-orange-500">
+                        <span className="font-medium">R</span>
+                      </div>
+                      <div className="ml-3">
+                        <h4 className="text-sm font-medium text-amber-900 md:text-base">
+                          Radha Kumari
+                        </h4>
+                        <p className="text-xs text-gray-600 md:text-sm">Visited 3 weeks ago</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex">{renderRating(5)}</div>
+                </div>
+                <p className="mb-3 text-sm text-gray-700 md:text-base">
+                  The experience was divine! The temple is well-maintained and the priests were very
+                  helpful. I participated in the evening aarti which was a soul-stirring experience.
+                  Highly recommend visiting during festival time.
+                </p>
+                <div className="flex items-center justify-between text-xs md:text-sm">
+                  <div className="flex items-center text-gray-600">
+                    <Heart className="mr-1 h-3 w-3" />
+                    <span>18 Helpful</span>
+                  </div>
+                  <button className="text-orange-500">Reply</button>
+                </div>
+              </div>
+
+              <button className="mt-3 flex w-full items-center justify-center rounded-lg bg-amber-100 px-4 py-3 text-sm font-medium text-amber-900 md:text-base">
+                <MessageSquare className="mr-2 h-4 w-4" />
+                Read All Reviews
+              </button>
+            </div>
+          )}
+
+          {activeTab === 'nearby' && (
+            <div className="space-y-4">
+              <h3 className="mb-2 font-serif text-lg text-amber-900 md:text-xl">
+                Nearby Attractions
+              </h3>
+              <div className="space-y-3 md:space-y-4">
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="flex overflow-hidden rounded-lg border border-amber-100 bg-white shadow-sm"
+                  >
+                    <div className="flex w-20 items-center justify-center bg-amber-100 md:w-32">
+                      <Image className="h-8 w-8 text-orange-500" />
+                    </div>
+                    <div className="flex-1 p-3 md:p-4">
+                      <h4 className="text-sm font-medium text-amber-900 md:text-base">
+                        {['Sacred Lake', 'Ancient Fort', 'Heritage Museum'][index]}
+                      </h4>
+                      <div className="mt-1 flex items-center text-xs text-gray-600 md:text-sm">
+                        <MapPin className="mr-1 h-3 w-3" />
+                        <span>{[2, 5, 3.5][index]} km away</span>
+                      </div>
+                      <div className="mt-2">
+                        <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-800 md:text-sm">
+                          {['Natural', 'Historical', 'Cultural'][index]}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <button className="mt-3 flex w-full items-center justify-center rounded-lg bg-amber-100 px-4 py-3 text-sm font-medium text-amber-900 md:text-base">
+                <MapPin className="mr-2 h-4 w-4" />
+                View All Nearby Places
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Floating Action Button - Adjusted position for mobile */}
+      <FloatingActionButton />
+    </div>
+  );
+};
+
+export default TempleDetails;
