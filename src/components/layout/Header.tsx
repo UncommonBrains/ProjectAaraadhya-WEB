@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { MdTempleHindu } from 'react-icons/md';
 import { AiFillHeart } from 'react-icons/ai';
 import { FaPeopleGroup } from 'react-icons/fa6';
@@ -20,6 +20,9 @@ import {
 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import Logo from '../../assets/images/logo.png';
+import { useConfirmation } from '../../hooks/useConfirmation';
+import { useSignoutViewModel } from '../../view-models/auth/useSignoutViewModel';
+import { toast } from '../../utils/toast';
 
 const Header = () => {
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
@@ -30,6 +33,18 @@ const Header = () => {
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const moreDropdownRef = useRef<HTMLDivElement>(null);
   const mobileMoreMenuRef = useRef<HTMLDivElement>(null);
+  const { handleSignout, error, success } = useSignoutViewModel();
+  const confirm = useConfirmation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (success) {
+      toast.success('Successfully logged out.');
+      navigate('/auth');
+    }
+
+    if (error) toast.error(error.message);
+  }, [success, error, toast, navigate]);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -77,6 +92,15 @@ const Header = () => {
     else {
       setShowMobileMoreMenu(!showMobileMoreMenu);
     }
+  };
+
+  const handleSignoutButtonClick = async () => {
+    const confirmation = await confirm({
+      title: 'Signout',
+      message: 'Are you sure you want to signout ?',
+    });
+
+    if (confirmation) handleSignout();
   };
 
   return (
@@ -300,13 +324,13 @@ const Header = () => {
                         </li>
                       </ul>
                       <div className="border-t border-amber-100 py-1">
-                        <NavLink
-                          to="/logout"
+                        <button
+                          onClick={handleSignoutButtonClick}
                           className="flex items-center px-4 py-2 text-sm text-red-500 hover:bg-amber-50"
                         >
                           <LogOut className="mr-3 h-4 w-4 text-red-500" />
                           Logout
-                        </NavLink>
+                        </button>
                       </div>
                     </div>
                   )}
@@ -605,14 +629,16 @@ const Header = () => {
               </NavLink>
 
               <div className="mt-2 border-t border-amber-300 pt-2">
-                <NavLink
-                  to="/logout"
+                <button
                   className="flex items-center p-3 text-red-500"
-                  onClick={() => setShowMobileMoreMenu(false)}
+                  onClick={() => {
+                    setShowMobileMoreMenu(false);
+                    handleSignoutButtonClick();
+                  }}
                 >
                   <LogOut className="mr-3 h-5 w-5" />
                   Logout
-                </NavLink>
+                </button>
               </div>
             </nav>
           </div>

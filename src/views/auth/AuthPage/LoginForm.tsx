@@ -11,7 +11,7 @@ const LoginForm = () => {
   useEffect(() => {
     if (success) toast.success('Successfully logged in. Redirecting to home page.');
     if (error) toast.error(error.message);
-  }, [error, success]);
+  }, [error, success, toast]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

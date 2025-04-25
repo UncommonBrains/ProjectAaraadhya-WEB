@@ -15,7 +15,7 @@ const VerifyEmail = () => {
   useEffect(() => {
     if (!loadingUser && firebaseUser?.emailVerified) navigate('/');
     if (error) toast.error(error.message);
-  }, [firebaseUser, loadingUser, error, navigate]);
+  }, [firebaseUser, loadingUser, error, navigate, toast]);
 
   useEffect(() => {
     let interval: number;
