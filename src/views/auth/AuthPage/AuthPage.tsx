@@ -2,9 +2,11 @@ import { useState } from 'react';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 import { NavLink } from 'react-router-dom';
+import { useLoginViewModel } from '../../../view-models/auth/useLoginViewModel';
 
 const AuthPage = () => {
   const [activeTab, setActiveTab] = useState<string>('login');
+  const { handleGoogleLogin } = useLoginViewModel();
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-amber-50 font-sans">
@@ -47,7 +49,10 @@ const AuthPage = () => {
 
             {/* Social Login Buttons */}
             <div className="space-y-3">
-              <button className="text-md flex w-full items-center justify-center rounded-lg border border-gray-300 bg-white py-3 font-medium text-gray-700 transition-colors hover:bg-gray-50">
+              <button
+                onClick={handleGoogleLogin}
+                className="text-md flex w-full items-center justify-center rounded-lg border border-gray-300 bg-white py-3 font-medium text-gray-700 transition-colors hover:bg-gray-50"
+              >
                 <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24">
                   <path
                     fill="#4285F4"
