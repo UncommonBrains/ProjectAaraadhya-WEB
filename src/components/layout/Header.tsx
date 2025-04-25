@@ -329,7 +329,7 @@ const Header = () => {
                           className="flex items-center px-4 py-2 text-sm text-red-500 hover:bg-amber-50"
                         >
                           <LogOut className="mr-3 h-4 w-4 text-red-500" />
-                          NavLink
+                          Logout
                         </button>
                       </div>
                     </div>
@@ -346,7 +346,7 @@ const Header = () => {
         <>
           {/* Overlay background */}
           <div
-            className="bg-opacity-50 fixed inset-0 z-50 bg-black"
+            className="fixed inset-0 z-50 bg-black/50"
             onClick={() => setShowMobileMenu(false)}
           />
 
@@ -489,7 +489,7 @@ const Header = () => {
         <>
           {/* Overlay background */}
           <div
-            className="bg-opacity-50 fixed inset-0 z-50 bg-black"
+            className="fixed inset-0 z-50 bg-black/50"
             onClick={() => setShowMobileMoreMenu(false)}
           />
 
