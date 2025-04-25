@@ -1,12 +1,19 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { Lock, ArrowLeft, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useResetPasswordViewModel } from '../../../view-models/auth/useResetPasswordViewModel';
+import { toast } from '../../../utils/toast';
+import { useAuth } from '../../../hooks/useAuth';
 
 const ResetPassword = () => {
-  const [isSending, setIsSending] = useState(false);
-  const [resendCooldown, setResendCooldown] = useState(0);
-
   const navigate = useNavigate();
+  const { firebaseUser } = useAuth();
+  const { handleResetPassword, loading, error, success, coolDown } = useResetPasswordViewModel();
+
+  useEffect(() => {
+    if (success) toast.success('Reset link sent to your email address. Please check your inbox.');
+    if (error) toast.error(error.message);
+  }, [success, error, toast]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-amber-50 px-4 py-12 font-sans">
@@ -34,12 +41,13 @@ const ResetPassword = () => {
                   registered email address.
                 </p>
                 <button
-                  disabled={resendCooldown > 0 || isSending}
+                  disabled={coolDown > 0 || loading}
+                  onClick={() => firebaseUser?.email && handleResetPassword(firebaseUser.email)}
                   className="text-md flex w-full items-center justify-center rounded-lg bg-amber-600 py-3 font-medium text-white transition-colors hover:bg-amber-700 disabled:bg-amber-300"
                 >
-                  {isSending && <RefreshCw className="mr-2 h-4 w-4 animate-spin" />}
-                  {resendCooldown > 0
-                    ? `Request New Reset Link in ${resendCooldown}s`
+                  {loading && <RefreshCw className="mr-2 h-4 w-4 animate-spin" />}
+                  {coolDown > 0
+                    ? `Request New Reset Link in ${coolDown}s`
                     : 'Request New Reset Link'}
                 </button>
               </div>

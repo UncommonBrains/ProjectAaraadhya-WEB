@@ -329,7 +329,7 @@ const Header = () => {
                           className="flex items-center px-4 py-2 text-sm text-red-500 hover:bg-amber-50"
                         >
                           <LogOut className="mr-3 h-4 w-4 text-red-500" />
-                          Logout
+                          NavLink
                         </button>
                       </div>
                     </div>

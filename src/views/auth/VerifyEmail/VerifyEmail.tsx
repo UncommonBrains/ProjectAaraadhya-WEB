@@ -57,8 +57,8 @@ const VerifyEmail = () => {
         </div>
         <h3 className="mb-2 text-xl font-semibold text-gray-800">Email Sent!</h3>
         <p className="mb-6 text-gray-600">
-          We've sent a verification email to <b>{'abc@email.com'}</b>. Please check your inbox and
-          click the link to verify your email. after verification you will be redirected to home
+          We've sent a verification email to <b>{firebaseUser?.email}</b>. Please check your inbox
+          and click the link to verify your email. after verification you will be redirected to home
           page. if not redirected click the Check Status button below.
         </p>
         <div className="flex">
@@ -100,8 +100,8 @@ const VerifyEmail = () => {
         </div>
         <h3 className="mb-2 text-xl font-semibold text-gray-800">Email Not Verified Yet</h3>
         <p className="mb-6 text-gray-600">
-          Your email address <b>{'abc@email.com'}</b> has not been verified yet. Click the button
-          below to get email verification link.
+          Your email address <b>{firebaseUser?.email}</b> has not been verified yet. Click the
+          button below to get email verification link.
         </p>
         <button
           onClick={handleEmailVerification}

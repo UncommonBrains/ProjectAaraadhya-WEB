@@ -1,14 +1,28 @@
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Mail, ArrowLeft, CheckCircle, RefreshCw } from 'lucide-react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { useResetPasswordViewModel } from '../../../view-models/auth/useResetPasswordViewModel';
+import { toast } from '../../../utils/toast';
 
 const ForgotPassword = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState<string>('');
   const [step, setStep] = useState<string>('request'); // request, sent, error
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [resendCooldown, setResendCooldown] = useState<number>(0);
+  const { handleResetPassword, loading, error, success, coolDown } = useResetPasswordViewModel();
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    if (success) setStep('sent');
+    if (error) setStep('error');
+  }, [success, error, setStep]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !email.includes('@') || !email.includes('.')) {
+      return toast.error('Please enter a valid email address');
+    }
+
+    await handleResetPassword(email);
+  };
 
   // Handle back button
   const handleBack = () => {
@@ -46,7 +60,7 @@ const ForgotPassword = () => {
                   </p>
                 </div>
 
-                <form>
+                <form onSubmit={handleSubmit}>
                   {/* Email Field */}
                   <div className="mb-6">
                     <label className="mb-2 block text-sm font-medium text-gray-700">
@@ -68,10 +82,10 @@ const ForgotPassword = () => {
                   {/* Submit Button */}
                   <button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={loading}
                     className="text-md flex w-full items-center justify-center rounded-lg bg-amber-600 py-3 font-medium text-white transition-colors hover:bg-amber-700 disabled:bg-amber-300"
                   >
-                    {isSubmitting ? (
+                    {loading ? (
                       <>
                         <div className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
                         Sending...
@@ -99,11 +113,12 @@ const ForgotPassword = () => {
                   <div className="mb-6">
                     <p className="mb-2 text-sm text-gray-600">Didn't receive the email?</p>
                     <button
-                      disabled={resendCooldown > 0 || isSubmitting}
+                      disabled={coolDown > 0 || loading}
+                      onClick={() => handleResetPassword(email)}
                       className="inline-flex items-center text-sm font-medium text-amber-700 hover:text-amber-900 disabled:text-amber-400"
                     >
-                      {isSubmitting && <RefreshCw className="mr-1 h-3 w-3 animate-spin" />}
-                      {resendCooldown > 0 ? `Resend link in ${resendCooldown}s` : 'Resend Link'}
+                      {loading && <RefreshCw className="mr-1 h-3 w-3 animate-spin" />}
+                      {coolDown > 0 ? `Resend link in ${coolDown}s` : 'Resend Link'}
                     </button>
                   </div>
 
