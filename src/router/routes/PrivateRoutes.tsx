@@ -7,9 +7,11 @@ import LoadingSpinner from '../../components/common/LoadingSpinner';
 const PrivateRoutes = () => {
   const { firebaseUser, loading } = useAuth();
 
-  if (loading) return <LoadingSpinner />;
-
-  return firebaseUser ? (
+  return loading ? (
+    <div className="flex h-screen items-center justify-center">
+      <LoadingSpinner />
+    </div>
+  ) : firebaseUser ? (
     firebaseUser.emailVerified ? (
       <>
         <Header />

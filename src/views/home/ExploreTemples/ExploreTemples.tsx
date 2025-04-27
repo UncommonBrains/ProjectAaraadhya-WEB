@@ -1,16 +1,20 @@
 import { useState, useRef, useEffect } from 'react';
-import { Star, Filter, Map, Clock, MapPin, ArrowUpDown, Camera, X, Heart } from 'lucide-react';
-import temples from '../../../mock/data/temples';
+import { Star, Filter, Map, Clock, ArrowUpDown, X, Heart } from 'lucide-react';
 import SearchInputField from '../../../components/common/Input/SearchInputField';
 import FloatingActionButton from '../../../components/common/Button/FloatingActionButton';
-import TempleImage from '../../../assets/images/temple.jpg';
 import { NavLink } from 'react-router-dom';
+import { useTemplesListViewModel } from '../../../view-models/temple/useTemplesListViewModel';
+import { formatTimeString } from '../../../utils/dateFormatters';
+import { getManagingAuthorityLabel } from '../../../models/entities/Temple';
+import LoadingSpinner from '../../../components/common/LoadingSpinner';
 
 const ExploreTemples = () => {
   const [activeFilter, setActiveFilter] = useState<string>('All');
   const [activeSortBy, setActiveSortBy] = useState<string>('Popular');
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState<boolean>(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
+
+  const { temples, loading, hasMore, loadingMore, loadMoreTemples } = useTemplesListViewModel();
 
   // Add click outside handler
   useEffect(() => {
@@ -35,31 +39,6 @@ const ExploreTemples = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [mobileFiltersOpen]);
-
-  // Filter temples based on active filter
-  const filteredTemples =
-    activeFilter === 'All'
-      ? temples
-      : temples.filter(
-          (temple) =>
-            temple.region === activeFilter ||
-            temple.category === activeFilter ||
-            (activeFilter === 'Favorites' && temple.favorite),
-        );
-
-  // Get sorted temples based on active sort
-  const getSortedTemples = () => {
-    switch (activeSortBy) {
-      case 'Popular':
-        return [...filteredTemples].sort((a, b) => b.rating - a.rating);
-      case 'Distance':
-        return [...filteredTemples].sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
-      case 'Rating':
-        return [...filteredTemples].sort((a, b) => b.rating - a.rating);
-      default:
-        return filteredTemples;
-    }
-  };
 
   // Toggle mobile filters
   const toggleMobileFilters = () => {
@@ -136,21 +115,6 @@ const ExploreTemples = () => {
                 <button className="text-xs text-orange-500">Reset All</button>
               </div>
 
-              {/* Region Filter */}
-              <div className="mb-4">
-                <h4 className="mb-2 text-sm font-medium text-gray-700">Region</h4>
-                <div className="space-y-1">
-                  {['North Indian', 'South Indian', 'East Indian', 'West Indian'].map((region) => (
-                    <div key={region} className="flex items-center">
-                      <input type="checkbox" id={region} className="h-4 w-4 accent-orange-500" />
-                      <label htmlFor={region} className="ml-2 text-sm text-gray-600">
-                        {region}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
               {/* Deity Filter */}
               <div className="mb-4">
                 <h4 className="mb-2 text-sm font-medium text-gray-700">Deity</h4>
@@ -181,17 +145,6 @@ const ExploreTemples = () => {
                 </div>
               </div>
 
-              {/* Distance Slider */}
-              <div>
-                <h4 className="mb-2 text-sm font-medium text-gray-700">Distance</h4>
-                <input type="range" min="0" max="1000" className="w-full accent-orange-500" />
-                <div className="mt-1 flex justify-between text-xs text-gray-500">
-                  <span>0 km</span>
-                  <span>500 km</span>
-                  <span>1000+ km</span>
-                </div>
-              </div>
-
               {mobileFiltersOpen && (
                 <button
                   onClick={toggleMobileFilters}
@@ -206,210 +159,217 @@ const ExploreTemples = () => {
             <div className="hidden rounded-lg border border-amber-100 bg-white p-4 shadow-sm md:!block">
               <h3 className="mb-3 font-serif text-amber-900">Featured Temples</h3>
               <div className="space-y-3">
-                {temples
-                  .filter((temple) => temple.featured)
-                  .slice(0, 3)
-                  .map((temple) => (
-                    <div key={temple.id} className="flex items-center rounded bg-amber-50 p-2">
-                      <div className="flex h-10 w-10 items-center justify-center rounded bg-amber-200/50 text-orange-500">
-                        <Star className="h-5 w-5" />
-                      </div>
-                      <div className="ml-3">
-                        <h4 className="text-sm font-medium text-amber-900">{temple.name}</h4>
-                        <p className="text-xs text-gray-600">{temple.location}</p>
-                      </div>
+                {temples.slice(0, 3).map((temple) => (
+                  <div key={temple.id} className="flex items-center rounded bg-amber-50 p-2">
+                    <div className="flex h-10 w-10 items-center justify-center rounded bg-amber-200/50 text-orange-500">
+                      <Star className="h-5 w-5" />
                     </div>
-                  ))}
+                    <div className="ml-3">
+                      <h4 className="text-sm font-medium text-amber-900">
+                        {temple.basicDetails?.templeName}
+                      </h4>
+                      <p className="text-xs text-gray-600">{temple.contactDetails?.address}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
-            {/* Map Preview */}
-            <div className="mb-6 hidden rounded-lg border border-amber-100 bg-white p-4 shadow-sm md:!block">
-              <h3 className="mb-3 font-serif text-amber-900">Temple Locations</h3>
-              <div className="relative flex h-48 items-center justify-center overflow-hidden rounded-lg bg-amber-100">
-                <div className="absolute inset-0 bg-amber-200/30"></div>
-                <MapPin className="h-8 w-8 text-orange-500" />
-              </div>
-              <button className="mt-3 flex w-full items-center justify-center rounded bg-amber-100 px-4 py-2 text-sm font-medium text-amber-900">
-                <Map className="mr-2 h-4 w-4" />
-                View Larger Map
-              </button>
             </div>
           </div>
         </div>
 
         {/* Center & Right Columns (Temple Content) */}
         <div className="space-y-3 md:col-span-3">
-          {/* Page Header */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="font-serif text-xl text-amber-900">Explore Temples</h2>
-              <p className="text-sm text-gray-600">Discover sacred places across India</p>
+          {loading ? (
+            <div className="flex h-full items-center justify-center">
+              <LoadingSpinner message="Loading temples..." />
             </div>
-            <div className="flex space-x-3">
-              {/* Filter button - Visible only on small screens */}
-              <button
-                className="rounded border border-amber-200 bg-white p-2 text-gray-600 md:hidden"
-                onClick={toggleMobileFilters}
-              >
-                <Filter className="h-4 w-4" />
-              </button>
-              <button className="rounded border border-amber-200 bg-white p-2 text-gray-600">
-                <Map className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-
-          {/* Category Filters - Touch scroll with no visible scrollbar */}
-          <div className="scrollbar-hide -mx-4 overflow-x-auto px-4 md:mx-0 md:px-0">
-            <div className="mb-2 flex touch-pan-x space-x-3 text-sm whitespace-nowrap">
-              {['All', 'Favorites', 'Vishnu', 'Shiva', 'Shakti'].map((filter) => (
-                <button
-                  key={filter}
-                  className={`${
-                    activeFilter === filter
-                      ? 'bg-orange-500 text-white'
-                      : 'bg-white text-gray-600 hover:bg-amber-100'
-                  } flex-shrink-0 rounded-full px-4 py-2 transition-colors`}
-                  onClick={() => setActiveFilter(filter)}
-                >
-                  {filter}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Sort Options and Results Count */}
-          <div className="mb-4 flex items-center justify-between">
-            <p className="text-sm text-gray-600">
-              Showing <span className="font-medium">{filteredTemples.length}</span> temples
-            </p>
-            <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-600">Sort by:</span>
-              <div className="relative">
-                <select
-                  className="appearance-none rounded-lg border border-amber-200 bg-white p-2 pr-8 text-sm text-gray-700"
-                  value={activeSortBy}
-                  onChange={(e) => setActiveSortBy(e.target.value)}
-                >
-                  <option value="Popular">Popular</option>
-                  <option value="Distance">Distance</option>
-                  <option value="Rating">Rating</option>
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                  <ArrowUpDown className="h-4 w-4" />
+          ) : (
+            <>
+              {/* Page Header */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="font-serif text-xl text-amber-900">Explore Temples</h2>
+                  <p className="text-sm text-gray-600">Discover sacred places across India</p>
+                </div>
+                <div className="flex space-x-3">
+                  {/* Filter button - Visible only on small screens */}
+                  <button
+                    className="rounded border border-amber-200 bg-white p-2 text-gray-600 md:hidden"
+                    onClick={toggleMobileFilters}
+                  >
+                    <Filter className="h-4 w-4" />
+                  </button>
+                  <button className="rounded border border-amber-200 bg-white p-2 text-gray-600">
+                    <Map className="h-4 w-4" />
+                  </button>
                 </div>
               </div>
-            </div>
-          </div>
 
-          {/* Temple Cards - Grid Layout */}
-          <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {getSortedTemples().map((temple) => (
-              <div
-                key={temple.id}
-                className="overflow-hidden rounded-lg border border-amber-100 bg-white shadow-sm"
-              >
-                <NavLink to={`/temple-details`} className="block">
-                  <div
-                    className="relative h-40 bg-cover bg-center"
-                    style={{ backgroundImage: `url(${TempleImage})` }}
-                  >
-                    {temple.specialEvent && (
-                      <div className="absolute top-2 left-2">
-                        <span className="rounded-full bg-orange-500 px-2 py-0.5 text-xs text-white">
-                          Special Event
-                        </span>
-                      </div>
-                    )}
-                    <div className="absolute top-2 right-2">
-                      {!temple.favorite ? (
-                        <button className="flex items-center space-x-1 rounded px-4 py-1 text-white">
-                          <Heart className="h-4 w-4 fill-current text-red-500" />
-                        </button>
-                      ) : (
-                        <button className="flex items-center space-x-1 rounded px-4 py-1 text-gray-400">
-                          <Heart className="h-4 w-4" />
-                        </button>
-                      )}
-                    </div>
-                    <div className="absolute right-0 bottom-0 left-0 bg-gradient-to-t from-amber-950/100 to-transparent p-3">
-                      <h3 className="font-medium text-white">{temple.name}</h3>
-                      <p className="text-xs text-amber-50">{temple.location}</p>
-                    </div>
-                  </div>
-
-                  <div className="p-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center text-xs text-gray-600">
-                        <Clock className="mr-1 h-3 w-3" />
-                        <span>Morning: {temple.morhours}</span>
-                      </div>
-                      <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-800">
-                        {temple.category}
-                      </span>
-                    </div>
-                    <div className="mb-2 flex items-center justify-between">
-                      <div className="flex items-center text-xs text-gray-600">
-                        <Clock className="mr-1 h-3 w-3" />
-                        <span>Evening: {temple.evehours}</span>
-                      </div>
-                    </div>
-
-                    <div className="mb-3 flex items-center justify-between">
-                      <div className="flex items-center">
-                        {renderRating(temple.rating)}
-                        <span className="ml-1 text-xs text-gray-600">({temple.reviews})</span>
-                      </div>
-                      <span className="rounded bg-blue-50 px-2 py-0.5 text-xs text-blue-600">
-                        {temple.distance}
-                      </span>
-                    </div>
-
-                    {/* Amenities */}
-                    <div className="mb-3 flex flex-wrap gap-1">
-                      {temple.amenities &&
-                        temple.amenities.slice(0, 3).map((amenity, index) => (
-                          <span
-                            key={index}
-                            className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-600"
-                          >
-                            {amenity}
-                          </span>
-                        ))}
-                      {temple.amenities && temple.amenities.length > 3 && (
-                        <span className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
-                          +{temple.amenities.length - 3}
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="flex justify-between">
-                      <NavLink
-                        to={`/temple/${temple.id}`}
-                        className="flex items-center rounded bg-amber-100 px-3 py-1 text-xs text-amber-900"
-                      >
-                        <Camera className="mr-1 h-3 w-3" />
-                        Virtual Tour
-                      </NavLink>
-                      <NavLink
-                        to={`/temple/${temple.id}`}
-                        className="rounded bg-orange-100 px-3 py-1 text-xs text-orange-500"
-                      >
-                        View Details
-                      </NavLink>
-                    </div>
-                  </div>
-                </NavLink>
+              {/* Category Filters - Touch scroll with no visible scrollbar */}
+              <div className="scrollbar-hide -mx-4 overflow-x-auto px-4 md:mx-0 md:px-0">
+                <div className="mb-2 flex touch-pan-x space-x-3 text-sm whitespace-nowrap">
+                  {['All', 'Favorites', 'Vishnu', 'Shiva', 'Shakti'].map((filter) => (
+                    <button
+                      key={filter}
+                      className={`${
+                        activeFilter === filter
+                          ? 'bg-orange-500 text-white'
+                          : 'bg-white text-gray-600 hover:bg-amber-100'
+                      } flex-shrink-0 rounded-full px-4 py-2 transition-colors`}
+                      onClick={() => setActiveFilter(filter)}
+                    >
+                      {filter}
+                    </button>
+                  ))}
+                </div>
               </div>
-            ))}
-          </div>
 
-          {/* Load More Button */}
-          <div className="mt-6 flex justify-center">
-            <button className="rounded-lg border border-amber-200 bg-white px-6 py-2 text-sm font-medium text-amber-900 hover:bg-amber-50">
-              Load More Temples
-            </button>
-          </div>
+              {/* Sort Options and Results Count */}
+              <div className="mb-4 flex items-center justify-between">
+                <p className="text-sm text-gray-600">
+                  Showing <span className="font-medium">{temples.length}</span> temples
+                </p>
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-600">Sort by:</span>
+                  <div className="relative">
+                    <select
+                      className="appearance-none rounded-lg border border-amber-200 bg-white p-2 pr-8 text-sm text-gray-700"
+                      value={activeSortBy}
+                      onChange={(e) => setActiveSortBy(e.target.value)}
+                    >
+                      <option value="Popular">Popular</option>
+                      <option value="Distance">Distance</option>
+                      <option value="Rating">Rating</option>
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                      <ArrowUpDown className="h-4 w-4" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Temple Cards - Grid Layout */}
+              <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                {temples.map((temple) => (
+                  <div
+                    key={temple.id}
+                    className="overflow-hidden rounded-lg border border-amber-100 bg-white shadow-sm"
+                  >
+                    <NavLink to={`/temple-details/${temple.id}`} className="block">
+                      <div
+                        className="relative h-40 bg-cover bg-center"
+                        style={{
+                          backgroundImage: `url(${temple.basicDetails?.profilePictureUrl})`,
+                        }}
+                      >
+                        {false && (
+                          <div className="absolute top-2 left-2">
+                            <span className="rounded-full bg-orange-500 px-2 py-0.5 text-xs text-white">
+                              Special Event
+                            </span>
+                          </div>
+                        )}
+                        <div className="absolute top-2 right-2">
+                          {false ? (
+                            <button className="flex items-center space-x-1 rounded px-4 py-1 text-white">
+                              <Heart className="h-4 w-4 fill-current text-red-500" />
+                            </button>
+                          ) : (
+                            <button className="flex items-center space-x-1 rounded px-4 py-1 text-gray-400">
+                              <Heart className="h-4 w-4" />
+                            </button>
+                          )}
+                        </div>
+                        <div className="absolute right-0 bottom-0 left-0 bg-gradient-to-t from-amber-950/100 to-transparent p-3">
+                          <h3 className="font-medium text-white">
+                            {temple.basicDetails?.templeName}
+                          </h3>
+                          <p className="text-xs text-amber-50">{temple.contactDetails?.address}</p>
+                        </div>
+                      </div>
+
+                      <div className="p-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center text-xs text-gray-600">
+                            <Clock className="mr-1 h-3 w-3" />
+                            <span>
+                              Morning:{' '}
+                              {formatTimeString(temple.basicDetails?.morningSchedule?.startTime)}
+                              {' - '}
+                              {formatTimeString(temple.basicDetails?.morningSchedule?.endTime)}
+                            </span>
+                          </div>
+                          <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-800">
+                            {getManagingAuthorityLabel(temple.basicDetails?.managingAuthority)}
+                          </span>
+                        </div>
+                        <div className="mb-2 flex items-center justify-between">
+                          <div className="flex items-center text-xs text-gray-600">
+                            <Clock className="mr-1 h-3 w-3" />
+                            <span>
+                              Evening:{' '}
+                              {formatTimeString(temple.basicDetails?.eveningSchedule?.startTime)}
+                              {' - '}
+                              {formatTimeString(temple.basicDetails?.eveningSchedule?.endTime)}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="mb-3 flex items-center justify-between">
+                          <div className="flex items-center">
+                            {renderRating(0)}
+                            <span className="ml-1 text-xs text-gray-600">({0})</span>
+                          </div>
+                          <span className="rounded bg-blue-50 px-2 py-0.5 text-xs text-blue-600">
+                            {temple.basicDetails?.mainDeityName}
+                          </span>
+                        </div>
+
+                        {/* Amenities */}
+                        <div className="mb-3 flex flex-wrap gap-1">
+                          {temple.basicDetails?.amenities &&
+                            temple.basicDetails?.amenities.slice(0, 3).map((amenity, index) => (
+                              <span
+                                key={index}
+                                className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-600"
+                              >
+                                {amenity}
+                              </span>
+                            ))}
+                          {temple.basicDetails?.amenities &&
+                            temple.basicDetails?.amenities.length > 3 && (
+                              <span className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+                                +{temple.basicDetails?.amenities.length - 3}
+                              </span>
+                            )}
+                        </div>
+                      </div>
+                    </NavLink>
+                  </div>
+                ))}
+              </div>
+
+              {/* Load More Button */}
+              {hasMore && (
+                <>
+                  {loadingMore ? (
+                    <div className="mt-6 flex justify-center">
+                      <LoadingSpinner message="Loading more temples..." />
+                    </div>
+                  ) : (
+                    <div className="mt-6 flex justify-center">
+                      <button
+                        onClick={loadMoreTemples}
+                        className="rounded-lg border border-amber-200 bg-white px-6 py-2 text-sm font-medium text-amber-900 hover:bg-amber-50"
+                      >
+                        Load More Temples
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
+            </>
+          )}
         </div>
       </main>
 

@@ -29,7 +29,7 @@ const AppRouter = () => {
         {/* Public Routes */}
         <Route element={<PublicRoutes />}>
           <Route path="/" element={<ExploreTemples />} />
-          <Route path="/temple-details" element={<TempleDetails />} />
+          <Route path="/temple-details/:id" element={<TempleDetails />} />
           <Route path="/upcoming-poojas" element={<UpcomingPoojas />} />
           <Route path="/feed" element={<Feed />} />
           <Route path="/divine-seva" element={<DivineSeva />} />

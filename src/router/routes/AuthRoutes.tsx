@@ -5,9 +5,15 @@ import LoadingSpinner from '../../components/common/LoadingSpinner';
 const AuthRoutes = () => {
   const { firebaseUser, loading } = useAuth();
 
-  if (loading) return <LoadingSpinner />;
-
-  return firebaseUser ? <Navigate to="/" /> : <Outlet />;
+  return loading ? (
+    <div className="flex h-screen items-center justify-center">
+      <LoadingSpinner />
+    </div>
+  ) : firebaseUser ? (
+    <Navigate to="/" />
+  ) : (
+    <Outlet />
+  );
 };
 
 export default AuthRoutes;
