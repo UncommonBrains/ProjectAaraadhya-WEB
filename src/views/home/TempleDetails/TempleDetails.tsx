@@ -15,17 +15,22 @@ import {
   Check,
   Gift,
 } from 'lucide-react';
-import temples from '../../../mock/data/temples';
 import FloatingActionButton from '../../../components/common/Button/FloatingActionButton';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useTempleViewModel } from '../../../view-models/temple/useTempleViewModel';
+import { formatTimeString } from '../../../utils/dateFormatters';
+import TempleGallery from './TempleGallery';
+import TemplePoojas from './TemplePoojas';
 
 const TempleDetails = () => {
   // In a real app, you would get the temple ID from URL params
   // Here we'll just use the first temple from the data for demonstration
-  const temple = temples[0];
+  const { temple } = useTempleViewModel();
 
   const [activeTab, setActiveTab] = useState('about');
-  const [isFavorite, setIsFavorite] = useState(temple.favorite || false);
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  const navigate = useNavigate();
 
   // Render stars based on rating
   const renderRating = (rating: number) => {
@@ -44,15 +49,6 @@ const TempleDetails = () => {
     }
 
     return stars;
-  };
-
-  // Handle navigation to pooja booking page
-  const navigateToBooking = () => {
-    // In a real app, this would use router navigation
-    // For now we'll just log the action
-    console.log('Navigating to pooja booking page');
-    alert('Navigating to pooja booking page');
-    // Example: router.push(`/temples/${temple.id}/book-pooja`);
   };
 
   return (
@@ -83,20 +79,22 @@ const TempleDetails = () => {
         {/* Hero Image Section */}
         <div
           className="relative h-80 overflow-hidden bg-cover bg-center md:h-80"
-          style={{ backgroundImage: `url(${temple.backgroundImage})` }}
+          style={{ backgroundImage: `url(${temple?.basicDetails?.profilePictureUrl})` }}
         >
           <div className="absolute right-0 bottom-0 left-0 bg-gradient-to-t from-amber-950/90 to-transparent p-6">
             <div className="container mx-auto">
               <div className="flex flex-col text-white">
-                <h1 className="mb-1 font-serif text-2xl md:text-3xl">{temple.name}</h1>
+                <h1 className="mb-1 font-serif text-2xl md:text-3xl">
+                  {temple?.basicDetails?.templeName}
+                </h1>
                 <div className="mb-2 flex items-center">
                   <MapPin className="mr-1 h-4 w-4" />
-                  <span className="text-sm md:text-base">{temple.location}</span>
+                  <span className="text-sm md:text-base">{temple?.contactDetails?.address}</span>
                 </div>
                 <div className="flex items-center">
-                  <div className="mr-3 flex">{renderRating(temple.rating)}</div>
+                  <div className="mr-3 flex">{renderRating(0)}</div>
                   <span className="text-sm md:text-base">
-                    {temple.rating} ({temple.reviews} reviews)
+                    {0} ({0} reviews)
                   </span>
                 </div>
               </div>
@@ -112,7 +110,9 @@ const TempleDetails = () => {
                 <Clock className="mb-1 h-5 w-5 text-orange-500" />
                 <span className="text-xs text-gray-600 md:text-sm">Morning Hours:</span>
                 <span className="text-sm font-medium text-amber-900 md:text-base">
-                  {temple.morhours}
+                  {formatTimeString(temple?.basicDetails?.morningSchedule?.startTime)}
+                  {' - '}
+                  {formatTimeString(temple?.basicDetails?.morningSchedule?.endTime)}
                 </span>
               </div>
               <div className="flex flex-col items-center rounded bg-amber-50 p-3">
@@ -120,14 +120,16 @@ const TempleDetails = () => {
                 <span className="text-xs text-gray-600 md:text-sm">Evening Hours: </span>
 
                 <span className="text-sm font-medium text-amber-900 md:text-base">
-                  {temple.evehours}
+                  {formatTimeString(temple?.basicDetails?.eveningSchedule?.startTime)}
+                  {' - '}
+                  {formatTimeString(temple?.basicDetails?.eveningSchedule?.endTime)}
                 </span>
               </div>
               <div className="flex flex-col items-center rounded bg-amber-50 p-3">
                 <Globe className="mb-1 h-5 w-5 text-orange-500" />
                 <span className="text-xs text-gray-600 md:text-sm">Main Deity</span>
                 <span className="text-sm font-medium text-amber-900 md:text-base">
-                  {temple.category}
+                  {temple?.basicDetails?.mainDeityName}
                 </span>
               </div>
             </div>
@@ -143,7 +145,7 @@ const TempleDetails = () => {
             </button> */}
             <button
               className="text-md md:text-md flex items-center justify-center rounded-lg bg-amber-600 py-3 font-medium text-white"
-              onClick={() => (window.location.href = '/temple-details/pooja-booking')}
+              onClick={() => navigate('/temple-details/pooja-booking')}
             >
               <Gift className="mr-1 h-5 w-5" />
               Book Pooja
@@ -185,55 +187,15 @@ const TempleDetails = () => {
                   About the Temple
                 </h3>
                 <p className="text-sm leading-relaxed text-gray-700 md:text-base">
-                  {temple.description ||
-                    `This magnificent temple dedicated to ${temple.category} is one of the most revered shrines in ${temple.location}. The temple showcases remarkable architecture with intricate carvings and sculptures that depict various mythological stories and deities.`}
+                  {temple?.basicDetails?.description ||
+                    `This magnificent temple is one of the most revered shrines in ${temple?.contactDetails?.address}. The temple showcases remarkable architecture with intricate carvings and sculptures that depict various mythological stories and deities.`}
                 </p>
                 <div className="mt-4 cursor-pointer text-sm font-medium text-orange-500">
                   Read More
                 </div>
               </div>
 
-              {/* Pooja Services */}
-              <div className="rounded-lg border border-amber-100 bg-white p-4 shadow-sm md:p-6">
-                <div className="mb-3 flex items-center justify-between">
-                  <h3 className="font-serif text-lg text-amber-900 md:text-xl">
-                    Available Pooja Services
-                  </h3>
-                  <button
-                    onClick={navigateToBooking}
-                    className="text-sm font-medium text-orange-500"
-                  >
-                    View All
-                  </button>
-                </div>
-                <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
-                  {[
-                    'Daily Archana',
-                    'Abhishekam',
-                    'Special Festival Poojas',
-                    'Family Blessing',
-                  ].map((pooja, index) => (
-                    <div key={index} className="flex rounded bg-amber-50 p-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-orange-500">
-                        <Gift className="h-5 w-5" />
-                      </div>
-                      <div className="ml-3">
-                        <h4 className="text-sm font-medium text-amber-900">{pooja}</h4>
-                        <p className="text-xs text-gray-600">
-                          From ₹{[101, 501, 1001, 2001][index]}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <button
-                  className="mt-4 flex w-full items-center justify-center rounded-lg bg-amber-600 px-4 py-3 text-sm font-medium text-white md:text-base"
-                  onClick={navigateToBooking}
-                >
-                  <Gift className="mr-2 h-4 w-4" />
-                  Book Pooja Service
-                </button>
-              </div>
+              <TemplePoojas />
 
               {/* Features & Amenities */}
               <div className="rounded-lg border border-amber-100 bg-white p-4 shadow-sm md:p-6">
@@ -241,8 +203,8 @@ const TempleDetails = () => {
                   Features & Amenities
                 </h3>
                 <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
-                  {temple.amenities &&
-                    temple.amenities.map((amenity, index) => (
+                  {temple?.basicDetails?.amenities &&
+                    temple?.basicDetails?.amenities.map((amenity, index) => (
                       <div key={index} className="flex items-center rounded bg-amber-50 p-2">
                         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-100 text-orange-500">
                           <Check className="h-4 w-4" />
@@ -275,17 +237,22 @@ const TempleDetails = () => {
                   Location & How to Reach
                 </h3>
                 <div className="relative mb-3 flex h-48 items-center justify-center overflow-hidden rounded-lg bg-amber-100 md:h-64">
-                  <div className="absolute inset-0 bg-amber-200/30"></div>
-                  <MapPin className="h-8 w-8 text-orange-500" />
+                  <iframe
+                    src={temple?.contactDetails?.locationLink}
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Google Map"
+                  ></iframe>
                 </div>
                 <p className="text-sm leading-relaxed text-gray-700 md:text-base">
-                  The temple is located in {temple.location}. It is easily accessible by road and is
-                  about {temple.distance} from the city center. Local transport options include
-                  buses, taxis, and auto-rickshaws.
+                  The temple is located in {temple?.contactDetails?.address}. It is easily
+                  accessible by road and Local transport options include buses, taxis, and
+                  auto-rickshaws.
                 </p>
-                <button className="mt-3 w-full rounded bg-amber-100 px-4 py-2 text-sm font-medium text-amber-900 md:text-base">
-                  Get Directions
-                </button>
               </div>
 
               {/* Visiting Tips */}
@@ -317,25 +284,7 @@ const TempleDetails = () => {
             </div>
           )}
 
-          {activeTab === 'photos' && (
-            <div className="space-y-4">
-              <h3 className="mb-2 font-serif text-lg text-amber-900 md:text-xl">Temple Gallery</h3>
-              <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
-                {Array.from({ length: 6 }).map((_, index) => (
-                  <div
-                    key={index}
-                    className="relative flex h-40 items-center justify-center rounded-lg bg-amber-100 md:h-52"
-                  >
-                    <Image className="h-8 w-8 text-orange-500" />
-                  </div>
-                ))}
-              </div>
-              <button className="mt-3 flex w-full items-center justify-center rounded-lg bg-amber-100 px-4 py-3 text-sm font-medium text-amber-900 md:text-base">
-                <Image className="mr-2 h-4 w-4" />
-                View All Photos
-              </button>
-            </div>
-          )}
+          {activeTab === 'photos' && <TempleGallery />}
 
           {activeTab === 'events' && (
             <div className="space-y-4">
