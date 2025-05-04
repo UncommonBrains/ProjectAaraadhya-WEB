@@ -7,7 +7,6 @@ import {
   Heart,
   Share,
   Calendar,
-  Info,
   Image,
   MessageSquare,
   Phone,
@@ -29,6 +28,8 @@ const TempleDetails = () => {
 
   const [activeTab, setActiveTab] = useState('about');
   const [isFavorite, setIsFavorite] = useState(false);
+  const [readMoreDescription, setReadMoreDescription] = useState(false);
+  const [readMoreHistory, setReadMoreHistory] = useState(false);
 
   const navigate = useNavigate();
 
@@ -186,12 +187,17 @@ const TempleDetails = () => {
                 <h3 className="mb-3 font-serif text-lg text-amber-900 md:text-xl">
                   About the Temple
                 </h3>
-                <p className="text-sm leading-relaxed text-gray-700 md:text-base">
-                  {temple?.basicDetails?.description ||
-                    `This magnificent temple is one of the most revered shrines in ${temple?.contactDetails?.address}. The temple showcases remarkable architecture with intricate carvings and sculptures that depict various mythological stories and deities.`}
-                </p>
-                <div className="mt-4 cursor-pointer text-sm font-medium text-orange-500">
-                  Read More
+                <div className={!readMoreDescription ? 'line-clamp-5' : 'line-clamp-none'}>
+                  <p className="text-sm leading-relaxed text-gray-700 md:text-base">
+                    {temple?.basicDetails?.description ||
+                      `This magnificent temple is one of the most revered shrines in ${temple?.contactDetails?.address}. The temple showcases remarkable architecture with intricate carvings and sculptures that depict various mythological stories and deities.`}
+                  </p>
+                </div>
+                <div
+                  onClick={() => setReadMoreDescription(!readMoreDescription)}
+                  className="mt-4 cursor-pointer text-sm font-medium text-orange-500"
+                >
+                  {readMoreDescription ? 'Show Less' : 'Read More'}
                 </div>
               </div>
 
@@ -220,14 +226,20 @@ const TempleDetails = () => {
                 <h3 className="mb-3 font-serif text-lg text-amber-900 md:text-xl">
                   History & Significance
                 </h3>
-                <p className="text-sm leading-relaxed text-gray-700 md:text-base">
-                  The temple has a rich history dating back to ancient times. It was built during
-                  the reign of a prominent dynasty and has withstood the test of time. The temple
-                  holds immense religious and cultural significance for devotees who visit from all
-                  parts of the country.
-                </p>
-                <div className="mt-4 cursor-pointer text-sm font-medium text-orange-500">
-                  Read More
+                <div className={!readMoreHistory ? 'line-clamp-5' : 'line-clamp-none'}>
+                  <p className="text-sm leading-relaxed text-gray-700 md:text-base">
+                    {temple?.basicDetails?.templeHistory ||
+                      `The temple has a rich history dating back to ancient times. It was built during
+                    the reign of a prominent dynasty and has withstood the test of time. The temple
+                    holds immense religious and cultural significance for devotees who visit from
+                    all parts of the country.`}
+                  </p>
+                </div>
+                <div
+                  onClick={() => setReadMoreHistory(!readMoreHistory)}
+                  className="mt-4 cursor-pointer text-sm font-medium text-orange-500"
+                >
+                  {readMoreHistory ? 'Show Less' : 'Read More'}
                 </div>
               </div>
 
@@ -256,31 +268,16 @@ const TempleDetails = () => {
               </div>
 
               {/* Visiting Tips */}
-              <div className="rounded-lg border border-amber-100 bg-white p-4 shadow-sm md:p-6">
-                <h3 className="mb-3 font-serif text-lg text-amber-900 md:text-xl">Visiting Tips</h3>
-                <ul className="space-y-2 text-sm text-gray-700 md:space-y-3 md:text-base">
-                  <li className="flex items-start">
-                    <Info className="mt-0.5 mr-2 h-4 w-4 text-orange-500" />
-                    <span>
-                      Best time to visit is early morning or evening for peaceful darshan.
-                    </span>
-                  </li>
-                  <li className="flex items-start">
-                    <Info className="mt-0.5 mr-2 h-4 w-4 text-orange-500" />
-                    <span>Dress modestly and follow temple customs and traditions.</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Info className="mt-0.5 mr-2 h-4 w-4 text-orange-500" />
-                    <span>Photography might be restricted in certain areas of the temple.</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Info className="mt-0.5 mr-2 h-4 w-4 text-orange-500" />
-                    <span>
-                      Special prayers and rituals can be arranged by contacting the temple office.
-                    </span>
-                  </li>
-                </ul>
-              </div>
+              {temple?.basicDetails?.rules && (
+                <div className="rounded-lg border border-amber-100 bg-white p-4 shadow-sm md:p-6">
+                  <h3 className="mb-3 font-serif text-lg text-amber-900 md:text-xl">
+                    Visiting Tips
+                  </h3>
+                  <p className="space-y-2 text-sm text-gray-700 md:space-y-3 md:text-base">
+                    {temple?.basicDetails?.rules}
+                  </p>
+                </div>
+              )}
             </div>
           )}
 

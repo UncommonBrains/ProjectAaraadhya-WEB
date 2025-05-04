@@ -13,6 +13,7 @@ interface BasicDetails {
   morningSchedule?: TimeRange;
   eveningSchedule?: TimeRange;
   amenities?: Array<string>;
+  templeHistory: string;
   description?: string;
   rules?: string;
 }
