@@ -146,7 +146,7 @@ const TempleDetails = () => {
             </button> */}
             <button
               className="text-md md:text-md flex items-center justify-center rounded-lg bg-amber-600 py-3 font-medium text-white"
-              onClick={() => navigate('/temple-details/pooja-booking')}
+              onClick={() => navigate(`/temple-details/pooja-booking/${temple?.id}`)}
             >
               <Gift className="mr-1 h-5 w-5" />
               Book Pooja
@@ -201,7 +201,7 @@ const TempleDetails = () => {
                 </div>
               </div>
 
-              <TemplePoojas />
+              <TemplePoojas templeId={temple?.id} />
 
               {/* Features & Amenities */}
               <div className="rounded-lg border border-amber-100 bg-white p-4 shadow-sm md:p-6">

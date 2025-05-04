@@ -44,7 +44,7 @@ const AppRouter = () => {
         <Route element={<PrivateRoutes />}>
           <Route path="/community" element={<Community />} />
           <Route path="/live-events" element={<LiveEvents />} />
-          <Route path="/temple-details/pooja-booking" element={<PoojaBooking />} />
+          <Route path="/temple-details/pooja-booking/:id" element={<PoojaBooking />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/my-temples" element={<MyTemples />} />
           <Route path="/my-bookings" element={<MyBookings />} />

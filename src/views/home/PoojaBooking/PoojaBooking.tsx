@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ChevronLeft,
   Search,
@@ -9,74 +9,12 @@ import {
   X,
   User,
   List,
-  GridIcon,
+  Sun,
 } from 'lucide-react';
-import { Deity, PoojaCategory, Pooja, AdditionalMember, FormData, CartItem } from './types';
-import VinayakaImage from '../../../assets/images/vinayaka.jpg';
-import LakshmiImage from '../../../assets/images/lakshmi.jpg';
-import ShivaImage from '../../../assets/images/shiva.jpg';
-import HanumanImage from '../../../assets/images/hanuman.jpg';
-import KrishnaImage from '../../../assets/images/krishna.jpg';
-import DurgaImage from '../../../assets/images/durga.jpg';
-import { NavLink } from 'react-router-dom';
-
-// Sample data - In a real app, this would come from API or parent component
-const deities: Deity[] = [
-  { id: 1, name: 'Lord Ganesha', image: VinayakaImage },
-  { id: 2, name: 'Goddess Lakshmi', image: LakshmiImage },
-  { id: 3, name: 'Lord Shiva', image: ShivaImage },
-  { id: 4, name: 'Lord Hanuman', image: HanumanImage },
-  { id: 5, name: 'Lord Krishna', image: KrishnaImage },
-  { id: 6, name: 'Goddess Durga', image: DurgaImage },
-];
-
-const poojaCategories: PoojaCategory[] = [
-  { id: 1, name: 'Homam', icon: '' },
-  { id: 2, name: 'Archanakal', icon: '' },
-  { id: 3, name: 'Nivedhyam', icon: '' },
-  { id: 4, name: 'Abhishekam', icon: '' },
-  { id: 5, name: 'Special Poojas', icon: '' },
-  { id: 6, name: 'Festival Poojas', icon: '' },
-];
-
-const allPoojas: Pooja[] = [
-  { id: 1, name: 'Ganesh Abhishekam', price: 501, categoryId: 4, deityId: 1 },
-  { id: 2, name: 'Lakshmi Archana', price: 101, categoryId: 2, deityId: 2 },
-  { id: 3, name: 'Maha Rudra Homam', price: 1501, categoryId: 1, deityId: 3 },
-  { id: 4, name: 'Hanuman Chalisa', price: 251, categoryId: 2, deityId: 4 },
-  { id: 5, name: 'Sri Suktha Homam', price: 1101, categoryId: 1, deityId: 2 },
-  {
-    id: 6,
-    name: 'Panchamruta Abhishekam',
-    price: 751,
-    categoryId: 4,
-    deityId: 3,
-  },
-  {
-    id: 7,
-    name: 'Satyanarayana Pooja',
-    price: 1001,
-    categoryId: 5,
-    deityId: 5,
-  },
-  { id: 8, name: 'Durga Ashtottara', price: 251, categoryId: 2, deityId: 6 },
-  { id: 9, name: 'Ganesha Nivedhyam', price: 351, categoryId: 3, deityId: 1 },
-  { id: 10, name: 'Navgraha Shanti', price: 1201, categoryId: 5, deityId: 3 },
-  {
-    id: 11,
-    name: 'Vishnu Sahasranamam',
-    price: 301,
-    categoryId: 2,
-    deityId: 5,
-  },
-  {
-    id: 12,
-    name: 'Diwali Special Pooja',
-    price: 1101,
-    categoryId: 6,
-    deityId: 2,
-  },
-];
+import { AdditionalMember, FormData, CartItem } from './types';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useTemplePoojasViewModel } from '../../../view-models/temple/useTemplePoojasViewModel';
+import { Pooja } from '../../../models/entities/Pooja';
 
 const starSigns: string[] = [
   'Aswathi (അശ്വതി)',
@@ -110,8 +48,11 @@ const starSigns: string[] = [
 ];
 
 const PoojaBooking: React.FC = () => {
-  const [mainTab, setMainTab] = useState<'deity' | 'category' | 'all'>('deity');
-  const [selectedDeity, setSelectedDeity] = useState<Deity | null>(null);
+  const navigate = useNavigate();
+  const { poojas } = useTemplePoojasViewModel();
+  const [deities, setDeities] = useState<Array<string>>([]);
+  const [mainTab, setMainTab] = useState<'deity' | 'all'>('deity');
+  const [selectedDeity, setSelectedDeity] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [currentForm, setCurrentForm] = useState<Pooja | null>(null);
@@ -122,6 +63,16 @@ const PoojaBooking: React.FC = () => {
     date: '',
     time: '',
   });
+
+  useEffect(() => {
+    const deities: Array<string> = [];
+
+    poojas.map((pooja) => {
+      !deities.includes(pooja.deityName) && deities.push(pooja.deityName);
+    });
+
+    setDeities(deities);
+  }, [poojas]);
 
   // Set the additional member price (percentage of base price)
   const additionalMemberRate = 1; // 100% of base price for each additional member
@@ -147,12 +98,16 @@ const PoojaBooking: React.FC = () => {
     if (!currentForm) return;
 
     // Calculate the total price with additional members
-    const totalPrice = calculateTotalPrice(currentForm.price, formData.additionalMembers);
+    const totalPrice = calculateTotalPrice(
+      parseFloat(currentForm.price),
+      formData.additionalMembers,
+    );
 
     const newCartItem: CartItem = {
       ...currentForm,
+      name: currentForm.poojaDetails.name,
       price: totalPrice, // Update the price
-      basePrice: currentForm.price, // Keep the original price for reference
+      basePrice: parseFloat(currentForm.price), // Keep the original price for reference
       bookingDetails: { ...formData },
       additionalMembersCount: formData.additionalMembers.length,
       id: Date.now(), // Generate unique ID for cart item
@@ -209,14 +164,9 @@ const PoojaBooking: React.FC = () => {
     setCartItems(cartItems.filter((item) => item.id !== itemId));
   };
 
-  // Get poojas by category
-  const getPoojasByCategory = (categoryId: number): Pooja[] => {
-    return allPoojas.filter((pooja) => pooja.categoryId === categoryId);
-  };
-
   // Get poojas by deity
-  const getPoojasByDeity = (deityId: number): Pooja[] => {
-    return allPoojas.filter((pooja) => pooja.deityId === deityId);
+  const getPoojasByDeity = (deityName: string): Pooja[] => {
+    return poojas.filter((pooja) => pooja.deityName === deityName);
   };
 
   // Render booking form modal
@@ -224,7 +174,10 @@ const PoojaBooking: React.FC = () => {
     if (!currentForm) return null;
 
     // Calculate dynamic price based on current number of additional members
-    const currentPrice = calculateTotalPrice(currentForm.price, formData.additionalMembers);
+    const currentPrice = calculateTotalPrice(
+      parseFloat(currentForm.price),
+      formData.additionalMembers,
+    );
 
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
@@ -243,7 +196,7 @@ const PoojaBooking: React.FC = () => {
 
           <div className="p-4">
             <div className="mb-4 rounded-lg bg-amber-50 p-3">
-              <p className="font-medium text-amber-900">{currentForm.name}</p>
+              <p className="font-medium text-amber-900">{currentForm.poojaDetails.name}</p>
               <div className="mt-1 flex justify-between">
                 <p className="text-sm text-gray-600">Base Price: ₹{currentForm.price}</p>
                 {formData.additionalMembers.length > 0 && (
@@ -311,7 +264,7 @@ const PoojaBooking: React.FC = () => {
                     <div className="mb-2 flex items-center justify-between">
                       <span className="text-sm font-medium text-amber-900">
                         Member {index + 1} (₹
-                        {(currentForm.price * additionalMemberRate).toFixed(0)})
+                        {(parseFloat(currentForm.price) * additionalMemberRate).toFixed(0)})
                       </span>
                       <button
                         type="button"
@@ -471,10 +424,13 @@ const PoojaBooking: React.FC = () => {
       {/* Header with back button */}
       <header className="sticky top-0 z-10 bg-white p-4 shadow-sm">
         <div className="container mx-auto flex items-center justify-between">
-          <NavLink to="/temple-details" className="flex items-center text-amber-900">
+          <div
+            onClick={() => navigate(-1)}
+            className="flex cursor-pointer items-center text-amber-900"
+          >
             <ChevronLeft className="mr-2 h-5 w-5" />
             <span>Back to Temple</span>
-          </NavLink>
+          </div>
         </div>
       </header>
 
@@ -494,17 +450,6 @@ const PoojaBooking: React.FC = () => {
               >
                 <User className="mx-auto mb-1 h-4 w-4" />
                 By Deity
-              </button>
-              <button
-                className={`flex-1 px-4 py-4 text-center text-sm font-medium whitespace-nowrap ${
-                  mainTab === 'category'
-                    ? 'border-b-2 border-orange-500 text-orange-500'
-                    : 'text-gray-600'
-                }`}
-                onClick={() => setMainTab('category')}
-              >
-                <GridIcon className="mx-auto mb-1 h-4 w-4" />
-                Group of Poojas
               </button>
               <button
                 className={`flex-1 px-4 py-4 text-center text-sm font-medium whitespace-nowrap ${
@@ -546,23 +491,18 @@ const PoojaBooking: React.FC = () => {
                   <h3 className="mb-3 font-serif text-lg text-amber-900">Select a Deity</h3>
                   <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
                     {deities
-                      .filter((deity) =>
-                        deity.name.toLowerCase().includes(searchQuery.toLowerCase()),
-                      )
-                      .map((deity) => (
+                      .filter((deity) => deity.toLowerCase().includes(searchQuery.toLowerCase()))
+                      .map((deity, index) => (
                         <div
-                          key={deity.id}
+                          key={index}
                           className="cursor-pointer overflow-hidden rounded-lg border border-amber-100 bg-white shadow-sm"
                           onClick={() => setSelectedDeity(deity)}
                         >
-                          <div
-                            className="h-40 bg-cover bg-top"
-                            style={{
-                              backgroundImage: `url(${deity.image})`,
-                            }}
-                          ></div>
-                          <div className="p-3 text-center">
-                            <h4 className="font-medium text-amber-900">{deity.name}</h4>
+                          <div key={index} className="bg-amber flex items-center rounded p-3">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-orange-500">
+                              <Sun className="h-5 w-5" />
+                            </div>
+                            <h4 className="text-md ms-3 font-medium text-amber-900">{deity}</h4>
                           </div>
                         </div>
                       ))}
@@ -579,14 +519,14 @@ const PoojaBooking: React.FC = () => {
                       <ChevronLeft className="h-5 w-5" />
                     </button>
                     <h3 className="font-serif text-lg text-amber-900">
-                      {selectedDeity.name} - Available Poojas
+                      {selectedDeity} - Available Poojas
                     </h3>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
-                    {getPoojasByDeity(selectedDeity.id)
+                    {getPoojasByDeity(selectedDeity)
                       .filter((pooja) =>
-                        pooja.name.toLowerCase().includes(searchQuery.toLowerCase()),
+                        pooja.poojaDetails.name.toLowerCase().includes(searchQuery.toLowerCase()),
                       )
                       .map((pooja) => (
                         <div
@@ -595,7 +535,9 @@ const PoojaBooking: React.FC = () => {
                         >
                           <div className="flex items-center justify-between">
                             <div>
-                              <h4 className="font-medium text-amber-900">{pooja.name}</h4>
+                              <h4 className="font-medium text-amber-900">
+                                {pooja.poojaDetails.name}
+                              </h4>
                               <p className="mt-1 text-sm text-gray-600">₹{pooja.price}</p>
                             </div>
                             <button
@@ -614,63 +556,15 @@ const PoojaBooking: React.FC = () => {
             </div>
           )}
 
-          {/* Category Tab */}
-          {mainTab === 'category' && (
-            <div className="space-y-6">
-              {poojaCategories
-                .filter((category) =>
-                  category.name.toLowerCase().includes(searchQuery.toLowerCase()),
-                )
-                .map((category) => {
-                  const categoryPoojas = getPoojasByCategory(category.id);
-                  if (categoryPoojas.length === 0) return null;
-
-                  return (
-                    <div key={category.id}>
-                      <div className="mb-3 flex items-center">
-                        <span className="mr-2 text-xl">{category.icon}</span>
-                        <h3 className="font-serif text-lg text-amber-900">{category.name}</h3>
-                      </div>
-                      <div className="grid grid-cols-1 gap-4 md:!grid-cols-2">
-                        {categoryPoojas.map((pooja) => (
-                          <div
-                            key={pooja.id}
-                            className="rounded-lg border border-amber-100 bg-white p-4 shadow-sm"
-                          >
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <h4 className="font-medium text-amber-900">{pooja.name}</h4>
-                                <p className="mt-1 text-sm text-gray-600">
-                                  {deities.find((d) => d.id === pooja.deityId)?.name}
-                                </p>
-                                <p className="mt-1 text-sm font-medium text-amber-900">
-                                  ₹{pooja.price}
-                                </p>
-                              </div>
-                              <button
-                                className="flex items-center rounded-lg bg-amber-600 px-3 py-2 text-sm font-medium text-white"
-                                onClick={() => handleAddToCart(pooja)}
-                              >
-                                <Plus className="mr-1 h-4 w-4" />
-                                Book
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
-            </div>
-          )}
-
           {/* All Poojas Tab */}
           {mainTab === 'all' && (
             <div>
               <h3 className="mb-3 font-serif text-lg text-amber-900">All Available Poojas</h3>
               <div className="grid grid-cols-1 gap-4 md:!grid-cols-2">
-                {allPoojas
-                  .filter((pooja) => pooja.name.toLowerCase().includes(searchQuery.toLowerCase()))
+                {poojas
+                  .filter((pooja) =>
+                    pooja.poojaDetails.name.toLowerCase().includes(searchQuery.toLowerCase()),
+                  )
                   .map((pooja) => (
                     <div
                       key={pooja.id}
@@ -678,20 +572,17 @@ const PoojaBooking: React.FC = () => {
                     >
                       <div className="flex items-center justify-between">
                         <div>
-                          <h4 className="font-medium text-amber-900">{pooja.name}</h4>
+                          <h4 className="font-medium text-amber-900">{pooja.poojaDetails.name}</h4>
                           <div className="mt-1 flex items-center">
-                            <span className="mr-2 rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-800">
-                              {poojaCategories.find((c) => c.id === pooja.categoryId)?.name}
-                            </span>
                             <span className="text-sm text-gray-600">
-                              {deities.find((d) => d.id === pooja.deityId)?.name}
+                              {deities.find((d) => d === pooja.deityName)}
                             </span>
                           </div>
                           <p className="mt-1 text-sm font-medium text-amber-900">₹{pooja.price}</p>
                         </div>
                         <button
                           className="flex items-center rounded-lg bg-amber-600 px-3 py-2 text-sm font-medium text-white"
-                          onClick={() => handleAddToCart(pooja)}
+                          // onClick={() => handleAddToCart(pooja)}
                         >
                           <Plus className="mr-1 h-4 w-4" />
                           Book

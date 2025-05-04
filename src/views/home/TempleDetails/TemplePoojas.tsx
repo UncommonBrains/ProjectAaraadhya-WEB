@@ -3,7 +3,7 @@ import React from 'react';
 import { useTemplePoojasViewModel } from '../../../view-models/temple/useTemplePoojasViewModel';
 import { useNavigate } from 'react-router-dom';
 
-const TemplePoojas: React.FC = () => {
+const TemplePoojas: React.FC<{ templeId?: string }> = ({ templeId }) => {
   const { poojas, loading } = useTemplePoojasViewModel();
   const navigate = useNavigate();
 
@@ -32,7 +32,7 @@ const TemplePoojas: React.FC = () => {
               Available Pooja Services
             </h3>
             <button
-              onClick={() => navigate('/temple-details/pooja-booking')}
+              onClick={() => navigate(`/temple-details/pooja-booking/${templeId}`)}
               className="text-sm font-medium text-orange-500"
             >
               View All
@@ -52,7 +52,7 @@ const TemplePoojas: React.FC = () => {
             ))}
           </div>
           <button
-            onClick={() => navigate('/temple-details/pooja-booking')}
+            onClick={() => navigate(`/temple-details/pooja-booking/${templeId}`)}
             className="mt-4 flex w-full items-center justify-center rounded-lg bg-amber-600 px-4 py-3 text-sm font-medium text-white md:text-base"
           >
             <Gift className="mr-2 h-4 w-4" />

@@ -14,8 +14,6 @@ export interface Pooja {
   id: number;
   name: string;
   price: number;
-  categoryId: number;
-  deityId: number;
 }
 
 export interface AdditionalMember {
