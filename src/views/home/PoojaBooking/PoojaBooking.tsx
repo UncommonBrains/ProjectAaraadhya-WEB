@@ -12,9 +12,10 @@ import {
   Sun,
 } from 'lucide-react';
 import { AdditionalMember, FormData, CartItem } from './types';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useTemplePoojasViewModel } from '../../../view-models/temple/useTemplePoojasViewModel';
 import { Pooja } from '../../../models/entities/Pooja';
+import CustomDatePicker from '../../../components/common/CustomDatePicker';
 
 const starSigns: string[] = [
   'Aswathi (അശ്വതി)',
@@ -306,35 +307,7 @@ const PoojaBooking: React.FC = () => {
               </div>
 
               {/* Date and Calendar */}
-              <div className="mb-6 grid grid-cols-[2fr_2fr] gap-3">
-                {/* Date Input (75%) */}
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">Date</label>
-                  <div className="relative">
-                    <input
-                      type="date"
-                      className="w-full rounded-lg border border-amber-200 p-3 focus:ring-2 focus:ring-amber-300 focus:outline-none"
-                      required
-                      value={formData.date}
-                      onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                    />
-                  </div>
-                </div>
-
-                {/* Calendar Link (25%) - Label Removed */}
-                <div className="flex items-end">
-                  <NavLink
-                    to="/"
-                    onClick={(e) => {
-                      e.preventDefault(); // Prevent default navigation
-                      alert('Calendar link clicked!');
-                    }}
-                    className="block w-full rounded-lg bg-amber-500 p-3 text-center text-white hover:bg-amber-600 focus:ring-2 focus:ring-amber-300 focus:outline-none"
-                  >
-                    View Calendar
-                  </NavLink>
-                </div>
-              </div>
+              <CustomDatePicker onSelected={() => {}} availableDates={[]} unavailableDates={[]} />
 
               <button
                 type="submit"
