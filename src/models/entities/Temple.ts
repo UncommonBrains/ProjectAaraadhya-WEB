@@ -2,6 +2,7 @@ export interface Temple {
   id?: string;
   basicDetails?: BasicDetails;
   contactDetails?: ContactDetails;
+  advancedOptions?: AdvancedOptions;
 }
 
 interface BasicDetails {
@@ -24,6 +25,20 @@ interface ContactDetails {
   address: string;
   locationLink: string;
   websiteLink: string;
+}
+
+interface AdvancedOptions {
+  advancedOnlneBookingLimit: string;
+  bankDetails?: BankDetails;
+  enableOnlineBooking: boolean;
+}
+
+interface BankDetails {
+  accountHolderName: string;
+  bankName: string;
+  accountNumber: string;
+  ifscCode: string;
+  vpa: string;
 }
 
 interface TimeRange {

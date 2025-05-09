@@ -21,9 +21,9 @@ export interface PoojaDetails {
   imageUrl: string;
 }
 
-enum ScheduleMode {
-  repeat,
-  once,
+export enum ScheduleMode {
+  repeat = 'repeat',
+  once = 'once',
 }
 
 enum PoojaType {

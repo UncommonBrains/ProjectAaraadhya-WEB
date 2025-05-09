@@ -14,8 +14,10 @@ import {
 import { AdditionalMember, FormData, CartItem } from './types';
 import { useNavigate } from 'react-router-dom';
 import { useTemplePoojasViewModel } from '../../../view-models/temple/useTemplePoojasViewModel';
-import { Pooja } from '../../../models/entities/Pooja';
+import { Pooja, ScheduleMode } from '../../../models/entities/Pooja';
 import CustomDatePicker from '../../../components/common/CustomDatePicker';
+import { useTempleViewModel } from '../../../view-models/temple/useTempleViewModel';
+import moment from 'moment';
 
 const starSigns: string[] = [
   'Aswathi (അശ്വതി)',
@@ -51,12 +53,15 @@ const starSigns: string[] = [
 const PoojaBooking: React.FC = () => {
   const navigate = useNavigate();
   const { poojas } = useTemplePoojasViewModel();
+  const { temple } = useTempleViewModel();
   const [deities, setDeities] = useState<Array<string>>([]);
   const [mainTab, setMainTab] = useState<'deity' | 'all'>('deity');
   const [selectedDeity, setSelectedDeity] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [currentForm, setCurrentForm] = useState<Pooja | null>(null);
+  const [dates, setDates] = useState<Date[]>([]);
+  const [availableDates, setAvailableDates] = useState<Date[]>([]);
   const [formData, setFormData] = useState<FormData>({
     name: '',
     starSign: '',
@@ -80,6 +85,20 @@ const PoojaBooking: React.FC = () => {
 
   // Handle adding a pooja to cart
   const handleAddToCart = (pooja: Pooja): void => {
+    if (pooja?.scheduleMode == ScheduleMode.repeat) {
+      const today = new Date();
+      const daysAfter = parseInt(temple?.advancedOptions?.advancedOnlneBookingLimit ?? '10') - 1;
+      const dates: Date[] = [];
+
+      for (let i = 0; i <= daysAfter; i++) {
+        const d = new Date(today);
+        d.setDate(today.getDate() + i);
+        dates.push(d);
+      }
+
+      setDates(dates);
+      setAvailableDates(dates.filter((date) => pooja?.poojaDays[date.getDay()]));
+    }
     setCurrentForm({ ...pooja });
   };
 
@@ -307,7 +326,21 @@ const PoojaBooking: React.FC = () => {
               </div>
 
               {/* Date and Calendar */}
-              <CustomDatePicker onSelected={() => {}} availableDates={[]} unavailableDates={[]} />
+              {currentForm.scheduleMode === ScheduleMode.repeat ? (
+                <CustomDatePicker
+                  onSelected={() => {}}
+                  dates={dates}
+                  availableDates={availableDates}
+                />
+              ) : (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Pooja Date & Time
+                  </label>
+                  <h3>{moment(currentForm.poojaDateAndTime).format('MMMM Do YYYY [-] h:mm A')}</h3>
+                  <br />
+                </div>
+              )}
 
               <button
                 type="submit"

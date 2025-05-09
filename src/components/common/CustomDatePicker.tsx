@@ -1,35 +1,25 @@
 import moment from 'moment';
 import React, { useState } from 'react';
 
-const today = new Date();
-
-const getDateRange = (): Date[] => {
-  const daysAfter = 29;
-  const result: Date[] = [];
-  for (let i = 0; i <= daysAfter; i++) {
-    const d = new Date(today);
-    d.setDate(today.getDate() + i);
-    result.push(d);
-  }
-  return result;
-};
-
 const weekdayNames: string[] = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 interface CustomDatePickerProps {
-  availableDates: string[];
-  unavailableDates: string[];
+  dates: Date[];
+  availableDates: Date[];
   onSelected: (selectedDate: Date | null) => void;
 }
 
-const CustomDatePicker: React.FC<CustomDatePickerProps> = ({ onSelected }) => {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
+  onSelected,
+  dates,
+  availableDates,
+}) => {
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
-  const dates: Date[] = getDateRange();
   const firstDayOfWeek = dates[0].getDay();
 
   const isEnabled = (date: Date): boolean => {
-    return date.getDate() % 2 === 0; // Even dates enabled for demo
+    return availableDates.includes(date);
   };
 
   const handleSelect = (date: Date): void => {
