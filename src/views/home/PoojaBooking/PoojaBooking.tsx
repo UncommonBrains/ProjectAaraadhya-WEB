@@ -12,7 +12,7 @@ import {
   Sun,
 } from 'lucide-react';
 import { AdditionalMember, FormData, CartItem } from './types';
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useTemplePoojasViewModel } from '../../../view-models/temple/useTemplePoojasViewModel';
 import { Pooja, ScheduleMode } from '../../../models/entities/Pooja';
 import CustomDatePicker from '../../../components/common/CustomDatePicker';
@@ -415,10 +415,13 @@ const PoojaBooking: React.FC = () => {
               </div>
             </div>
 
-            <button className="flex w-full items-center justify-center rounded-lg bg-amber-600 px-4 py-3 font-medium text-white">
+            <NavLink
+              to="/checkout"
+              className="flex w-full items-center justify-center rounded-lg bg-amber-600 px-4 py-3 font-medium text-white"
+            >
               Proceed to Payment
               <ArrowRight className="ml-2 h-4 w-4" />
-            </button>
+            </NavLink>
           </>
         )}
       </div>

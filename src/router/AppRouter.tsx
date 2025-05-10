@@ -21,6 +21,7 @@ import TempleStore from '../views/home/TempleStore/TempleStore';
 import ResetPassword from '../views/auth/ResetPassword/ResetPassword';
 import VerifyEmail from '../views/auth/VerifyEmail/VerifyEmail';
 import NotFound from '../views/others/NotFound/NotFound';
+import Checkout from '../views/home/Checkout/Checkout';
 
 const AppRouter = () => {
   return (
@@ -48,6 +49,7 @@ const AppRouter = () => {
           <Route path="/settings" element={<Settings />} />
           <Route path="/my-temples" element={<MyTemples />} />
           <Route path="/my-bookings" element={<MyBookings />} />
+          <Route path="/checkout" element={<Checkout />} />
           <Route path="/temple-store" element={<TempleStore />} />
           <Route path="/reset-password" element={<ResetPassword />} />
         </Route>
