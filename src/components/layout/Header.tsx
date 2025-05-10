@@ -17,6 +17,7 @@ import {
   ShoppingBag,
   X,
   Video,
+  ShoppingCart,
 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import Logo from '../../assets/images/logo.png';
@@ -227,12 +228,18 @@ const Header = () => {
             {/* Profile */}
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
-                <div className="relative">
+                <div className="relative mx-3">
                   <Bell className="h-6 w-6 text-gray-500" />
                   <span className="absolute -top-1.5 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-orange-400 text-xs text-white">
                     3
                   </span>
                 </div>
+                <NavLink to="/cart" className="relative mx-3">
+                  <ShoppingCart className="h-6 w-6 text-gray-500" />
+                  <span className="absolute -top-1.5 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-orange-400 text-xs text-white">
+                    3
+                  </span>
+                </NavLink>
                 <div className="relative pl-5" ref={dropdownRef}>
                   <button
                     className="flex h-9 w-9 items-center justify-center rounded-full bg-amber-600 font-medium text-white focus:outline-none"

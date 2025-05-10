@@ -1,23 +1,13 @@
 import { useEffect, useState } from 'react';
-import {
-  ChevronLeft,
-  Search,
-  Plus,
-  Minus,
-  ArrowRight,
-  ShoppingCart,
-  X,
-  User,
-  List,
-  Sun,
-} from 'lucide-react';
+import { ChevronLeft, Search, Plus, Minus, ShoppingCart, X, User, List, Sun } from 'lucide-react';
 import { AdditionalMember, FormData, CartItem } from './types';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useTemplePoojasViewModel } from '../../../view-models/temple/useTemplePoojasViewModel';
 import { Pooja, ScheduleMode } from '../../../models/entities/Pooja';
 import CustomDatePicker from '../../../components/common/CustomDatePicker';
 import { useTempleViewModel } from '../../../view-models/temple/useTempleViewModel';
 import moment from 'moment';
+import CartBox from '../CartPage/CartBox';
 
 const starSigns: string[] = [
   'Aswathi (അശ്വതി)',
@@ -177,11 +167,6 @@ const PoojaBooking: React.FC = () => {
       ...formData,
       additionalMembers: updatedMembers,
     });
-  };
-
-  // Handle removing an item from cart
-  const handleRemoveFromCart = (itemId: number): void => {
-    setCartItems(cartItems.filter((item) => item.id !== itemId));
   };
 
   // Get poojas by deity
@@ -352,78 +337,6 @@ const PoojaBooking: React.FC = () => {
             </form>
           </div>
         </div>
-      </div>
-    );
-  };
-
-  // Render cart sidebar
-  const renderCart = (): React.ReactNode => {
-    const totalAmount = cartItems.reduce((total, item) => total + item.price, 0);
-
-    return (
-      <div className="mt-4 mb-16 border-t border-amber-200 bg-white p-4">
-        <div className="mb-4 flex items-center justify-between">
-          <h3 className="font-serif text-lg text-amber-900">Your Cart</h3>
-          <span className="rounded-full bg-amber-100 px-2 py-1 text-sm text-amber-900">
-            {cartItems.length} items
-          </span>
-        </div>
-
-        {cartItems.length === 0 ? (
-          <div className="p-4 text-center">
-            <ShoppingCart className="mx-auto mb-2 h-12 w-12 text-amber-300" />
-            <p className="text-gray-600">Your cart is empty</p>
-          </div>
-        ) : (
-          <>
-            <div className="mb-4 max-h-60 space-y-3 overflow-y-auto">
-              {cartItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-center justify-between rounded-lg bg-amber-50 p-3"
-                >
-                  <div>
-                    <p className="text-sm font-medium text-amber-900">{item.name}</p>
-                    <p className="text-xs text-gray-600">
-                      For: {item.bookingDetails.name}
-                      {item.bookingDetails.additionalMembers.length > 0 &&
-                        ` +${item.bookingDetails.additionalMembers.length}`}
-                    </p>
-                    {item.additionalMembersCount > 0 && (
-                      <p className="text-xs text-amber-700">
-                        Base: ₹{item.basePrice} + {item.additionalMembersCount} members
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex items-center">
-                    <span className="mr-2 font-medium text-amber-900">₹{item.price}</span>
-                    <button
-                      onClick={() => handleRemoveFromCart(item.id)}
-                      className="rounded-full bg-amber-100 p-1 text-amber-900"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mb-4 border-t border-amber-200 pt-3">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-700">Total Amount</span>
-                <span className="text-lg font-medium text-amber-900">₹{totalAmount}</span>
-              </div>
-            </div>
-
-            <NavLink
-              to="/checkout"
-              className="flex w-full items-center justify-center rounded-lg bg-amber-600 px-4 py-3 font-medium text-white"
-            >
-              Proceed to Payment
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </NavLink>
-          </>
-        )}
       </div>
     );
   };
@@ -602,9 +515,9 @@ const PoojaBooking: React.FC = () => {
               </div>
             </div>
           )}
-
-          {/* Cart Section */}
-          {renderCart()}
+          <main className="flex flex-1 py-4">
+            <CartBox />
+          </main>
         </div>
       </div>
 
