@@ -15,6 +15,7 @@ import LiveEvents from '../views/home/LiveEvents/LiveEvents';
 import Settings from '../views/home/Settings/Settings';
 import MyTemples from '../views/home/MyTemples/MyTemples';
 import MyBookings from '../views/home/MyBookings/MyBookings';
+import Payment from '../views/home/Payment/Payment';
 import TempleDetails from '../views/home/TempleDetails/TempleDetails';
 import PoojaBooking from '../views/home/PoojaBooking/PoojaBooking';
 import TempleStore from '../views/home/TempleStore/TempleStore';
@@ -48,6 +49,7 @@ const AppRouter = () => {
           <Route path="/settings" element={<Settings />} />
           <Route path="/my-temples" element={<MyTemples />} />
           <Route path="/my-bookings" element={<MyBookings />} />
+          <Route path="/payment" element={<Payment />} />
           <Route path="/temple-store" element={<TempleStore />} />
           <Route path="/reset-password" element={<ResetPassword />} />
         </Route>
