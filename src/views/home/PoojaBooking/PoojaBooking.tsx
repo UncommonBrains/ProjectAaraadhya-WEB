@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ChevronLeft, Search, Plus, Minus, ShoppingCart, X, User, List, Sun } from 'lucide-react';
-import { AdditionalMember, FormData, CartItem } from './types';
+import { CartForm } from './types';
 import { useNavigate } from 'react-router-dom';
 import { useTemplePoojasViewModel } from '../../../view-models/temple/useTemplePoojasViewModel';
 import { Pooja, ScheduleMode } from '../../../models/entities/Pooja';
@@ -8,6 +8,9 @@ import CustomDatePicker from '../../../components/common/CustomDatePicker';
 import { useTempleViewModel } from '../../../view-models/temple/useTempleViewModel';
 import moment from 'moment';
 import CartBox from '../CartPage/CartBox';
+import { CartItem, Member } from '../../../models/entities/Cart';
+import { useCart } from '../../../hooks/useCart';
+import { toast } from '../../../utils/toast';
 
 const starSigns: string[] = [
   'Aswathi (അശ്വതി)',
@@ -44,20 +47,20 @@ const PoojaBooking: React.FC = () => {
   const navigate = useNavigate();
   const { poojas } = useTemplePoojasViewModel();
   const { temple } = useTempleViewModel();
+  const { cart, addToCart } = useCart();
   const [deities, setDeities] = useState<Array<string>>([]);
   const [mainTab, setMainTab] = useState<'deity' | 'all'>('deity');
   const [selectedDeity, setSelectedDeity] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [currentForm, setCurrentForm] = useState<Pooja | null>(null);
+  const [selectedPooja, setSelectedPooja] = useState<Pooja | null>(null);
   const [dates, setDates] = useState<Date[]>([]);
   const [availableDates, setAvailableDates] = useState<Date[]>([]);
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<CartForm>({
     name: '',
     starSign: '',
-    additionalMembers: [],
-    date: '',
-    time: '',
+    members: [],
+    poojaDate: '',
   });
 
   useEffect(() => {
@@ -75,6 +78,10 @@ const PoojaBooking: React.FC = () => {
 
   // Handle adding a pooja to cart
   const handleAddToCart = (pooja: Pooja): void => {
+    if (cart?.items && cart.items.length > 0 && cart.items[0].templeId != pooja.templeId) {
+      return toast.error('Please clear the cart before adding a pooja from a different temple.');
+    }
+
     if (pooja?.scheduleMode == ScheduleMode.repeat) {
       const today = new Date();
       const daysAfter = parseInt(temple?.advancedOptions?.advancedOnlneBookingLimit ?? '10') - 1;
@@ -89,14 +96,19 @@ const PoojaBooking: React.FC = () => {
       setDates(dates);
       setAvailableDates(dates.filter((date) => pooja?.poojaDays[date.getDay()]));
     }
-    setCurrentForm({ ...pooja });
+
+    setFormData({
+      ...formData,
+      poojaDate:
+        dates.find((date) => pooja?.poojaDays[date.getDay()])?.toISOString() ??
+        pooja.poojaDateAndTime ??
+        new Date().toISOString(),
+    });
+    setSelectedPooja(pooja);
   };
 
   // Calculate the total price based on number of additional members
-  const calculateTotalPrice = (
-    basePrice: number,
-    additionalMembers: AdditionalMember[],
-  ): number => {
+  const calculateTotalPrice = (basePrice: number, additionalMembers: Member[]): number => {
     const additionalPrice = additionalMembers.length * (basePrice * additionalMemberRate);
     return basePrice + additionalPrice;
   };
@@ -105,32 +117,30 @@ const PoojaBooking: React.FC = () => {
   const handleFormSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
 
-    if (!currentForm) return;
+    if (!selectedPooja) return;
 
     // Calculate the total price with additional members
-    const totalPrice = calculateTotalPrice(
-      parseFloat(currentForm.price),
-      formData.additionalMembers,
-    );
+    const totalPrice = calculateTotalPrice(parseFloat(selectedPooja.price), formData.members);
 
     const newCartItem: CartItem = {
-      ...currentForm,
-      name: currentForm.poojaDetails.name,
-      price: totalPrice, // Update the price
-      basePrice: parseFloat(currentForm.price), // Keep the original price for reference
-      bookingDetails: { ...formData },
-      additionalMembersCount: formData.additionalMembers.length,
-      id: Date.now(), // Generate unique ID for cart item
+      poojaId: selectedPooja.poojaId,
+      templeId: selectedPooja.templeId,
+      scheduleId: selectedPooja.id,
+      poojaPrice: selectedPooja.price,
+      price: totalPrice.toString(),
+      ...formData,
     };
 
     setCartItems([...cartItems, newCartItem]);
-    setCurrentForm(null);
+
+    addToCart(newCartItem);
+
+    setSelectedPooja(null);
     setFormData({
       name: '',
       starSign: '',
-      additionalMembers: [],
-      date: '',
-      time: '',
+      members: [],
+      poojaDate: '',
     });
   };
 
@@ -138,34 +148,30 @@ const PoojaBooking: React.FC = () => {
   const handleAddMember = (): void => {
     setFormData({
       ...formData,
-      additionalMembers: [...formData.additionalMembers, { name: '', starSign: '' }],
+      members: [...formData.members, { name: '', starSign: '' }],
     });
   };
 
   // Handle removing additional member
   const handleRemoveMember = (index: number): void => {
-    const updatedMembers = [...formData.additionalMembers];
+    const updatedMembers = [...formData.members];
     updatedMembers.splice(index, 1);
     setFormData({
       ...formData,
-      additionalMembers: updatedMembers,
+      members: updatedMembers,
     });
   };
 
   // Handle updating member info
-  const handleMemberChange = (
-    index: number,
-    field: keyof AdditionalMember,
-    value: string,
-  ): void => {
-    const updatedMembers = [...formData.additionalMembers];
+  const handleMemberChange = (index: number, field: keyof Member, value: string): void => {
+    const updatedMembers = [...formData.members];
     updatedMembers[index] = {
       ...updatedMembers[index],
       [field]: value,
     };
     setFormData({
       ...formData,
-      additionalMembers: updatedMembers,
+      members: updatedMembers,
     });
   };
 
@@ -176,13 +182,10 @@ const PoojaBooking: React.FC = () => {
 
   // Render booking form modal
   const renderBookingForm = (): React.ReactNode => {
-    if (!currentForm) return null;
+    if (!selectedPooja) return null;
 
     // Calculate dynamic price based on current number of additional members
-    const currentPrice = calculateTotalPrice(
-      parseFloat(currentForm.price),
-      formData.additionalMembers,
-    );
+    const currentPrice = calculateTotalPrice(parseFloat(selectedPooja.price), formData.members);
 
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
@@ -191,7 +194,7 @@ const PoojaBooking: React.FC = () => {
             <div className="flex items-center justify-between">
               <h3 className="font-serif text-lg text-amber-900">Book Pooja</h3>
               <button
-                onClick={() => setCurrentForm(null)}
+                onClick={() => setSelectedPooja(null)}
                 className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-200 text-amber-900"
               >
                 <X className="h-5 w-5" />
@@ -201,10 +204,10 @@ const PoojaBooking: React.FC = () => {
 
           <div className="p-4">
             <div className="mb-4 rounded-lg bg-amber-50 p-3">
-              <p className="font-medium text-amber-900">{currentForm.poojaDetails.name}</p>
+              <p className="font-medium text-amber-900">{selectedPooja.poojaDetails.name}</p>
               <div className="mt-1 flex justify-between">
-                <p className="text-sm text-gray-600">Base Price: ₹{currentForm.price}</p>
-                {formData.additionalMembers.length > 0 && (
+                <p className="text-sm text-gray-600">Base Price: ₹{selectedPooja.price}</p>
+                {formData.members.length > 0 && (
                   <p className="font-medium text-amber-900">Total: ₹{currentPrice}</p>
                 )}
               </div>
@@ -235,9 +238,9 @@ const PoojaBooking: React.FC = () => {
                   onChange={(e) => setFormData({ ...formData, starSign: e.target.value })}
                 >
                   <option value="">Select your star sign</option>
-                  {starSigns.map((star) => (
-                    <option key={star} value={star}>
-                      {star}
+                  {starSigns.map((sign) => (
+                    <option key={sign} value={sign}>
+                      {sign}
                     </option>
                   ))}
                 </select>
@@ -258,18 +261,18 @@ const PoojaBooking: React.FC = () => {
                   </button>
                 </div>
 
-                {formData.additionalMembers.length > 0 && (
+                {formData.members.length > 0 && (
                   <p className="mb-2 text-xs text-amber-700">
                     Each additional member costs {additionalMemberRate * 100}% of the base price
                   </p>
                 )}
 
-                {formData.additionalMembers.map((member, index) => (
+                {formData.members.map((member, index) => (
                   <div key={index} className="mb-3 rounded-lg bg-amber-50 p-3">
                     <div className="mb-2 flex items-center justify-between">
                       <span className="text-sm font-medium text-amber-900">
                         Member {index + 1} (₹
-                        {(parseFloat(currentForm.price) * additionalMemberRate).toFixed(0)})
+                        {(parseFloat(selectedPooja.price) * additionalMemberRate).toFixed(0)})
                       </span>
                       <button
                         type="button"
@@ -299,9 +302,9 @@ const PoojaBooking: React.FC = () => {
                         required
                       >
                         <option value="">Select star sign</option>
-                        {starSigns.map((star) => (
-                          <option key={star} value={star}>
-                            {star}
+                        {starSigns.map((sign) => (
+                          <option key={sign} value={sign}>
+                            {sign}
                           </option>
                         ))}
                       </select>
@@ -311,9 +314,16 @@ const PoojaBooking: React.FC = () => {
               </div>
 
               {/* Date and Calendar */}
-              {currentForm.scheduleMode === ScheduleMode.repeat ? (
+              {selectedPooja.scheduleMode === ScheduleMode.repeat ? (
                 <CustomDatePicker
-                  onSelected={() => {}}
+                  onSelected={(date) => {
+                    if (date) {
+                      setFormData({
+                        ...formData,
+                        poojaDate: date.toISOString(),
+                      });
+                    }
+                  }}
                   dates={dates}
                   availableDates={availableDates}
                 />
@@ -322,7 +332,9 @@ const PoojaBooking: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700">
                     Pooja Date & Time
                   </label>
-                  <h3>{moment(currentForm.poojaDateAndTime).format('MMMM Do YYYY [-] h:mm A')}</h3>
+                  <h3>
+                    {moment(selectedPooja.poojaDateAndTime).format('MMMM Do YYYY [-] h:mm A')}
+                  </h3>
                   <br />
                 </div>
               )}

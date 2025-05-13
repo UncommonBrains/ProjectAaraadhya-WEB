@@ -5,7 +5,7 @@ export interface Temple {
   advancedOptions?: AdvancedOptions;
 }
 
-interface BasicDetails {
+export interface BasicDetails {
   profilePictureUrl?: string;
   templeName?: string;
   mainDeityName?: string;
@@ -38,7 +38,7 @@ interface BankDetails {
   bankName: string;
   accountNumber: string;
   ifscCode: string;
-  vpa: string;
+  upiId: string;
 }
 
 interface TimeRange {

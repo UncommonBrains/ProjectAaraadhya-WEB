@@ -14,7 +14,7 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
   dates,
   availableDates,
 }) => {
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date>(availableDates[0]);
 
   const firstDayOfWeek = dates[0].getDay();
 

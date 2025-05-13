@@ -51,7 +51,7 @@ const AppRouter = () => {
           <Route path="/my-temples" element={<MyTemples />} />
           <Route path="/my-bookings" element={<MyBookings />} />
           <Route path="/cart" element={<CartPage />} />
-          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/checkout/:id" element={<Checkout />} />
           <Route path="/temple-store" element={<TempleStore />} />
           <Route path="/reset-password" element={<ResetPassword />} />
         </Route>

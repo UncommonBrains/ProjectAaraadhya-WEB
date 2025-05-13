@@ -8,6 +8,11 @@ import {
   AlertCircle,
   ChevronLeft,
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useCart } from '../../../hooks/useCart';
+import { useTempleViewModel } from '../../../view-models/temple/useTempleViewModel';
+import { generateUpiUrl, initiateUpiPayment } from '../../../utils/paymentHandler';
+import UpiQrCode from '../../../components/common/UpiQrCode';
 
 interface PaymentMethod {
   type: 'bank' | 'upi';
@@ -19,31 +24,15 @@ interface PaymentDetails {
   screenshot: File | null;
 }
 
-// Dummy data for the temple payment details
-const DUMMY_TEMPLE_DATA = {
-  name: 'Sri Mahaganapathy Temple',
-  cartTotal: 1200,
-  paymentDetails: {
-    bankAccount: {
-      accountName: 'Sri Mahaganapathy Temple Trust',
-      accountNumber: '1234567890123456',
-      bankName: 'State Bank of India',
-      ifsc: 'SBIN0001234',
-    },
-    upiId: 'mahaganapathy@upi',
-    upiName: 'Temple Trust',
-  },
-};
-
 const Checkout: React.FC = () => {
+  const navigate = useNavigate();
+  const { cart } = useCart();
+  const { temple } = useTempleViewModel();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Use dummy data instead of fetching from a view model
-  const temple = DUMMY_TEMPLE_DATA;
-
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([
-    { type: 'bank', selected: true },
-    { type: 'upi', selected: false },
+    { type: 'upi', selected: true },
+    { type: 'bank', selected: false },
   ]);
 
   const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>({
@@ -67,8 +56,7 @@ const Checkout: React.FC = () => {
 
   // Handle navigating back (dummy implementation)
   const handleGoBack = () => {
-    console.log('Navigate back');
-    // In a real app, you'd use react-router's navigate(-1) here
+    navigate(-1);
   };
 
   // Handle method selection
@@ -89,6 +77,23 @@ const Checkout: React.FC = () => {
     setTimeout(() => {
       setCopied({ ...copied, [field]: false });
     }, 2000);
+  };
+
+  const handleUpiPayment = () => {
+    if (!temple?.advancedOptions?.bankDetails || !cart) {
+      console.error('Missing required data: bank details or cart');
+      return;
+    }
+
+    const { upiId, accountHolderName } = temple?.advancedOptions?.bankDetails;
+    const { totalPrice } = cart;
+
+    initiateUpiPayment(
+      accountHolderName,
+      upiId,
+      totalPrice,
+      `Payment for ${temple.basicDetails?.templeName}`,
+    );
   };
 
   // Handle file upload
@@ -121,18 +126,105 @@ const Checkout: React.FC = () => {
     }, 1500);
   };
 
-  // Redirect to payment gateway if needed
-  const handlePaymentRedirect = () => {
-    // Would typically navigate to external payment gateway
-    // For this example, we'll just simulate a completed payment after a delay
-    console.log(`Redirecting to ${selectedMethod === 'bank' ? 'bank payment' : 'UPI app'}`);
+  const renderQrCode = () => {
+    if (!temple?.advancedOptions?.bankDetails || !cart) return null;
+
+    const { upiId, accountHolderName } = temple?.advancedOptions?.bankDetails;
+    const { totalPrice } = cart;
+
+    const upiUrl = generateUpiUrl(
+      accountHolderName,
+      upiId,
+      totalPrice,
+      `Payment for ${temple.basicDetails?.templeName}`,
+    );
+
+    return (
+      <div className="rounded-lg border border-amber-100 bg-white p-4">
+        <UpiQrCode upiUrl={upiUrl} />
+      </div>
+    );
+  };
+
+  // UPI details display
+  const renderUpiDetails = () => {
+    if (!hasUpiDetails) return null;
+
+    return (
+      <div
+        className={`rounded-lg border bg-white p-4 ${selectedMethod === 'upi' ? 'border-amber-300' : 'border-gray-200'}`}
+      >
+        <div className="mb-2 flex items-center justify-between">
+          <h3 className="font-medium text-amber-900">UPI Payment Details</h3>
+          {paymentMethods.length > 1 && (
+            <div
+              className={`flex h-5 w-5 cursor-pointer items-center justify-center rounded-full ${
+                selectedMethod === 'upi' ? 'bg-amber-500' : 'border border-gray-300'
+              }`}
+              onClick={() => handleMethodSelect('upi')}
+            >
+              {selectedMethod === 'upi' && <div className="h-2 w-2 rounded-full bg-white"></div>}
+            </div>
+          )}
+        </div>
+
+        <div className="space-y-3">
+          {temple?.advancedOptions?.bankDetails?.accountHolderName && (
+            <div>
+              <p className="text-xs text-gray-500">UPI Name</p>
+              <p className="text-sm font-medium text-gray-700">
+                {temple?.advancedOptions?.bankDetails?.accountHolderName}
+              </p>
+            </div>
+          )}
+
+          <div>
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-gray-500">UPI ID</p>
+              <button
+                className="flex items-center text-xs text-amber-600"
+                onClick={() =>
+                  copyToClipboard(temple?.advancedOptions?.bankDetails?.upiId ?? '', 'upi')
+                }
+              >
+                {copied.upi ? (
+                  <>
+                    <CheckCircle className="mr-1 h-3 w-3" />
+                    Copied
+                  </>
+                ) : (
+                  <>
+                    <Copy className="mr-1 h-3 w-3" />
+                    Copy
+                  </>
+                )}
+              </button>
+            </div>
+            <p className="text-sm font-medium text-gray-700">
+              {temple?.advancedOptions?.bankDetails?.upiId}
+            </p>
+          </div>
+        </div>
+        <button
+          className="my-4 flex w-full items-center justify-center rounded-lg bg-amber-500 px-4 py-3 font-medium text-white shadow-sm"
+          onClick={handleUpiPayment}
+        >
+          <CreditCard className="mr-2 h-5 w-5" />
+          Pay via UPI App
+        </button>
+        <div className="my-4 flex w-full items-center">
+          <div className="h-px flex-grow bg-amber-300 dark:bg-amber-700" />
+          <span className="px-3 text-sm font-medium text-amber-500 dark:text-amber-400">OR</span>
+          <div className="h-px flex-grow bg-amber-300 dark:bg-amber-700" />
+        </div>
+        {renderQrCode()}
+      </div>
+    );
   };
 
   // Bank account details display
   const renderBankDetails = () => {
     if (!hasBankDetails) return null;
-
-    const { accountName, accountNumber, bankName, ifsc } = temple.paymentDetails.bankAccount;
 
     return (
       <div
@@ -155,12 +247,16 @@ const Checkout: React.FC = () => {
         <div className="space-y-3">
           <div>
             <p className="text-xs text-gray-500">Account Holder Name</p>
-            <p className="text-sm font-medium text-gray-700">{accountName}</p>
+            <p className="text-sm font-medium text-gray-700">
+              {temple?.advancedOptions?.bankDetails?.accountHolderName}
+            </p>
           </div>
 
           <div>
             <p className="text-xs text-gray-500">Bank Name</p>
-            <p className="text-sm font-medium text-gray-700">{bankName}</p>
+            <p className="text-sm font-medium text-gray-700">
+              {temple?.advancedOptions?.bankDetails?.bankName}
+            </p>
           </div>
 
           <div>
@@ -168,7 +264,12 @@ const Checkout: React.FC = () => {
               <p className="text-xs text-gray-500">Account Number</p>
               <button
                 className="flex items-center text-xs text-amber-600"
-                onClick={() => copyToClipboard(accountNumber, 'accountNumber')}
+                onClick={() =>
+                  copyToClipboard(
+                    temple?.advancedOptions?.bankDetails?.accountNumber ?? '',
+                    'accountNumber',
+                  )
+                }
               >
                 {copied.accountNumber ? (
                   <>
@@ -183,7 +284,9 @@ const Checkout: React.FC = () => {
                 )}
               </button>
             </div>
-            <p className="text-sm font-medium text-gray-700">{accountNumber}</p>
+            <p className="text-sm font-medium text-gray-700">
+              {temple?.advancedOptions?.bankDetails?.accountNumber}
+            </p>
           </div>
 
           <div>
@@ -191,7 +294,9 @@ const Checkout: React.FC = () => {
               <p className="text-xs text-gray-500">IFSC Code</p>
               <button
                 className="flex items-center text-xs text-amber-600"
-                onClick={() => copyToClipboard(ifsc, 'ifsc')}
+                onClick={() =>
+                  copyToClipboard(temple?.advancedOptions?.bankDetails?.ifscCode ?? '', 'ifsc')
+                }
               >
                 {copied.ifsc ? (
                   <>
@@ -206,66 +311,9 @@ const Checkout: React.FC = () => {
                 )}
               </button>
             </div>
-            <p className="text-sm font-medium text-gray-700">{ifsc}</p>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  // UPI details display
-  const renderUpiDetails = () => {
-    if (!hasUpiDetails) return null;
-
-    const { upiId, upiName } = temple.paymentDetails;
-
-    return (
-      <div
-        className={`rounded-lg border bg-white p-4 ${selectedMethod === 'upi' ? 'border-amber-300' : 'border-gray-200'}`}
-      >
-        <div className="mb-2 flex items-center justify-between">
-          <h3 className="font-medium text-amber-900">UPI Payment Details</h3>
-          {paymentMethods.length > 1 && (
-            <div
-              className={`flex h-5 w-5 cursor-pointer items-center justify-center rounded-full ${
-                selectedMethod === 'upi' ? 'bg-amber-500' : 'border border-gray-300'
-              }`}
-              onClick={() => handleMethodSelect('upi')}
-            >
-              {selectedMethod === 'upi' && <div className="h-2 w-2 rounded-full bg-white"></div>}
-            </div>
-          )}
-        </div>
-
-        <div className="space-y-3">
-          {upiName && (
-            <div>
-              <p className="text-xs text-gray-500">UPI Name</p>
-              <p className="text-sm font-medium text-gray-700">{upiName}</p>
-            </div>
-          )}
-
-          <div>
-            <div className="flex items-center justify-between">
-              <p className="text-xs text-gray-500">UPI ID</p>
-              <button
-                className="flex items-center text-xs text-amber-600"
-                onClick={() => copyToClipboard(upiId, 'upi')}
-              >
-                {copied.upi ? (
-                  <>
-                    <CheckCircle className="mr-1 h-3 w-3" />
-                    Copied
-                  </>
-                ) : (
-                  <>
-                    <Copy className="mr-1 h-3 w-3" />
-                    Copy
-                  </>
-                )}
-              </button>
-            </div>
-            <p className="text-sm font-medium text-gray-700">{upiId}</p>
+            <p className="text-sm font-medium text-gray-700">
+              {temple?.advancedOptions?.bankDetails?.ifscCode}
+            </p>
           </div>
         </div>
       </div>
@@ -399,36 +447,19 @@ const Checkout: React.FC = () => {
           <h2 className="mb-2 font-serif text-lg text-amber-900">Order Summary</h2>
           <div className="flex justify-between border-b border-dashed border-amber-100 pb-2">
             <span className="text-gray-600">Total Amount</span>
-            <span className="font-medium text-amber-900">₹{temple.cartTotal}</span>
+            <span className="font-medium text-amber-900">₹{cart?.totalPrice}</span>
           </div>
 
           <div className="mt-2 text-sm text-gray-600">
-            <p>Temple: {temple.name}</p>
-            <p>
-              Booking ID: TMP
-              {Math.floor(Math.random() * 10000)
-                .toString()
-                .padStart(4, '0')}
-            </p>
+            <p>Temple: {temple?.basicDetails?.templeName}</p>
           </div>
         </div>
 
         {/* Payment Methods */}
         <div className="mb-4 space-y-3">
-          {renderBankDetails()}
           {renderUpiDetails()}
+          {renderBankDetails()}
         </div>
-
-        {/* Payment Button - Only show if not already submitted */}
-        {!paymentSubmitted && (
-          <button
-            className="mb-4 flex w-full items-center justify-center rounded-lg bg-amber-500 px-4 py-3 font-medium text-white shadow-sm"
-            onClick={handlePaymentRedirect}
-          >
-            <CreditCard className="mr-2 h-5 w-5" />
-            {selectedMethod === 'bank' ? 'Pay via Net Banking' : 'Pay via UPI App'}
-          </button>
-        )}
 
         {/* Payment Confirmation Form */}
         {renderPaymentForm()}
