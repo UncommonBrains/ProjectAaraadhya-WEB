@@ -5,7 +5,7 @@ export interface Temple {
   advancedOptions?: AdvancedOptions;
 }
 
-export interface BasicDetails {
+interface BasicDetails {
   profilePictureUrl?: string;
   templeName?: string;
   mainDeityName?: string;

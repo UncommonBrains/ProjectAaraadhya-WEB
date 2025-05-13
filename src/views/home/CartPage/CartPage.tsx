@@ -21,7 +21,7 @@ const CartPage: React.FC = () => {
       </header>
 
       <main className="flex flex-1">
-        <div className="container mx-auto flex flex-1 p-4">
+        <div className="container mx-auto p-4">
           <CartBox />
         </div>
       </main>

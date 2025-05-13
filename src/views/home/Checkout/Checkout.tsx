@@ -13,30 +13,22 @@ import { useCart } from '../../../hooks/useCart';
 import { useTempleViewModel } from '../../../view-models/temple/useTempleViewModel';
 import { generateUpiUrl, initiateUpiPayment } from '../../../utils/paymentHandler';
 import UpiQrCode from '../../../components/common/UpiQrCode';
-
-interface PaymentMethod {
-  type: 'bank' | 'upi';
-  selected: boolean;
-}
-
-interface PaymentDetails {
-  referenceId: string;
-  screenshot: File | null;
-}
+import { PaymentDetails, PaymentMethod } from './types';
+import { useBookingViewModel } from '../../../view-models/booking/useBookingViewModel';
+import { useAuth } from '../../../hooks/useAuth';
+import { BookingStatus } from '../../../models/entities/Booking';
+import { toast } from '../../../utils/toast';
 
 const Checkout: React.FC = () => {
   const navigate = useNavigate();
+  const { firebaseUser } = useAuth();
+  const { bookPooja, loading } = useBookingViewModel();
   const { cart } = useCart();
   const { temple } = useTempleViewModel();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([
-    { type: 'upi', selected: true },
-    { type: 'bank', selected: false },
-  ]);
-
   const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>({
-    referenceId: '',
+    paymentMethod: undefined,
     screenshot: null,
   });
 
@@ -46,27 +38,14 @@ const Checkout: React.FC = () => {
     upi: false,
   });
 
-  const [paymentSubmitted, setPaymentSubmitted] = useState<boolean>(false);
-  const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
   const hasBankDetails = true; // Set to true or false based on your needs
   const hasUpiDetails = true; // Set to true or false based on your needs
 
-  const selectedMethod = paymentMethods.find((method) => method.selected)?.type || 'bank';
-
   // Handle navigating back (dummy implementation)
   const handleGoBack = () => {
     navigate(-1);
-  };
-
-  // Handle method selection
-  const handleMethodSelect = (type: 'bank' | 'upi') => {
-    setPaymentMethods((prevMethods) =>
-      prevMethods.map((method) => ({
-        ...method,
-        selected: method.type === type,
-      })),
-    );
   };
 
   // Copy to clipboard functionality
@@ -106,24 +85,38 @@ const Checkout: React.FC = () => {
     }
   };
 
-  // Handle reference ID change
-  const handleReferenceIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPaymentDetails({
-      ...paymentDetails,
-      referenceId: e.target.value,
-    });
-  };
-
   // Submit payment confirmation
-  const handleSubmitPayment = (e: React.FormEvent) => {
+  const handleSubmitPayment = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsUploading(true);
 
-    // Simulate API call with a timeout
-    setTimeout(() => {
-      setIsUploading(false);
-      setPaymentSubmitted(true);
-    }, 1500);
+    if (!paymentDetails.paymentMethod || !paymentDetails.screenshot)
+      return toast.error('Please select a payment method and upload a screenshot.');
+
+    if (!firebaseUser?.uid || !temple?.id || !cart?.items || cart?.items.length < 1) return;
+
+    try {
+      await bookPooja({
+        userId: firebaseUser.uid,
+        templeId: temple.id,
+        poojas: cart.items.map(({ poojaId, scheduleId, name, starSign, members }) => ({
+          poojaId,
+          scheduleId,
+          name,
+          starSign,
+          members,
+        })),
+        price: cart.totalPrice,
+        status: BookingStatus.PENDING,
+        paymentDetails: {
+          paymentMethod: paymentDetails.paymentMethod,
+          screenshot: paymentDetails.screenshot,
+        },
+      });
+
+      setIsSubmitted(true);
+    } catch (error) {
+      toast.error('Something went wrong. Please try again later.');
+    }
   };
 
   const renderQrCode = () => {
@@ -151,21 +144,9 @@ const Checkout: React.FC = () => {
     if (!hasUpiDetails) return null;
 
     return (
-      <div
-        className={`rounded-lg border bg-white p-4 ${selectedMethod === 'upi' ? 'border-amber-300' : 'border-gray-200'}`}
-      >
+      <div className="rounded-lg border border-gray-200 bg-white p-4">
         <div className="mb-2 flex items-center justify-between">
           <h3 className="font-medium text-amber-900">UPI Payment Details</h3>
-          {paymentMethods.length > 1 && (
-            <div
-              className={`flex h-5 w-5 cursor-pointer items-center justify-center rounded-full ${
-                selectedMethod === 'upi' ? 'bg-amber-500' : 'border border-gray-300'
-              }`}
-              onClick={() => handleMethodSelect('upi')}
-            >
-              {selectedMethod === 'upi' && <div className="h-2 w-2 rounded-full bg-white"></div>}
-            </div>
-          )}
         </div>
 
         <div className="space-y-3">
@@ -227,21 +208,9 @@ const Checkout: React.FC = () => {
     if (!hasBankDetails) return null;
 
     return (
-      <div
-        className={`rounded-lg border bg-white p-4 ${selectedMethod === 'bank' ? 'border-amber-300' : 'border-gray-200'}`}
-      >
+      <div className="rounded-lg border border-gray-200 bg-white p-4">
         <div className="mb-2 flex items-center justify-between">
           <h3 className="font-medium text-amber-900">Bank Transfer Details</h3>
-          {paymentMethods.length > 1 && (
-            <div
-              className={`flex h-5 w-5 cursor-pointer items-center justify-center rounded-full ${
-                selectedMethod === 'bank' ? 'bg-amber-500' : 'border border-gray-300'
-              }`}
-              onClick={() => handleMethodSelect('bank')}
-            >
-              {selectedMethod === 'bank' && <div className="h-2 w-2 rounded-full bg-white"></div>}
-            </div>
-          )}
         </div>
 
         <div className="space-y-3">
@@ -322,19 +291,26 @@ const Checkout: React.FC = () => {
 
   // Payment confirmation form
   const renderPaymentForm = () => {
-    if (paymentSubmitted) {
+    if (isSubmitted) {
       return (
         <div className="mt-4 rounded-lg bg-green-50 p-4">
           <div className="flex items-center space-x-2">
             <CheckCircle className="h-5 w-5 text-green-500" />
-            <h3 className="font-medium text-green-700">Payment Confirmed</h3>
+            <h3 className="font-medium text-green-700">
+              Your pooja has been successfully booked! (payment verification in progress)
+            </h3>
           </div>
           <p className="mt-2 text-sm text-green-600">
-            Your payment has been confirmed. Thank you for your booking!
+            We're currently verifying your payment with the temple administrator. You'll receive an
+            update on your order status shortly.
           </p>
           <button
             className="mt-4 flex w-full items-center justify-center rounded-lg bg-amber-600 px-4 py-3 font-medium text-white"
-            onClick={() => console.log('Navigate to bookings')}
+            onClick={() =>
+              navigate('/my-bookings', {
+                replace: true,
+              })
+            }
           >
             View Your Bookings
             <ArrowRight className="ml-2 h-4 w-4" />
@@ -352,14 +328,24 @@ const Checkout: React.FC = () => {
             <label className="mb-1 block text-sm font-medium text-gray-700">
               Transaction/Reference ID
             </label>
-            <input
-              type="text"
-              className="w-full rounded-lg border border-amber-200 p-3 focus:ring-2 focus:ring-amber-300 focus:outline-none"
-              placeholder="Enter transaction ID"
-              value={paymentDetails.referenceId}
-              onChange={handleReferenceIdChange}
-              required
-            />
+            <select
+              className="w-full rounded-lg border border-amber-200 p-2 focus:ring-2 focus:ring-amber-300 focus:outline-none"
+              value={paymentDetails.paymentMethod}
+              onChange={(e) =>
+                setPaymentDetails({
+                  ...paymentDetails,
+                  paymentMethod: e.target.value as PaymentMethod,
+                })
+              }
+            >
+              <option value="">Select Payment Method</option>
+              <option key={PaymentMethod.UPI} value={PaymentMethod.UPI}>
+                {PaymentMethod.UPI}
+              </option>
+              <option key={PaymentMethod.BANK_TRANSFER} value={PaymentMethod.BANK_TRANSFER}>
+                {PaymentMethod.BANK_TRANSFER}
+              </option>
+            </select>
           </div>
 
           <div className="mb-4">
@@ -410,13 +396,13 @@ const Checkout: React.FC = () => {
           <button
             type="submit"
             className="mt-4 flex w-full items-center justify-center rounded-lg bg-amber-600 px-4 py-3 font-medium text-white"
-            disabled={isUploading || !paymentDetails.referenceId}
+            disabled={loading}
           >
-            {isUploading ? (
+            {loading ? (
               <>Processing...</>
             ) : (
               <>
-                Confirm Payment
+                Checkout
                 <CheckCircle className="ml-2 h-4 w-4" />
               </>
             )}

@@ -16,6 +16,7 @@ import {
   startAfter,
   QueryConstraint,
   DocumentSnapshot,
+  writeBatch,
 } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 
@@ -188,5 +189,48 @@ export class DatabaseService<T extends DocumentData> {
   async delete(id: string): Promise<void> {
     const docRef = doc(db, this.collectionName, id);
     await deleteDoc(docRef);
+  }
+
+  async deleteCollection(collectionPath?: string, batchSize: number = 100): Promise<void> {
+    const path = collectionPath || this.collectionName;
+    const collectionRef = collection(db, path);
+
+    // Get the first batch of documents
+    const q = query(collectionRef, limit(batchSize));
+
+    return this.deleteQueryBatch(collectionRef, q, batchSize);
+  }
+
+  private async deleteQueryBatch(collectionRef: any, q: any, batchSize: number): Promise<void> {
+    const snapshot = await getDocs(q);
+
+    // When there are no documents left, we're done
+    if (snapshot.size === 0) {
+      return;
+    }
+
+    // Delete documents in a batch
+    const batch = writeBatch(db);
+
+    snapshot.docs.forEach((docSnapshot) => {
+      batch.delete(docSnapshot.ref);
+    });
+
+    await batch.commit();
+
+    // If we have less documents than the batch size, we're done
+    if (snapshot.size < batchSize) {
+      return;
+    }
+
+    // Recursively delete the next batch
+    const lastDoc = snapshot.docs[snapshot.size - 1];
+    const nextQuery = query(collectionRef, startAfter(lastDoc), limit(batchSize));
+
+    // Small timeout to avoid overloading the database
+    await new Promise((resolve) => setTimeout(resolve, 10));
+
+    // Continue with next batch
+    return this.deleteQueryBatch(collectionRef, nextQuery, batchSize);
   }
 }

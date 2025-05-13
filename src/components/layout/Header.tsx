@@ -24,8 +24,10 @@ import Logo from '../../assets/images/logo.png';
 import { useConfirmation } from '../../hooks/useConfirmation';
 import { useSignoutViewModel } from '../../view-models/auth/useSignoutViewModel';
 import { toast } from '../../utils/toast';
+import { useCart } from '../../hooks/useCart';
 
 const Header = () => {
+  const { cart } = useCart();
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [showMobileMenu, setShowMobileMenu] = useState<boolean>(false);
   const [showMoreDropdown, setShowMoreDropdown] = useState<boolean>(false);
@@ -237,7 +239,7 @@ const Header = () => {
                 <NavLink to="/cart" className="relative mx-3">
                   <ShoppingCart className="h-6 w-6 text-gray-500" />
                   <span className="absolute -top-1.5 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-orange-400 text-xs text-white">
-                    3
+                    {cart?.items.length ?? 0}
                   </span>
                 </NavLink>
                 <div className="relative pl-5" ref={dropdownRef}>
