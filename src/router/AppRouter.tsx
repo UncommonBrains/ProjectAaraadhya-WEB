@@ -21,6 +21,8 @@ import TempleStore from '../views/home/TempleStore/TempleStore';
 import ResetPassword from '../views/auth/ResetPassword/ResetPassword';
 import VerifyEmail from '../views/auth/VerifyEmail/VerifyEmail';
 import NotFound from '../views/others/NotFound/NotFound';
+import Checkout from '../views/home/Checkout/Checkout';
+import CartPage from '../views/home/CartPage/CartPage';
 
 const AppRouter = () => {
   return (
@@ -29,7 +31,7 @@ const AppRouter = () => {
         {/* Public Routes */}
         <Route element={<PublicRoutes />}>
           <Route path="/" element={<ExploreTemples />} />
-          <Route path="/temple-details" element={<TempleDetails />} />
+          <Route path="/temple-details/:id" element={<TempleDetails />} />
           <Route path="/upcoming-poojas" element={<UpcomingPoojas />} />
           <Route path="/feed" element={<Feed />} />
           <Route path="/divine-seva" element={<DivineSeva />} />
@@ -44,10 +46,12 @@ const AppRouter = () => {
         <Route element={<PrivateRoutes />}>
           <Route path="/community" element={<Community />} />
           <Route path="/live-events" element={<LiveEvents />} />
-          <Route path="/temple-details/pooja-booking" element={<PoojaBooking />} />
+          <Route path="/temple-details/pooja-booking/:id" element={<PoojaBooking />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/my-temples" element={<MyTemples />} />
           <Route path="/my-bookings" element={<MyBookings />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/checkout/:id" element={<Checkout />} />
           <Route path="/temple-store" element={<TempleStore />} />
           <Route path="/reset-password" element={<ResetPassword />} />
         </Route>
