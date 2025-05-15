@@ -8,7 +8,7 @@ const CartBox: React.FC = () => {
   const { cart, loading, removeFromCart } = useCart();
 
   return (
-    <div className="flex flex-1 flex-col rounded-lg border border-amber-200 bg-white p-4 pb-12">
+    <div className="flex flex-1 flex-col rounded-lg border border-amber-200 bg-white p-4">
       <div className="mb-4 flex items-center justify-between">
         <h3 className="font-serif text-lg text-amber-900">Your Cart</h3>
         <span className="rounded-full bg-amber-100 px-2 py-1 text-sm text-amber-900">

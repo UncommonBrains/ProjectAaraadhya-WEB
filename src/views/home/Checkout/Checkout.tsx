@@ -293,7 +293,7 @@ const Checkout: React.FC = () => {
   const renderPaymentForm = () => {
     if (isSubmitted) {
       return (
-        <div className="mt-4 rounded-lg bg-green-50 p-4 pb-16">
+        <div className="mt-4 rounded-lg bg-green-50 p-4 ">
           <div className="flex items-center space-x-2">
             <CheckCircle className="h-5 w-5 text-green-500" />
             <h3 className="font-medium text-green-700">

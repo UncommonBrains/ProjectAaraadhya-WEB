@@ -89,7 +89,7 @@ const TempleDetails = () => {
       </header>
 
       {/* Main content wrapper with max-width for larger screens */}
-      <div className="mx-auto max-w-4xl pb-16">
+      <div className="mx-auto max-w-4xl ">
         {/* Hero Image Section */}
         <div
           className="relative h-80 overflow-hidden bg-cover bg-center md:h-80"
