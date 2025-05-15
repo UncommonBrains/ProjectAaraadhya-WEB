@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "serve": "vite --host",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -12,6 +13,8 @@
   "dependencies": {
     "firebase": "^11.6.1",
     "lucide-react": "^0.503.0",
+    "moment": "^2.30.1",
+    "qrcode.react": "^4.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
@@ -19,6 +22,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
+    "@tailwindcss/line-clamp": "^0.4.4",
     "@tailwindcss/postcss": "^4.1.4",
     "@tailwindcss/vite": "^4.1.4",
     "@types/react": "^19.0.10",
@@ -34,5 +38,6 @@
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.26.1",
     "vite": "^6.3.1"
-  }
+  },
+  "packageManager": "pnpm@10.9.0+sha512.0486e394640d3c1fb3c9d43d49cf92879ff74f8516959c235308f5a8f62e2e19528a65cdc2a3058f587cde71eba3d5b56327c8c33a97e4c4051ca48a10ca2d5f"
 }
