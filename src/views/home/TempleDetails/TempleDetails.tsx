@@ -20,16 +20,29 @@ import { useTempleViewModel } from '../../../view-models/temple/useTempleViewMod
 import { formatTimeString } from '../../../utils/dateFormatters';
 import TempleGallery from './TempleGallery';
 import TemplePoojas from './TemplePoojas';
+import ReviewModal from './ReviewModal';
 
 const TempleDetails = () => {
-  // In a real app, you would get the temple ID from URL params
-  // Here we'll just use the first temple from the data for demonstration
   const { temple } = useTempleViewModel();
 
   const [activeTab, setActiveTab] = useState('about');
   const [isFavorite, setIsFavorite] = useState(false);
   const [readMoreDescription, setReadMoreDescription] = useState(false);
   const [readMoreHistory, setReadMoreHistory] = useState(false);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  
+  // Function to handle review submission
+  const handleReviewSubmit = (reviewData: {
+    rating: number;
+    title: string;
+    review: string;
+  }) => {
+    // In a real app, you would send this data to your backend
+    console.log('Review submitted:', reviewData);
+    // TODO: Implement API call to save review
+    
+    // You might want to show a success message or update the reviews list
+  };
 
   const navigate = useNavigate();
 
@@ -346,7 +359,10 @@ const TempleDetails = () => {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-serif text-lg text-amber-900 md:text-xl">Reviews & Ratings</h3>
-                <button className="text-sm font-medium text-orange-500 md:text-base">
+                <button 
+                  className="text-sm font-medium text-orange-500 md:text-base"
+                  onClick={() => setIsReviewModalOpen(true)}
+                >
                   Write a Review
                 </button>
               </div>
@@ -459,6 +475,13 @@ const TempleDetails = () => {
           )}
         </div>
       </div>
+
+      {/* Review Modal */}
+      <ReviewModal 
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+        onSubmit={handleReviewSubmit}
+      />
 
       {/* Floating Action Button - Adjusted position for mobile */}
       <FloatingActionButton />
