@@ -158,14 +158,14 @@ const TempleDetails = () => {
               Virtual Tour
             </button> */}
             <button
-              className="text-md md:text-md flex items-center justify-center rounded-lg bg-amber-600 py-3 font-medium text-white"
+              className="text-md md:text-md flex items-center justify-center rounded-lg bg-amber-600 py-3 font-medium text-white cursor-pointer"
               onClick={() => navigate(`/temple-details/pooja-booking/${temple?.id}`)}
             >
               <Gift className="mr-1 h-5 w-5" />
               Book Pooja
             </button>
 
-            <button className="text-md md:text-md flex items-center justify-center rounded-lg bg-amber-100 py-3 font-medium text-amber-900">
+            <button className="text-md md:text-md flex items-center justify-center rounded-lg bg-amber-100 py-3 font-medium text-amber-900 cursor-pointer">
               <Phone className="mr-1 h-5 w-5" />
               Contact
             </button>
@@ -174,11 +174,11 @@ const TempleDetails = () => {
 
         {/* Tabs Navigation */}
         <div className="container mx-auto px-4">
-          <div className="flex overflow-x-auto border-b border-amber-200 md:justify-center md:overflow-visible">
+          <div className="flex overflow-x-auto border-b border-amber-200 md:justify-center md:overflow-visible ">
             {['about', 'photos', 'events', 'reviews', 'nearby'].map((tab) => (
               <button
                 key={tab}
-                className={`px-4 py-3 text-sm font-medium whitespace-nowrap ${
+                className={`px-4 py-3 text-sm font-medium whitespace-nowrap cursor-pointer ${
                   activeTab === tab
                     ? 'border-b-2 border-orange-500 text-orange-500'
                     : 'text-gray-600'
