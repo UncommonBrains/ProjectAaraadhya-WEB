@@ -13,3 +13,29 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
+
+a {
+  cursor: pointer;
+}
+button {
+  cursor: pointer;
+}
+
+select,
+input[type="checkbox"],
+input[type="radio"],
+input[type="range"],
+label[for],
+[role="button"] {
+  cursor: pointer;
+}
+
+[onclick] {
+  cursor: pointer;
+}
+
+.clickable,
+[data-clickable="true"],
+summary {
+  cursor: pointer;
+}
