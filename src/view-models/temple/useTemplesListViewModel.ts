@@ -28,7 +28,6 @@ export const useTemplesListViewModel = () => {
       setHasMore(result.hasMore);
       setError(null);
     } catch (err) {
-      console.error('Error fetching posts:', err);
       setError('Failed to load posts');
     } finally {
       setLoading(false);
@@ -44,11 +43,10 @@ export const useTemplesListViewModel = () => {
 
       const result = await templeService.queryPaginated(PAGE_SIZE, lastVisible);
 
-      setTemples((prevPosts) => [...prevPosts, ...result.data]);
+      setTemples((prevTemples) => [...prevTemples, ...result.data]);
       setLastVisible(result.lastVisible);
       setHasMore(result.hasMore);
     } catch (err) {
-      console.error('Error fetching more posts:', err);
       setError('Failed to load more posts');
     } finally {
       setLoadingMore(false);

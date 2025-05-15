@@ -19,19 +19,27 @@ export const useBookingViewModel = () => {
 
   const PAGE_SIZE = 10;
 
-  const loadBookings = useCallback(async () => {
+  const loadBookings = useCallback(async (uid?: string) => {
     setLoading(true);
     setBookings([]);
     setLastVisible(null);
     setHasMore(true);
     try {
-      const result = await bookingService.queryPaginated(PAGE_SIZE, undefined, [
+      const result = await bookingService.queryPaginated(
+        PAGE_SIZE,
+        null,
+        [
+          {
+            field: 'userId',
+            operator: '==',
+            value: uid,
+          },
+        ],
         {
-          field: 'userId',
-          operator: '==',
-          value: firebaseUser?.uid,
+          field: 'createdAt',
+          direction: 'desc',
         },
-      ]);
+      );
 
       const bookings = await Promise.all(
         result.data.map(async (doc) => {
@@ -57,7 +65,7 @@ export const useBookingViewModel = () => {
     }
   }, []);
 
-  const loadMoreBookings = async () => {
+  const loadMoreBookings = async (uid?: string) => {
     if (!hasMore || !lastVisible || loadingMore) return;
 
     try {
@@ -67,7 +75,7 @@ export const useBookingViewModel = () => {
         {
           field: 'userId',
           operator: '==',
-          value: firebaseUser?.uid,
+          value: uid,
         },
       ]);
 
@@ -88,7 +96,6 @@ export const useBookingViewModel = () => {
       setLastVisible(result.lastVisible);
       setHasMore(result.hasMore);
     } catch (err) {
-      console.error('Error fetching more posts:', err);
       setError('Failed to load more posts');
     } finally {
       setLoadingMore(false);
@@ -97,9 +104,6 @@ export const useBookingViewModel = () => {
 
   const bookPooja = async (booking: Booking) => {
     if (!firebaseUser?.uid || !booking.paymentDetails?.screenshot) return;
-
-    console.log(booking);
-
     setLoading(true);
     setError(null);
 
@@ -120,7 +124,6 @@ export const useBookingViewModel = () => {
       });
       return await cartService(firebaseUser.uid).deleteCollection();
     } catch (err) {
-      console.log(err);
       setError('Failed to book pooja');
     } finally {
       setLoading(false);
@@ -128,8 +131,10 @@ export const useBookingViewModel = () => {
   };
 
   useEffect(() => {
-    loadBookings();
-  }, [loadBookings]);
+    if (firebaseUser?.uid) {
+      loadBookings(firebaseUser.uid);
+    }
+  }, [loadBookings, firebaseUser]);
 
   return {
     bookings,

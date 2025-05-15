@@ -325,9 +325,7 @@ const Checkout: React.FC = () => {
           <h3 className="mb-3 font-medium text-amber-900">Payment Confirmation</h3>
 
           <div className="mb-4">
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              Transaction/Reference ID
-            </label>
+            <label className="mb-1 block text-sm font-medium text-gray-700">Payment Method</label>
             <select
               className="w-full rounded-lg border border-amber-200 p-2 focus:ring-2 focus:ring-amber-300 focus:outline-none"
               value={paymentDetails.paymentMethod}

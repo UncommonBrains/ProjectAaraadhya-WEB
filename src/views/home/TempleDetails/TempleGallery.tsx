@@ -52,7 +52,7 @@ const TempleGallery: React.FC = () => {
           className="mt-3 flex w-full items-center justify-center rounded-lg bg-amber-100 px-4 py-3 text-sm font-medium text-amber-900 md:text-base"
         >
           <Image className="mr-2 h-4 w-4" />
-          View All Photos
+          View more photos
         </button>
       )}
       {isOpen && (
