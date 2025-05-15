@@ -76,7 +76,7 @@ const TempleDetails = () => {
       </header>
 
       {/* Main content wrapper with max-width for larger screens */}
-      <div className="mx-auto max-w-4xl">
+      <div className="mx-auto max-w-4xl pb-16">
         {/* Hero Image Section */}
         <div
           className="relative h-80 overflow-hidden bg-cover bg-center md:h-80"
@@ -269,7 +269,7 @@ const TempleDetails = () => {
 
               {/* Visiting Tips */}
               {temple?.basicDetails?.rules && (
-                <div className="rounded-lg border border-amber-100 bg-white p-4 shadow-sm md:p-6">
+                <div className="rounded-lg border border-amber-100 bg-white p-4 shadow-sm md:p-6 ">
                   <h3 className="mb-3 font-serif text-lg text-amber-900 md:text-xl">
                     Visiting Tips
                   </h3>
