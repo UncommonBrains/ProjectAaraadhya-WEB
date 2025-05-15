@@ -415,7 +415,7 @@ const PoojaBooking: React.FC = () => {
         </div>
 
         {/* Content based on selected tab */}
-        <div className="container mx-auto p-4">
+        <div className="container mx-auto p-4 pt-0">
           {/* Deity Tab */}
           {mainTab === 'deity' && (
             <div>
