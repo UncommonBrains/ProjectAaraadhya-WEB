@@ -343,6 +343,9 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
 
 // Booking card component
 const BookingCard: React.FC<BookingsCardProps> = ({ booking }) => {
+  // Add state for this specific card's modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
   return (
     <div className="overflow-hidden rounded-lg border border-amber-100 bg-white shadow-sm transition-shadow hover:shadow">
       {/* Status indicator */}
@@ -428,7 +431,10 @@ const BookingCard: React.FC<BookingsCardProps> = ({ booking }) => {
         <div className="mt-3 flex justify-between items-center">
           <span className="text-xs text-gray-500">Booking ID: {booking.id}</span>
           <div className="flex space-x-3">
-            <button className="px-3 py-1 bg-amber-50 rounded-md text-sm font-medium text-amber-600 hover:bg-amber-100">
+            <button 
+              className="px-3 py-1 bg-amber-50 rounded-md text-sm font-medium text-amber-600 hover:bg-amber-100"
+              onClick={() => setIsModalOpen(true)} // Open modal when clicked
+            >
               View Details
             </button>
 
@@ -439,6 +445,13 @@ const BookingCard: React.FC<BookingsCardProps> = ({ booking }) => {
             )}
           </div>
         </div>
+        
+        {/* Add modal for this card */}
+        <BookingDetailsModal 
+          isOpen={isModalOpen} 
+          onClose={() => setIsModalOpen(false)} 
+          booking={booking} 
+        />
       </div>
     </div>
   );
@@ -472,7 +485,7 @@ const BookingDetailsModal = ({ isOpen, onClose, booking }: { isOpen: boolean; on
 
         <div className="p-6">
           <h2 className="text-2xl font-bold text-amber-900 mb-4">Booking Details</h2>
-
+          
           <div className="mb-6">
             <div className="flex items-center mb-4">
               <img src={booking.imageUrl} alt={booking.templeName} className="h-16 w-16 rounded-md object-cover mr-4" />
@@ -483,7 +496,7 @@ const BookingDetailsModal = ({ isOpen, onClose, booking }: { isOpen: boolean; on
                 </div>
               </div>
             </div>
-
+            
             <StatusBadge status={booking.status} />
           </div>
 
@@ -513,7 +526,7 @@ const BookingDetailsModal = ({ isOpen, onClose, booking }: { isOpen: boolean; on
                 </li>
               </ul>
             </div>
-
+            
             <div>
               <h4 className="font-medium text-amber-900 mb-2">Contact Information</h4>
               <ul className="space-y-2">
@@ -546,14 +559,14 @@ const BookingDetailsModal = ({ isOpen, onClose, booking }: { isOpen: boolean; on
               <h4 className="font-medium text-amber-900 mb-2">Total Amount</h4>
               <p className="text-2xl font-bold text-amber-900">{booking.amount}</p>
             </div>
-
+            
             <div className="flex space-x-2">
               {booking.status === 'upcoming' && (
                 <button className="px-4 py-2 bg-red-50 rounded-md text-red-500 hover:bg-red-100">
                   Cancel Booking
                 </button>
               )}
-              <button
+              <button 
                 onClick={onClose}
                 className="px-4 py-2 bg-amber-500 text-white rounded-md hover:bg-amber-600"
               >
