@@ -343,59 +343,73 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
 
 // Booking card component
 const BookingCard: React.FC<BookingsCardProps> = ({ booking }) => {
-  // Add state for this specific card's modal
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  
   return (
     <div className="overflow-hidden rounded-lg border border-amber-100 bg-white shadow-sm transition-shadow hover:shadow">
+      {/* Status indicator */}
+      {booking.status === 'upcoming' && (
+        <div className="bg-green-50 p-2 flex items-center">
+          <div className="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
+          <span className="text-sm font-medium text-green-700">Upcoming</span>
+        </div>
+      )}
+      {booking.status === 'completed' && (
+        <div className="bg-blue-50 p-2 flex items-center">
+          <div className="w-2 h-2 rounded-full bg-blue-500 mr-2"></div>
+          <span className="text-sm font-medium text-blue-700">Completed</span>
+        </div>
+      )}
+      {booking.status === 'cancelled' && (
+        <div className="bg-red-50 p-2 flex items-center">
+          <div className="w-2 h-2 rounded-full bg-red-500 mr-2"></div>
+          <span className="text-sm font-medium text-red-700">Cancelled</span>
+        </div>
+      )}
+
       <div className="relative">
         <img src={booking.imageUrl} alt={booking.templeName} className="h-48 w-full object-cover" />
-        {booking.isPriority && (
-          <div className="absolute top-3 left-3 rounded bg-amber-500 px-2 py-1 text-xs font-bold text-white">
-            Priority Booking
-          </div>
-        )}
-        <StatusBadge status={booking.status} className="absolute top-3 right-3" />
       </div>
 
       <div className="p-4">
-        <h3 className="text-lg font-medium text-amber-900">{booking.templeName}</h3>
+        <h3 className="text-xl font-bold text-amber-900">{booking.templeName}</h3>
 
         <div className="mt-1 flex items-center text-sm text-gray-500">
           <MapPin className="mr-1 h-4 w-4" />
           {booking.location}
         </div>
 
-        <div className="mt-4 grid grid-cols-2 gap-3">
-          <div>
-            <div className="text-xs text-gray-500">Date</div>
-            <div className="mt-1 flex items-center">
-              <Calendar className="mr-1 h-4 w-4 text-amber-700" />
-              <span className="text-sm">{booking.date}</span>
+        <div className="mt-4 space-y-3">
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <div className="text-xs text-gray-500">Date</div>
+              <div className="mt-1 flex items-center">
+                <Calendar className="mr-2 h-4 w-4 text-amber-700" />
+                <span className="text-sm">{booking.date}</span>
+              </div>
+            </div>
+
+            <div>
+              <div className="text-xs text-gray-500">Time</div>
+              <div className="mt-1 flex items-center">
+                <Clock className="mr-2 h-4 w-4 text-amber-700" />
+                <span className="text-sm">{booking.time}</span>
+              </div>
             </div>
           </div>
 
-          <div>
-            <div className="text-xs text-gray-500">Time</div>
-            <div className="mt-1 flex items-center">
-              <Clock className="mr-1 h-4 w-4 text-amber-700" />
-              <span className="text-sm">{booking.time}</span>
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <div className="text-xs text-gray-500">Members</div>
+              <div className="mt-1 flex items-center">
+                <User className="mr-2 h-4 w-4 text-amber-700" />
+                <span className="text-sm">N/A (N/A)</span>
+              </div>
             </div>
-          </div>
 
-          <div>
-            <div className="text-xs text-gray-500">Service</div>
-            <div className="mt-1 flex items-center">
-              <User className="mr-1 h-4 w-4 text-amber-700" />
-              <span className="text-sm">{booking.service}</span>
-            </div>
-          </div>
-
-          <div>
-            <div className="text-xs text-gray-500">Amount</div>
-            <div className="mt-1 flex items-center">
-              <CreditCard className="mr-1 h-4 w-4 text-amber-700" />
-              <span className="text-sm font-medium">{booking.amount}</span>
+            <div>
+              <div className="text-xs text-gray-500">Services</div>
+              <div className="mt-1 flex items-center">
+                <span className="text-sm">{booking.service}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -406,13 +420,15 @@ const BookingCard: React.FC<BookingsCardProps> = ({ booking }) => {
           </div>
         )}
 
+        <div className="mt-4 bg-amber-50 p-3 rounded-md flex justify-between items-center">
+          <span className="font-medium text-amber-900">Total Amount:</span>
+          <span className="font-bold text-amber-900">{booking.amount}</span>
+        </div>
+
         <div className="mt-3 flex justify-between items-center">
           <span className="text-xs text-gray-500">Booking ID: {booking.id}</span>
           <div className="flex space-x-3">
-            <button 
-              className="px-3 py-1 bg-amber-50 rounded-md text-sm font-medium text-amber-600 hover:bg-amber-100"
-              onClick={() => setIsModalOpen(true)} // Open modal when clicked
-            >
+            <button className="px-3 py-1 bg-amber-50 rounded-md text-sm font-medium text-amber-600 hover:bg-amber-100">
               View Details
             </button>
 
@@ -423,17 +439,7 @@ const BookingCard: React.FC<BookingsCardProps> = ({ booking }) => {
             )}
           </div>
         </div>
-        
-        {/* Add modal for this card */}
-        <BookingDetailsModal 
-          isOpen={isModalOpen} 
-          onClose={() => setIsModalOpen(false)} 
-          booking={booking} 
-        />
       </div>
-
-      {/* Floating Action Button - Adjusted position for mobile */}
-      <FloatingActionButton />
     </div>
   );
 };
