@@ -23,6 +23,9 @@ import FloatingActionButton from '../../../components/common/Button/FloatingActi
 const MyBookings = () => {
   const [activeTab, setActiveTab] = useState('upcoming');
   const [viewMode, setViewMode] = useState('grid');
+  // Add state for modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState<any>(null);
 
   // Filter options
   const [searchQuery, setSearchQuery] = useState('');
@@ -301,6 +304,13 @@ const MyBookings = () => {
           )}
         </div>
       )}
+
+      {/* Modal for Booking Details */}
+      <BookingDetailsModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        booking={selectedBooking}
+      />
     </div>
   );
 };
@@ -333,6 +343,9 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
 
 // Booking card component
 const BookingCard: React.FC<BookingsCardProps> = ({ booking }) => {
+  // Add state for this specific card's modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
   return (
     <div className="overflow-hidden rounded-lg border border-amber-100 bg-white shadow-sm transition-shadow hover:shadow">
       <div className="relative">
@@ -393,30 +406,157 @@ const BookingCard: React.FC<BookingsCardProps> = ({ booking }) => {
           </div>
         )}
 
-        <div className="mt-4 flex justify-between border-t border-amber-100 pt-3">
+        <div className="mt-3 flex justify-between items-center">
           <span className="text-xs text-gray-500">Booking ID: {booking.id}</span>
           <div className="flex space-x-3">
-            <button className="text-sm font-medium text-amber-600 hover:text-amber-800">
-              Details
+            <button 
+              className="px-3 py-1 bg-amber-50 rounded-md text-sm font-medium text-amber-600 hover:bg-amber-100"
+              onClick={() => setIsModalOpen(true)} // Open modal when clicked
+            >
+              View Details
             </button>
 
             {booking.status === 'upcoming' && (
-              <button className="text-sm font-medium text-red-500 hover:text-red-700">
+              <button className="px-3 py-1 bg-red-50 rounded-md text-sm font-medium text-red-500 hover:bg-red-100">
                 Cancel
-              </button>
-            )}
-
-            {booking.status === 'completed' && (
-              <button className="text-sm font-medium text-gray-500 hover:text-gray-700">
-                Receipt
               </button>
             )}
           </div>
         </div>
+        
+        {/* Add modal for this card */}
+        <BookingDetailsModal 
+          isOpen={isModalOpen} 
+          onClose={() => setIsModalOpen(false)} 
+          booking={booking} 
+        />
       </div>
 
       {/* Floating Action Button - Adjusted position for mobile */}
       <FloatingActionButton />
+    </div>
+  );
+};
+
+// Modal component for booking details
+const BookingDetailsModal = ({ isOpen, onClose, booking }: { isOpen: boolean; onClose: () => void; booking: any }) => {
+  if (!isOpen || !booking) return null;
+
+  // Handle click outside to close
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  return (
+    <div
+      className="fixed inset-0 flex items-center justify-center bg-black/70 z-50"
+      onClick={handleBackdropClick}
+    >
+      <div className="relative bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-auto">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div className="p-6">
+          <h2 className="text-2xl font-bold text-amber-900 mb-4">Booking Details</h2>
+
+          <div className="mb-6">
+            <div className="flex items-center mb-4">
+              <img src={booking.imageUrl} alt={booking.templeName} className="h-16 w-16 rounded-md object-cover mr-4" />
+              <div>
+                <h3 className="text-xl font-bold text-amber-900">{booking.templeName}</h3>
+                <div className="flex items-center text-gray-500">
+                  <MapPin className="mr-1 h-4 w-4" /> {booking.location}
+                </div>
+              </div>
+            </div>
+
+            <StatusBadge status={booking.status} />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className="border-r pr-4">
+              <h4 className="font-medium text-amber-900 mb-2">Booking Information</h4>
+              <ul className="space-y-2">
+                <li className="flex justify-between">
+                  <span className="text-gray-500">Booking ID:</span>
+                  <span className="font-medium">{booking.id}</span>
+                </li>
+                <li className="flex justify-between">
+                  <span className="text-gray-500">Date:</span>
+                  <span className="font-medium">{booking.date}</span>
+                </li>
+                <li className="flex justify-between">
+                  <span className="text-gray-500">Time:</span>
+                  <span className="font-medium">{booking.time}</span>
+                </li>
+                <li className="flex justify-between">
+                  <span className="text-gray-500">Service:</span>
+                  <span className="font-medium">{booking.service}</span>
+                </li>
+                <li className="flex justify-between">
+                  <span className="text-gray-500">Amount:</span>
+                  <span className="font-medium">{booking.amount}</span>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-medium text-amber-900 mb-2">Contact Information</h4>
+              <ul className="space-y-2">
+                <li className="flex justify-between">
+                  <span className="text-gray-500">Name:</span>
+                  <span className="font-medium">John Doe</span>
+                </li>
+                <li className="flex justify-between">
+                  <span className="text-gray-500">Email:</span>
+                  <span className="font-medium">john.doe@example.com</span>
+                </li>
+                <li className="flex justify-between">
+                  <span className="text-gray-500">Phone:</span>
+                  <span className="font-medium">+1 234 567 8901</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {booking.status === 'cancelled' && (
+            <div className="bg-red-50 p-3 rounded mb-6">
+              <h4 className="font-medium text-red-800 mb-1">Cancellation Information</h4>
+              <p className="text-sm text-red-700">{booking.cancellationReason || 'No reason provided'}</p>
+              <p className="text-xs text-red-600 mt-1">Cancelled on: {new Date().toLocaleDateString()}</p>
+            </div>
+          )}
+
+          <div className="border-t pt-4 flex justify-between">
+            <div>
+              <h4 className="font-medium text-amber-900 mb-2">Total Amount</h4>
+              <p className="text-2xl font-bold text-amber-900">{booking.amount}</p>
+            </div>
+
+            <div className="flex space-x-2">
+              {booking.status === 'upcoming' && (
+                <button className="px-4 py-2 bg-red-50 rounded-md text-red-500 hover:bg-red-100">
+                  Cancel Booking
+                </button>
+              )}
+              <button
+                onClick={onClose}
+                className="px-4 py-2 bg-amber-500 text-white rounded-md hover:bg-amber-600"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
