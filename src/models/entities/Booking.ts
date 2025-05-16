@@ -21,8 +21,10 @@ export interface Booking {
 interface BookedPoojaDetails extends Member {
   poojaId: string;
   scheduleId: string;
+  poojaDate: string;
   members?: Member[];
   pooja?: Pooja;
+  
 }
 
 export enum BookingStatus {
