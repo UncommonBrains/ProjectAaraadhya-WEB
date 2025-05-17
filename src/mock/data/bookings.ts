@@ -1,7 +1,7 @@
 import TempleImage from '../../assets/images/temple-3.jpg';
 
 // Sample booking data
-export const bookings = [
+export const bookingsMockData = [
   {
     id: 'BK1234',
     templeName: 'Sri Venkateswara Temple',

@@ -9,30 +9,34 @@ import {
   Clock,
   MapPin,
   User,
-  CreditCard,
   CheckCircle,
   AlertCircle,
   Clock8,
   PieChart,
   List,
 } from 'lucide-react';
-import { bookings } from '../../../mock/data/bookings';
+import { bookingsMockData } from '../../../mock/data/bookings';
+import { useBookingViewModel } from '../../../view-models/booking/useBookingViewModel';
+
 import { BookingsCardProps, StatusBadgeProps } from './types';
 import FloatingActionButton from '../../../components/common/Button/FloatingActionButton';
+import React from 'react';
 
 const MyBookings = () => {
   const [activeTab, setActiveTab] = useState('upcoming');
   const [viewMode, setViewMode] = useState('grid');
   // Add state for modal
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedBooking, setSelectedBooking] = useState<any>(null);
+  const [selectedBooking] = useState<any>(null);
 
   // Filter options
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const { bookings } = useBookingViewModel();
+  console.log('Bookings:===', bookings);
 
   // Filter bookings based on active tab and search query
-  const filteredBookings = bookings.filter((booking) => {
+  const filteredBookings = bookingsMockData.filter((booking) => {
     const matchesTab = activeTab === 'all' || booking.status === activeTab;
     const matchesSearch =
       booking.templeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -459,14 +463,47 @@ const BookingCard: React.FC<BookingsCardProps> = ({ booking }) => {
 
 // Modal component for booking details
 const BookingDetailsModal = ({ isOpen, onClose, booking }: { isOpen: boolean; onClose: () => void; booking: any }) => {
-  if (!isOpen || !booking) return null;
 
+  React.useEffect(() => {
+    // When modal opens, prevent scrolling on the body
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } 
+    // When modal closes, allow scrolling again
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isOpen]); // Only re-run when isOpen changes
+  
+  if (!isOpen || !booking) return null;
+  
+  
   // Handle click outside to close
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       onClose();
     }
   };
+
+  // Mock pooja services data (replace with actual data from booking object)
+  // This structure shows multiple poojas with their participants
+  const poojaServices = booking.poojaServices || [
+    {
+      poojaName: "Abhishekam",
+      participants: [
+        { name: "John Doe", starSign: "Aries" },
+        { name: "Jane Doe", starSign: "Libra" }
+      ]
+    },
+    {
+      poojaName: "Archana",
+      participants: [
+        { name: "John Doe", starSign: "Aries" },
+        { name: "Jane Doe", starSign: "Libra" },
+        { name: "Jack Doe", starSign: "Gemini" }
+      ]
+    }
+  ];
 
   return (
     <div
@@ -485,7 +522,7 @@ const BookingDetailsModal = ({ isOpen, onClose, booking }: { isOpen: boolean; on
 
         <div className="p-6">
           <h2 className="text-2xl font-bold text-amber-900 mb-4">Booking Details</h2>
-          
+
           <div className="mb-6">
             <div className="flex items-center mb-4">
               <img src={booking.imageUrl} alt={booking.templeName} className="h-16 w-16 rounded-md object-cover mr-4" />
@@ -496,7 +533,7 @@ const BookingDetailsModal = ({ isOpen, onClose, booking }: { isOpen: boolean; on
                 </div>
               </div>
             </div>
-            
+
             <StatusBadge status={booking.status} />
           </div>
 
@@ -517,7 +554,7 @@ const BookingDetailsModal = ({ isOpen, onClose, booking }: { isOpen: boolean; on
                   <span className="font-medium">{booking.time}</span>
                 </li>
                 <li className="flex justify-between">
-                  <span className="text-gray-500">Service:</span>
+                  <span className="text-gray-500">Main Service:</span>
                   <span className="font-medium">{booking.service}</span>
                 </li>
                 <li className="flex justify-between">
@@ -526,7 +563,7 @@ const BookingDetailsModal = ({ isOpen, onClose, booking }: { isOpen: boolean; on
                 </li>
               </ul>
             </div>
-            
+
             <div>
               <h4 className="font-medium text-amber-900 mb-2">Contact Information</h4>
               <ul className="space-y-2">
@@ -546,6 +583,38 @@ const BookingDetailsModal = ({ isOpen, onClose, booking }: { isOpen: boolean; on
             </div>
           </div>
 
+          {/* Pooja Services Section */}
+          <div className="mb-6">
+            <h4 className="font-medium text-amber-900 mb-3">Pooja Services</h4>
+            <div className="space-y-4">
+              {poojaServices.map((pooja: { poojaName: string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | null | undefined; participants: any[]; }, index: React.Key | null | undefined) => (
+                <div key={index} className="bg-amber-50 rounded-md p-4">
+                  <div className="flex items-center mb-3">
+                    <div className="bg-amber-100 p-2 rounded-full mr-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-800" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <h5 className="text-lg font-semibold text-amber-900">Pooja: {pooja.poojaName}</h5>
+                  </div>
+                  
+                  <div className="pl-3 border-l-2 border-amber-200">
+                    <p className="text-sm font-medium text-amber-800 mb-2">Participants:</p>
+                    {pooja.participants.map((participant, idx) => (
+                      <div key={idx} className="flex items-center justify-between mb-2 bg-white rounded-md p-2 shadow-sm">
+                        <div className="flex items-center">
+                          <User className="h-4 w-4 text-amber-700 mr-2" />
+                          <span>{participant.name}</span>
+                        </div>
+                        <span className="text-gray-500 text-sm">Star Sign: {participant.starSign}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {booking.status === 'cancelled' && (
             <div className="bg-red-50 p-3 rounded mb-6">
               <h4 className="font-medium text-red-800 mb-1">Cancellation Information</h4>
@@ -559,14 +628,14 @@ const BookingDetailsModal = ({ isOpen, onClose, booking }: { isOpen: boolean; on
               <h4 className="font-medium text-amber-900 mb-2">Total Amount</h4>
               <p className="text-2xl font-bold text-amber-900">{booking.amount}</p>
             </div>
-            
+
             <div className="flex space-x-2">
               {booking.status === 'upcoming' && (
                 <button className="px-4 py-2 bg-red-50 rounded-md text-red-500 hover:bg-red-100">
                   Cancel Booking
                 </button>
               )}
-              <button 
+              <button
                 onClick={onClose}
                 className="px-4 py-2 bg-amber-500 text-white rounded-md hover:bg-amber-600"
               >
@@ -576,6 +645,7 @@ const BookingDetailsModal = ({ isOpen, onClose, booking }: { isOpen: boolean; on
           </div>
         </div>
       </div>
+      <FloatingActionButton/>
     </div>
   );
 };
