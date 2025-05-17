@@ -381,19 +381,19 @@ const MyBookings = () => {
 // Status badge component
 const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
   switch (status) {
-    case 'upcoming':
+    case 'PENDING':
       return (
         <span className="inline-flex rounded-full bg-green-100 px-2 py-1 text-xs leading-5 font-semibold text-green-800">
           <Clock8 className="mr-1 h-3 w-3" /> Upcoming
         </span>
       );
-    case 'completed':
+    case 'COMPLETED':
       return (
         <span className="inline-flex rounded-full bg-blue-100 px-2 py-1 text-xs leading-5 font-semibold text-blue-800">
           <CheckCircle className="mr-1 h-3 w-3" /> Completed
         </span>
       );
-    case 'cancelled':
+    case 'CANELLED':
       return (
         <span className="inline-flex rounded-full bg-red-100 px-2 py-1 text-xs leading-5 font-semibold text-red-800">
           <AlertCircle className="mr-1 h-3 w-3" /> Cancelled
@@ -454,14 +454,8 @@ const BookingCard: React.FC<BookingsCardProps> = ({ booking }) => {
           className="h-48 w-full object-cover"
         />
       </div>
-      {/* Status indicator - Replace this section */}
-      {booking.status === 'UPCOMING' && (
-        <div className="flex items-center p-2">
-          <span className="inline-flex items-center rounded-md bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
-            <Clock8 className="mr-1 h-3 w-3" /> Upcoming
-          </span>
-        </div>
-      )}
+      {/* Status indicator  */}
+
       {booking.status === 'COMPLETED' && (
         <div className="flex items-center p-2">
           <span className="inline-flex items-center rounded-md bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800">
@@ -476,10 +470,17 @@ const BookingCard: React.FC<BookingsCardProps> = ({ booking }) => {
           </span>
         </div>
       )}
+      {booking.status === 'REFUNDED' && (
+        <div className="flex items-center p-2">
+          <span className="inline-flex items-center rounded-md bg-red-100 px-3 py-1 text-sm font-medium text-red-800">
+            <AlertCircle className="mr-1 h-3 w-3" /> Refunded
+          </span>
+        </div>
+      )}
       {booking.status === 'CONFIRMED' && (
         <div className="flex items-center p-2">
           <span className="inline-flex items-center rounded-md bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
-            <Clock8 className="mr-1 h-3 w-3" /> Upcoming
+            <Clock8 className="mr-1 h-3 w-3" /> Confirmed
           </span>
         </div>
       )}
