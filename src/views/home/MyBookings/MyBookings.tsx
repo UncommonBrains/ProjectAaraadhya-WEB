@@ -16,7 +16,6 @@ import {
 import { useBookingViewModel } from '../../../view-models/booking/useBookingViewModel';
 
 import { BookingsCardProps, StatusBadgeProps } from './types';
-import FloatingActionButton from '../../../components/common/Button/FloatingActionButton';
 import React from 'react';
 import { Booking } from './types'; // Ensure you're importing your Booking type
 
@@ -31,6 +30,7 @@ const MyBookings = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const { bookings: fetchedBookings } = useBookingViewModel();
+  console.log('Fetched Bookings:', fetchedBookings);
 
   const bookings = useMemo(() => {
     return fetchedBookings as Booking[];
@@ -638,13 +638,42 @@ const BookingDetailsModal = ({
   const { date, time } = convertTimestampToDateAndTime(booking.createdAt);
 
   // Get pooja services with participants from booking data
-  const poojaServices = booking.poojas?.map((pooja: any) => ({
-    name: pooja.poojaDetails?.name || pooja.name,
-    participants: pooja.members?.map((member: any) => ({
-      name: member.name,
-      starSign: member.starSign
-    })) || []
-  })) || [];
+  const poojaServices = booking.poojas?.map((pooja: any) => {
+    const participent1 = { name: pooja.name, starSign: pooja.starSign };
+    const otherParticipants =
+      pooja.members?.map((member: any) => ({
+        name: member.name,
+        starSign: member.starSign,
+      })) || [];
+
+    return {
+      name: pooja.poojaDetails?.name || pooja.name,
+      poojaDate: pooja.poojaDate, // Include the poojaDate from the pooja object
+      participants: [participent1, ...otherParticipants],
+    };
+  }) || [];
+
+  // Format date helper function
+  const formatPoojaDate = (dateString: string) => {
+    if (!dateString) return 'Date not specified';
+
+    try {
+      const date = new Date(dateString);
+      
+      // Check if date is valid
+      if (isNaN(date.getTime())) {
+        return 'Invalid date format';
+      }
+      
+      return date.toLocaleDateString('en-IN', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+    } catch (error) {
+      return dateString; // Return original string if parsing fails
+    }
+  };
 
   return (
     <div
@@ -679,7 +708,7 @@ const BookingDetailsModal = ({
             <div className="mb-4 flex items-center">
               <img
                 src={booking.templeDetails?.basicDetails?.profilePictureUrl}
-                alt={booking.templeDetails?.basicDetails?.templeName || "Temple"}
+                alt={booking.templeDetails?.basicDetails?.templeName || 'Temple'}
                 className="mr-4 h-16 w-16 rounded-md object-cover"
               />
               <div>
@@ -687,10 +716,10 @@ const BookingDetailsModal = ({
                   {booking.templeDetails?.basicDetails?.templeName}
                 </h3>
                 <div className="flex items-center text-gray-500">
-                  <MapPin className="mr-1 h-4 w-4" /> 
-                  {booking.templeDetails?.contactDetails?.address || 
-                   booking.templeDetails?.basicDetails?.location || 
-                   "Location not available"}
+                  <MapPin className="mr-1 h-4 w-4" />
+                  {booking.templeDetails?.contactDetails?.address ||
+                    booking.templeDetails?.basicDetails?.location ||
+                    'Location not available'}
                 </div>
               </div>
             </div>
@@ -700,28 +729,39 @@ const BookingDetailsModal = ({
 
           <div className="mb-6 grid gap-4">
             <h4 className="mb-2 font-medium text-amber-900">Booking Information</h4>
-            <div className="grid grid-cols-2 gap-4 border-r pr-4">
-              <ul className="space-y-2">
-                <li className="flex justify-between">
-                  <span className="text-gray-500">Booking ID:</span>
-                  <span className="font-medium">{booking.id}</span>
-                </li>
-                <li className="flex justify-between">
-                  <span className="text-gray-500">Date:</span>
-                  <span className="font-medium">{date}</span>
-                </li>
-              </ul>
-              <ul className="space-y-2">
-                <li className="flex justify-between">
-                  <span className="text-gray-500">Time:</span>
-                  <span className="font-medium">{time}</span>
-                </li>
-
-                <li className="flex justify-between">
-                  <span className="text-gray-500">Amount:</span>
-                  <span className="font-medium">₹ {booking.price || "N/A"}</span>
-                </li>
-              </ul>
+            <div className="bg-amber-50 rounded-lg p-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-3">
+                  <div className="flex items-center">
+                    <span className="text-sm text-gray-500 w-28">Booking ID:</span>
+                    <span className="font-medium text-amber-900 overflow-hidden text-ellipsis">{booking.id}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-sm text-gray-500 w-28">Date:</span>
+                    <span className="font-medium text-amber-900">{date}</span>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex items-center">
+                    <span className="text-sm text-gray-500 w-28">Time:</span>
+                    <span className="font-medium text-amber-900">{time}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-sm text-gray-500 w-28">Amount:</span>
+                    <span className="font-medium text-amber-900">₹ {booking.price || 'N/A'}</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Payment method if available */}
+              {booking.paymentDetails?.paymentMethod && (
+                <div className="mt-3 pt-3 border-t border-amber-200">
+                  <div className="flex items-center">
+                    <span className="text-sm text-gray-500 w-28">Payment Method:</span>
+                    <span className="font-medium text-amber-900">{booking.paymentDetails.paymentMethod}</span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -732,46 +772,62 @@ const BookingDetailsModal = ({
               {poojaServices.length > 0 ? (
                 poojaServices.map((pooja: any, index: number) => (
                   <div key={index} className="rounded-md bg-amber-50 p-4">
-                    <div className="mb-3 flex items-center">
-                      <div className="mr-3 rounded-full bg-amber-100 p-2">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5 text-amber-800"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
+                    <div className="mb-3 flex flex-col">
+                      <div className="flex items-center">
+                        <div className="mr-3 rounded-full bg-amber-100 p-2">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 text-amber-800"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </div>
+                        <h5 className="text-lg font-semibold text-amber-900">
+                          {pooja.name || "Unnamed Pooja"}  - 
+                        </h5>
+                        <div className=" flex items-center text-lg text-amber-700 font-semibold ml-2">
+                        <Calendar className="mr-1 h-4 w-4" />
+                        <span className="">
+                          {formatPoojaDate(pooja.poojaDate)}
+                        </span>
                       </div>
-                      <h5 className="text-lg font-semibold text-amber-900">
-                        Pooja: {pooja.name || "Unnamed Pooja"}
-                      </h5>
+                      </div>
+                      
+                     
                     </div>
 
+                    {/* Participant List */}
                     {pooja.participants && pooja.participants.length > 0 ? (
                       <div className="border-l-2 border-amber-200 pl-3">
                         <p className="mb-2 text-sm font-medium text-amber-800">Participants:</p>
-                        {pooja.participants.map((participant: any, idx: number) => (
-                          <div
-                            key={idx}
-                            className="mb-2 flex items-center justify-between rounded-md bg-white p-2 shadow-sm"
-                          >
-                            <div className="flex items-center">
-                              <User className="mr-2 h-4 w-4 text-amber-700" />
-                              <span>{participant.name || "Unnamed"}</span>
+                        <div className="space-y-2">
+                          {pooja.participants.map((participant: any, idx: number) => (
+                            <div key={idx} className="rounded-md bg-white p-3 shadow-sm">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center">
+                                  <User className="mr-2 h-4 w-4 text-amber-700" />
+                                  <span className="font-medium">
+                                    {participant.name || 'Unnamed'}
+                                  </span>
+                                </div>
+                                <span className="rounded-full bg-amber-50 px-2 py-1 text-xs text-amber-800">
+                                  {participant.starSign || 'No star sign'}
+                                </span>
+                              </div>
                             </div>
-                            <span className="text-sm text-gray-500">
-                              Star Sign: {participant.starSign || "Not specified"}
-                            </span>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
                     ) : (
-                      <p className="text-sm text-gray-500">No participants listed</p>
+                      <div className="mt-2 text-center text-sm text-gray-500">
+                        <p>No participants for this pooja</p>
+                      </div>
                     )}
                   </div>
                 ))
@@ -782,7 +838,7 @@ const BookingDetailsModal = ({
               )}
             </div>
           </div>
-
+          
           {booking.status === 'CANCELLED' && (
             <div className="mb-6 rounded bg-red-50 p-3">
               <h4 className="mb-1 font-medium text-red-800">Cancellation Information</h4>
@@ -790,9 +846,10 @@ const BookingDetailsModal = ({
                 {booking.cancellationReason || 'No reason provided'}
               </p>
               <p className="mt-1 text-xs text-red-600">
-                Cancelled on: {booking.cancelledAt ? 
-                  new Date(booking.cancelledAt.seconds * 1000).toLocaleDateString() : 
-                  'Date not available'}
+                Cancelled on:{' '}
+                {booking.cancelledAt
+                  ? new Date(booking.cancelledAt.seconds * 1000).toLocaleDateString()
+                  : 'Date not available'}
               </p>
             </div>
           )}
@@ -800,7 +857,7 @@ const BookingDetailsModal = ({
           <div className="flex justify-between border-t pt-4">
             <div>
               <h4 className="mb-2 font-medium text-amber-900">Total Amount</h4>
-              <p className="text-2xl font-bold text-amber-900">₹ {booking.price || "N/A"}</p>
+              <p className="text-2xl font-bold text-amber-900">₹ {booking.price || 'N/A'}</p>
             </div>
 
             <div className="flex space-x-2">
