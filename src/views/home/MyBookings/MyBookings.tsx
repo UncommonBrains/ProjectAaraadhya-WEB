@@ -383,21 +383,35 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
   switch (status) {
     case 'PENDING':
       return (
-        <span className="inline-flex rounded-full bg-green-100 px-2 py-1 text-xs leading-5 font-semibold text-green-800">
-          <Clock8 className="mr-1 h-3 w-3" /> Upcoming
-        </span>
+        <div className="flex items-center p-2">
+          <span className="inline-flex items-center rounded-md bg-yellow-100 px-3 py-1 text-sm font-medium text-yellow-800">
+            <AlertCircle className="mr-1 h-3 w-3" /> Pending
+          </span>
+        </div>
+      );
+    case 'CONFIRMED':
+      return (
+        <div className="flex items-center p-2">
+          <span className="inline-flex items-center rounded-md bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800">
+            <AlertCircle className="mr-1 h-3 w-3" /> Confirmed
+          </span>
+        </div>
       );
     case 'COMPLETED':
       return (
-        <span className="inline-flex rounded-full bg-blue-100 px-2 py-1 text-xs leading-5 font-semibold text-blue-800">
-          <CheckCircle className="mr-1 h-3 w-3" /> Completed
-        </span>
+        <div className="flex items-center p-2">
+          <span className="inline-flex items-center rounded-md bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
+            <AlertCircle className="mr-1 h-3 w-3" /> Completed
+          </span>
+        </div>
       );
     case 'CANELLED':
       return (
-        <span className="inline-flex rounded-full bg-red-100 px-2 py-1 text-xs leading-5 font-semibold text-red-800">
-          <AlertCircle className="mr-1 h-3 w-3" /> Cancelled
-        </span>
+        <div className="flex items-center p-2">
+          <span className="inline-flex items-center rounded-md bg-red-100 px-3 py-1 text-sm font-medium text-red-800">
+            <AlertCircle className="mr-1 h-3 w-3" /> Cancelled
+          </span>
+        </div>
       );
     default:
       return null;
