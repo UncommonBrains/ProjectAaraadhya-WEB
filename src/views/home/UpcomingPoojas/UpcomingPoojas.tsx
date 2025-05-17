@@ -87,7 +87,7 @@ const UpcomingPoojas = () => {
   };
 
   return (
-    <div className="min-h-screen bg-amber-50 font-sans">
+    <div className="min-h-screen bg-amber-50 font-sans ">
       <SearchInputField />
 
       {/* Main Content */}

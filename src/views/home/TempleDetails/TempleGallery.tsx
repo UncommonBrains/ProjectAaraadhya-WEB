@@ -32,7 +32,7 @@ const TempleGallery: React.FC = () => {
           gallery.map((image, index) => (
             <div
               key={index}
-              className="relative flex h-40 items-center justify-center rounded-lg bg-amber-100 bg-cover bg-center md:h-52"
+              className="relative flex h-40 items-center justify-center rounded-lg bg-amber-100 bg-cover bg-center md:h-52 cursor-pointer"
               style={{ backgroundImage: `url(${image.url})` }}
               onClick={() => openModal(index)}
             />
@@ -49,9 +49,9 @@ const TempleGallery: React.FC = () => {
       {hasMore && (
         <button
           onClick={loadMore}
-          className="mt-3 flex w-full items-center justify-center rounded-lg bg-amber-100 px-4 py-3 text-sm font-medium text-amber-900 md:text-base"
+          className="mt-3 flex w-full items-center justify-center rounded-lg bg-amber-100 px-4 py-3 text-sm font-medium text-amber-900 md:text-base cursor-pointer"
         >
-          <Image className="mr-2 h-4 w-4" />
+          <Image className="mr-2 h-4 w-4 " />
           View more photos
         </button>
       )}

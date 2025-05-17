@@ -70,7 +70,7 @@ const CartBox: React.FC = () => {
 
             <NavLink
               to={`/checkout/${cart?.items[0].templeId}`}
-              className="flex w-full items-center justify-center rounded-lg bg-amber-600 px-4 py-3 font-medium text-white"
+              className="flex w-full items-center justify-center rounded-lg bg-amber-600 px-4 py-4 font-medium text-white"
             >
               Proceed to Payment
               <ArrowRight className="ml-2 h-4 w-4" />
