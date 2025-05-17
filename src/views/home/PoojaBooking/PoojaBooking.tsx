@@ -100,9 +100,10 @@ const PoojaBooking: React.FC = () => {
     setFormData({
       ...formData,
       poojaDate:
-        dates.find((date) => pooja?.poojaDays[date.getDay()])?.toISOString() ??
-        pooja.poojaDateAndTime ??
-        new Date().toISOString(),
+        pooja.scheduleMode === ScheduleMode.once
+          ? (pooja.poojaDateAndTime ?? new Date().toISOString())
+          : (dates.find((date) => pooja?.poojaDays[date.getDay()])?.toISOString() ??
+            new Date().toISOString()),
     });
     setSelectedPooja(pooja);
   };

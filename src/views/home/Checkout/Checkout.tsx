@@ -98,7 +98,7 @@ const Checkout: React.FC = () => {
       await bookPooja({
         userId: firebaseUser.uid,
         templeId: temple.id,
-        poojas: cart.items.map(({ poojaId, scheduleId,poojaDate, name, starSign, members }) => ({
+        poojas: cart.items.map(({ poojaId, scheduleId, poojaDate, name, starSign, members }) => ({
           poojaId,
           scheduleId,
           poojaDate,
