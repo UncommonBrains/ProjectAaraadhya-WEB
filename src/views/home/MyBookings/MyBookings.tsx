@@ -34,6 +34,10 @@ const MyBookings = () => {
   const [showFilters, setShowFilters] = useState(false);
   const { bookings } = useBookingViewModel();
   console.log('Bookings:===', bookings);
+  console.log('basicDetails:', bookings?.[0]);
+
+  
+  
 
   // Filter bookings based on active tab and search query
   const filteredBookings = bookingsMockData.filter((booking) => {
@@ -205,7 +209,7 @@ const MyBookings = () => {
 
       {/* Pagination */}
       <div className="mb-6 flex items-center justify-between text-sm">
-        <span className="text-gray-500">Showing {filteredBookings.length} bookings</span>
+        <span className="text-gray-500">Showing {bookings.length} bookings</span>
 
         <div className="flex items-center space-x-2">
           <button className="rounded-md p-1 hover:bg-amber-100">
@@ -221,8 +225,10 @@ const MyBookings = () => {
       {/* Bookings display - Grid View */}
       {viewMode === 'grid' && (
         <div className="sm-grid-cols-1 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredBookings.length > 0 ? (
-            filteredBookings.map((booking) => <BookingCard key={booking.id} booking={booking} />)
+          {bookings.length > 0 ? (
+            bookings
+              .filter((booking) => booking.id !== undefined)
+              .map((booking) => <BookingCard key={booking.id!} booking={booking as Required<typeof booking>} />)
           ) : (
             <div className="col-span-full rounded-lg bg-amber-50 py-12 text-center">
               <AlertCircle className="mx-auto mb-4 h-12 w-12 text-amber-300" />
@@ -236,7 +242,7 @@ const MyBookings = () => {
       {/* Bookings display - List View */}
       {viewMode === 'list' && (
         <div className="overflow-hidden rounded-lg border border-amber-100">
-          {filteredBookings.length > 0 ? (
+          {bookings.length > 0 ? (
             <table className="min-w-full divide-y divide-amber-100">
               <thead className="bg-amber-50">
                 <tr>
@@ -258,28 +264,28 @@ const MyBookings = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-amber-100 bg-white">
-                {filteredBookings.map((booking) => (
+                {bookings.map((booking) => (
                   <tr key={booking.id}>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-start">
                         <div className="ml-0">
                           <div className="text-sm font-medium text-amber-900">
-                            {booking.templeName}
+                            {booking.templeDetails?.basicDetails?.templeName}
                           </div>
                           <div className="flex items-center text-sm text-gray-500">
-                            <MapPin className="mr-1 h-3 w-3" /> {booking.location}
+                            <MapPin className="mr-1 h-3 w-3" /> {booking.templeDetails?.basicDetails?.templeName}
                           </div>
                           <div className="mt-1 text-xs text-gray-400">ID: {booking.id}</div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{booking.date}</div>
-                      <div className="text-sm text-gray-500">{booking.time}</div>
+                      <div className="text-sm text-gray-900">{booking.templeDetails?.basicDetails?.templeName}</div>
+                      <div className="text-sm text-gray-500">{booking.templeDetails?.basicDetails?.templeName}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{booking.service}</div>
-                      <div className="text-sm font-medium text-amber-900">{booking.amount}</div>
+                      <div className="text-sm text-gray-900">{booking.templeDetails?.basicDetails?.templeName}</div>
+                      <div className="text-sm font-medium text-amber-900">{booking.templeDetails?.basicDetails?.templeName}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <StatusBadge status={booking.status} />
@@ -287,10 +293,10 @@ const MyBookings = () => {
                     <td className="px-6 py-4 text-sm whitespace-nowrap">
                       <div className="flex space-x-2">
                         <button className="text-amber-600 hover:text-amber-800">View</button>
-                        {booking.status === 'upcoming' && (
+                        {booking.status === 'PENDING' && (
                           <button className="text-red-500 hover:text-red-700">Cancel</button>
                         )}
-                        {booking.status === 'completed' && (
+                        {booking.status === 'COMPLETED' && (
                           <button className="text-gray-500 hover:text-gray-700">Receipt</button>
                         )}
                       </div>
@@ -349,39 +355,63 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
 const BookingCard: React.FC<BookingsCardProps> = ({ booking }) => {
   // Add state for this specific card's modal
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
+
+  const convertTimestampToDateAndTime = (timestamp: { seconds: number; nanoseconds: number }) => {
+  if (!timestamp?.seconds) return { date: 'Invalid', time: 'Invalid' };
+
+  const milliseconds = timestamp.seconds * 1000 + Math.floor(timestamp.nanoseconds / 1_000_000);
+  const dateObj = new Date(milliseconds);
+
+  const date = dateObj.toLocaleDateString('en-IN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  const time = dateObj.toLocaleTimeString('en-IN', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  });
+
+  return { date, time };
+};
+
+const { date, time } = convertTimestampToDateAndTime(booking.createdAt);
+
+
   return (
     <div className="overflow-hidden rounded-lg border border-amber-100 bg-white shadow-sm transition-shadow hover:shadow">
       {/* Status indicator */}
-      {booking.status === 'upcoming' && (
-        <div className="bg-green-50 p-2 flex items-center">
-          <div className="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
+      {booking.status === 'UPCOMING' && (
+        <div className="flex items-center bg-green-50 p-2">
+          <div className="mr-2 h-2 w-2 rounded-full bg-green-500"></div>
           <span className="text-sm font-medium text-green-700">Upcoming</span>
         </div>
       )}
-      {booking.status === 'completed' && (
-        <div className="bg-blue-50 p-2 flex items-center">
-          <div className="w-2 h-2 rounded-full bg-blue-500 mr-2"></div>
+      {booking.status === 'COMPLETED' && (
+        <div className="flex items-center bg-blue-50 p-2">
+          <div className="mr-2 h-2 w-2 rounded-full bg-blue-500"></div>
           <span className="text-sm font-medium text-blue-700">Completed</span>
         </div>
       )}
-      {booking.status === 'cancelled' && (
-        <div className="bg-red-50 p-2 flex items-center">
-          <div className="w-2 h-2 rounded-full bg-red-500 mr-2"></div>
+      {booking.status === 'CANCELLED' && (
+        <div className="flex items-center bg-red-50 p-2">
+          <div className="mr-2 h-2 w-2 rounded-full bg-red-500"></div>
           <span className="text-sm font-medium text-red-700">Cancelled</span>
         </div>
       )}
 
       <div className="relative">
-        <img src={booking.imageUrl} alt={booking.templeName} className="h-48 w-full object-cover" />
+        <img src={booking?.templeDetails?.basicDetails?.profilePictureUrl} alt={booking.templeDetails?.basicDetails?.profilePictureUrl} className="h-48 w-full object-cover" />
       </div>
 
       <div className="p-4">
-        <h3 className="text-xl font-bold text-amber-900">{booking.templeName}</h3>
+        <h3 className="text-xl font-bold text-amber-900">{booking.templeDetails.basicDetails?.templeName}</h3>
 
         <div className="mt-1 flex items-center text-sm text-gray-500">
           <MapPin className="mr-1 h-4 w-4" />
-          {booking.location}
+          {booking.templeDetails.contactDetails?.address}
         </div>
 
         <div className="mt-4 space-y-3">
@@ -390,7 +420,8 @@ const BookingCard: React.FC<BookingsCardProps> = ({ booking }) => {
               <div className="text-xs text-gray-500">Date</div>
               <div className="mt-1 flex items-center">
                 <Calendar className="mr-2 h-4 w-4 text-amber-700" />
-                <span className="text-sm">{booking.date}</span>
+                
+                <span className="text-sm">{date}</span>
               </div>
             </div>
 
@@ -398,7 +429,7 @@ const BookingCard: React.FC<BookingsCardProps> = ({ booking }) => {
               <div className="text-xs text-gray-500">Time</div>
               <div className="mt-1 flex items-center">
                 <Clock className="mr-2 h-4 w-4 text-amber-700" />
-                <span className="text-sm">{booking.time}</span>
+                <span className="text-sm">{time}</span>
               </div>
             </div>
           </div>
@@ -421,11 +452,9 @@ const BookingCard: React.FC<BookingsCardProps> = ({ booking }) => {
           </div>
         </div>
 
-        {booking.status === 'cancelled' && (
-          <div className="mt-3 rounded bg-red-50 p-2 text-xs text-red-800">
-            <span className="font-medium">Cancellation reason:</span> {booking.cancellationReason}
-          </div>
-        )}
+        <div className="mt-4 flex items-center justify-between">
+          <span className="text-xs text-gray-500">Booking ID: {booking.id}</span>
+          <StatusBadge status={booking.status} />
 
         <div className="mt-4 bg-amber-50 p-3 rounded-md flex justify-between items-center">
           <span className="font-medium text-amber-900">Total Amount:</span>
