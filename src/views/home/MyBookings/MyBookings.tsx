@@ -1,8 +1,6 @@
 import { useState, useMemo } from 'react';
 import {
   Calendar,
-  ChevronLeft,
-  ChevronRight,
   Filter,
   Search,
   Download,
@@ -15,7 +13,6 @@ import {
   PieChart,
   List,
 } from 'lucide-react';
-import { bookingsMockData } from '../../../mock/data/bookings';
 import { useBookingViewModel } from '../../../view-models/booking/useBookingViewModel';
 
 import { BookingsCardProps, StatusBadgeProps } from './types';
@@ -26,9 +23,9 @@ import { Booking } from './types'; // Ensure you're importing your Booking type
 const MyBookings = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [viewMode, setViewMode] = useState('grid');
-  // Add state for modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBooking] = useState<any>(null);
+  const [visibleCount, setVisibleCount] = useState(3);
 
   // Filter options
   const [searchQuery, setSearchQuery] = useState('');
@@ -38,18 +35,30 @@ const MyBookings = () => {
   const bookings = useMemo(() => {
     return fetchedBookings as Booking[];
   }, [fetchedBookings]);
-  console.log('Bookings:===', bookings);
-  console.log('basicDetails:', bookings?.[0]);
 
   // Filter bookings based on active tab and search query
-  const filteredBookings = bookingsMockData.filter((booking) => {
+  const filteredBookings = bookings.filter((booking) => {
     const matchesTab = activeTab === 'all' || booking.status === activeTab;
     const matchesSearch =
-      booking.templeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      booking.service.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      booking.templeDetails?.basicDetails?.templeName
+        ?.toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      booking.poojas?.some((pooja) =>
+        pooja.name?.toLowerCase().includes(searchQuery.toLowerCase()),
+      ) ||
       booking.id.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesTab && matchesSearch;
   });
+
+  // Get only the visible bookings
+  const visibleBookings = useMemo(() => {
+    return filteredBookings.slice(0, visibleCount);
+  }, [filteredBookings, visibleCount]);
+
+  // Function to load more bookings
+  const handleViewMore = () => {
+    setVisibleCount((prevCount) => prevCount + 3);
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -78,8 +87,11 @@ const MyBookings = () => {
 
       {/* Tabs */}
       <div className="mb-6 flex border-b border-amber-100">
-      <button
-          onClick={() => setActiveTab('all')}
+        <button
+          onClick={() => {
+            setActiveTab('all');
+            setVisibleCount(3);
+          }}
           className={`px-4 py-2 text-sm font-medium ${
             activeTab === 'all'
               ? 'border-b-2 border-orange-600 text-orange-600'
@@ -89,17 +101,37 @@ const MyBookings = () => {
           All Bookings
         </button>
         <button
-          onClick={() => setActiveTab('CONFIRMED')}
+          onClick={() => {
+            setActiveTab('PENDING');
+            setVisibleCount(3);
+          }}
+          className={`px-4 py-2 text-sm font-medium ${
+            activeTab === 'PENDING'
+              ? 'border-b-2 border-orange-600 text-orange-600'
+              : 'text-gray-600 hover:text-amber-900'
+          }`}
+        >
+          Pending
+        </button>
+        <button
+          onClick={() => {
+            setActiveTab('CONFIRMED');
+            setVisibleCount(3);
+          }}
           className={`px-4 py-2 text-sm font-medium ${
             activeTab === 'CONFIRMED'
               ? 'border-b-2 border-orange-600 text-orange-600'
               : 'text-gray-600 hover:text-amber-900'
           }`}
         >
-          Upcoming
+          Confirmed
         </button>
+
         <button
-          onClick={() => setActiveTab('COMPLETED')}
+          onClick={() => {
+            setActiveTab('COMPLETED');
+            setVisibleCount(3);
+          }}
           className={`px-4 py-2 text-sm font-medium ${
             activeTab === 'COMPLETED'
               ? 'border-b-2 border-orange-600 text-orange-600'
@@ -108,223 +140,232 @@ const MyBookings = () => {
         >
           Completed
         </button>
-        <button
-          onClick={() => setActiveTab('PENDING')}
-          className={`px-4 py-2 text-sm font-medium ${
-            activeTab === 'PENDING'
-              ? 'border-b-2 border-orange-600 text-orange-600'
-              : 'text-gray-600 hover:text-amber-900'
-          }`}
-        >
-          Cancelled
-        </button>
-        
       </div>
-
-      {/* Search and filter */}
-      <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row">
-        <div className="relative max-w-md flex-1">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <Search className="h-4 w-4 text-gray-400" />
-          </div>
-          <input
-            type="text"
-            placeholder="Search bookings by temple, service, or booking ID"
-            className="w-full rounded-md border border-amber-100 bg-amber-50 py-2 pr-4 pl-10 focus:ring-2 focus:ring-amber-200 focus:outline-none"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-
-        <div className="flex space-x-2">
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center rounded-md bg-amber-50 px-4 py-2 text-amber-900 transition-colors hover:bg-amber-100"
-          >
-            <Filter className="mr-2 h-4 w-4" />
-            Filters
-          </button>
-
-          <button className="flex items-center rounded-md bg-amber-50 px-4 py-2 text-amber-900 transition-colors hover:bg-amber-100">
-            <Download className="mr-2 h-4 w-4" />
-            Export
-          </button>
-        </div>
-      </div>
-
-      {/* Filters panel (expandable) */}
-      {showFilters && (
-        <div className="mb-6 rounded-lg border border-amber-100 bg-amber-50 p-4">
-          <h3 className="mb-3 font-medium text-amber-900">Filter Options</h3>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <div>
-              <label className="mb-1 block text-sm text-gray-600">Service Type</label>
-              <select className="w-full rounded-md border border-amber-100 bg-white px-3 py-2 focus:ring-2 focus:ring-amber-200 focus:outline-none">
-                <option value="">All Services</option>
-                <option value="darshan">Darshan</option>
-                <option value="archana">Archana</option>
-                <option value="abhishekam">Abhishekam</option>
-                <option value="homam">Homam</option>
-              </select>
+      {/* Search and filter hidden for now*/}
+      <div className="hidden">
+        <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row">
+          <div className="relative max-w-md flex-1">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+              <Search className="h-4 w-4 text-gray-400" />
             </div>
-
-            <div>
-              <label className="mb-1 block text-sm text-gray-600">Booking Date Range</label>
-              <div className="flex space-x-2">
-                <input
-                  type="date"
-                  className="flex-1 rounded-md border border-amber-100 bg-white px-3 py-2 focus:ring-2 focus:ring-amber-200 focus:outline-none"
-                />
-                <span className="self-center text-gray-500">to</span>
-                <input
-                  type="date"
-                  className="flex-1 rounded-md border border-amber-100 bg-white px-3 py-2 focus:ring-2 focus:ring-amber-200 focus:outline-none"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="mb-1 block text-sm text-gray-600">Price Range</label>
-              <div className="flex space-x-2">
-                <input
-                  type="number"
-                  placeholder="Min"
-                  className="flex-1 rounded-md border border-amber-100 bg-white px-3 py-2 focus:ring-2 focus:ring-amber-200 focus:outline-none"
-                />
-                <span className="self-center text-gray-500">to</span>
-                <input
-                  type="number"
-                  placeholder="Max"
-                  className="flex-1 rounded-md border border-amber-100 bg-white px-3 py-2 focus:ring-2 focus:ring-amber-200 focus:outline-none"
-                />
-              </div>
-            </div>
+            <input
+              type="text"
+              placeholder="Search bookings by temple, service, or booking ID"
+              className="w-full rounded-md border border-amber-100 bg-amber-50 py-2 pr-4 pl-10 focus:ring-2 focus:ring-amber-200 focus:outline-none"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
 
-          <div className="mt-4 flex justify-end space-x-2">
-            <button className="px-4 py-2 text-gray-600 hover:text-gray-800">Reset</button>
-            <button className="rounded-md bg-amber-500 px-4 py-2 text-white transition-colors hover:bg-amber-600">
-              Apply Filters
+          <div className="flex space-x-2">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center rounded-md bg-amber-50 px-4 py-2 text-amber-900 transition-colors hover:bg-amber-100"
+            >
+              <Filter className="mr-2 h-4 w-4" />
+              Filters
+            </button>
+
+            <button className="flex items-center rounded-md bg-amber-50 px-4 py-2 text-amber-900 transition-colors hover:bg-amber-100">
+              <Download className="mr-2 h-4 w-4" />
+              Export
             </button>
           </div>
         </div>
-      )}
+
+        {/* Filters panel (expandable) */}
+        {showFilters && (
+          <div className="mb-6 rounded-lg border border-amber-100 bg-amber-50 p-4">
+            <h3 className="mb-3 font-medium text-amber-900">Filter Options</h3>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+              <div>
+                <label className="mb-1 block text-sm text-gray-600">Service Type</label>
+                <select className="w-full rounded-md border border-amber-100 bg-white px-3 py-2 focus:ring-2 focus:ring-amber-200 focus:outline-none">
+                  <option value="">All Services</option>
+                  <option value="darshan">Darshan</option>
+                  <option value="archana">Archana</option>
+                  <option value="abhishekam">Abhishekam</option>
+                  <option value="homam">Homam</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm text-gray-600">Booking Date Range</label>
+                <div className="flex space-x-2">
+                  <input
+                    type="date"
+                    className="flex-1 rounded-md border border-amber-100 bg-white px-3 py-2 focus:ring-2 focus:ring-amber-200 focus:outline-none"
+                  />
+                  <span className="self-center text-gray-500">to</span>
+                  <input
+                    type="date"
+                    className="flex-1 rounded-md border border-amber-100 bg-white px-3 py-2 focus:ring-2 focus:ring-amber-200 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm text-gray-600">Price Range</label>
+                <div className="flex space-x-2">
+                  <input
+                    type="number"
+                    placeholder="Min"
+                    className="flex-1 rounded-md border border-amber-100 bg-white px-3 py-2 focus:ring-2 focus:ring-amber-200 focus:outline-none"
+                  />
+                  <span className="self-center text-gray-500">to</span>
+                  <input
+                    type="number"
+                    placeholder="Max"
+                    className="flex-1 rounded-md border border-amber-100 bg-white px-3 py-2 focus:ring-2 focus:ring-amber-200 focus:outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 flex justify-end space-x-2">
+              <button className="px-4 py-2 text-gray-600 hover:text-gray-800">Reset</button>
+              <button className="rounded-md bg-amber-500 px-4 py-2 text-white transition-colors hover:bg-amber-600">
+                Apply Filters
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Pagination */}
       <div className="mb-6 flex items-center justify-between text-sm">
-        <span className="text-gray-500">Showing {bookings.length} bookings</span>
-
-        <div className="flex items-center space-x-2">
-          <button className="rounded-md p-1 hover:bg-amber-100">
-            <ChevronLeft className="h-5 w-5 text-amber-900" />
-          </button>
-          <span className="rounded-md bg-amber-100 px-3 py-1 text-amber-900">1</span>
-          <button className="rounded-md p-1 hover:bg-amber-100">
-            <ChevronRight className="h-5 w-5 text-amber-900" />
-          </button>
-        </div>
+        <span className="text-gray-500">
+          Showing {visibleBookings.length} of {filteredBookings.length} bookings
+        </span>
       </div>
 
       {/* Bookings display - Grid View */}
       {viewMode === 'grid' && (
-        <div className="sm-grid-cols-1 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {bookings.length > 0 ? (
-            bookings
-              .filter((booking) => booking.id !== undefined)
-              .map((booking) => <BookingCard key={booking.id!} booking={booking} />)
-          ) : (
-            <div className="col-span-full rounded-lg bg-amber-50 py-12 text-center">
-              <AlertCircle className="mx-auto mb-4 h-12 w-12 text-amber-300" />
-              <h3 className="mb-1 text-lg font-medium text-amber-900">No bookings found</h3>
-              <p className="text-gray-500">Try adjusting your filters or search criteria</p>
+        <>
+          <div className="sm-grid-cols-1 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {visibleBookings.length > 0 ? (
+              visibleBookings
+                .filter((booking) => booking.id !== undefined)
+                .map((booking) => <BookingCard key={booking.id!} booking={booking} />)
+            ) : (
+              <div className="col-span-full rounded-lg bg-amber-50 py-12 text-center">
+                <AlertCircle className="mx-auto mb-4 h-12 w-12 text-amber-300" />
+                <h3 className="mb-1 text-lg font-medium text-amber-900">No bookings found</h3>
+                <p className="text-gray-500">Try adjusting your filters or search criteria</p>
+              </div>
+            )}
+          </div>
+          {/* View More Button */}
+          {visibleBookings.length < filteredBookings.length && (
+            <div className="mt-8 flex justify-center">
+              <button
+                onClick={handleViewMore}
+                className="rounded-md bg-amber-500 px-6 py-2 text-white transition-colors hover:bg-amber-600"
+              >
+                View More
+              </button>
             </div>
           )}
-        </div>
+        </>
       )}
 
       {/* Bookings display - List View */}
       {viewMode === 'list' && (
-        <div className="overflow-hidden rounded-lg border border-amber-100">
-          {bookings.length > 0 ? (
-            <table className="min-w-full divide-y divide-amber-100">
-              <thead className="bg-amber-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-amber-900 uppercase">
-                    Booking Details
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-amber-900 uppercase">
-                    Date & Time
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-amber-900 uppercase">
-                    Service & Amount
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-amber-900 uppercase">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-amber-900 uppercase">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-amber-100 bg-white">
-                {bookings.map((booking) => (
-                  <tr key={booking.id}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-start">
-                        <div className="ml-0">
-                          <div className="text-sm font-medium text-amber-900">
-                            {booking.templeDetails?.basicDetails?.templeName}
-                          </div>
-                          <div className="flex items-center text-sm text-gray-500">
-                            <MapPin className="mr-1 h-3 w-3" />{' '}
-                            {booking.templeDetails?.basicDetails?.templeName}
-                          </div>
-                          <div className="mt-1 text-xs text-gray-400">ID: {booking.id}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">
-                        {booking.templeDetails?.basicDetails?.templeName}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {booking.templeDetails?.basicDetails?.templeName}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">
-                        {booking.templeDetails?.basicDetails?.templeName}
-                      </div>
-                      <div className="text-sm font-medium text-amber-900">
-                        {booking.templeDetails?.basicDetails?.templeName}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <StatusBadge status={booking.status} />
-                    </td>
-                    <td className="px-6 py-4 text-sm whitespace-nowrap">
-                      <div className="flex space-x-2">
-                        <button className="text-amber-600 hover:text-amber-800">View</button>
-                        {booking.status === 'PENDING' && (
-                          <button className="text-red-500 hover:text-red-700">Cancel</button>
-                        )}
-                        {booking.status === 'COMPLETED' && (
-                          <button className="text-gray-500 hover:text-gray-700">Receipt</button>
-                        )}
-                      </div>
-                    </td>
+        <>
+          <div className="overflow-hidden rounded-lg border border-amber-100">
+            {visibleBookings.length > 0 ? (
+              <table className="min-w-full divide-y divide-amber-100">
+                <thead className="bg-amber-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-amber-900 uppercase">
+                      Booking Details
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-amber-900 uppercase">
+                      Date & Time
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-amber-900 uppercase">
+                      Service & Amount
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-amber-900 uppercase">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-amber-900 uppercase">
+                      Actions
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <div className="bg-amber-50 py-12 text-center">
-              <AlertCircle className="mx-auto mb-4 h-12 w-12 text-amber-300" />
-              <h3 className="mb-1 text-lg font-medium text-amber-900">No bookings found</h3>
-              <p className="text-gray-500">Try adjusting your filters or search criteria</p>
+                </thead>
+                <tbody className="divide-y divide-amber-100 bg-white">
+                  {visibleBookings.map((booking) => (
+                    <tr key={booking.id}>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-start">
+                          <div className="ml-0">
+                            <div className="text-sm font-medium text-amber-900">
+                              {booking.templeDetails?.basicDetails?.templeName}
+                            </div>
+                            <div className="flex items-center text-sm text-gray-500">
+                              <MapPin className="mr-1 h-3 w-3" />{' '}
+                              {booking.templeDetails?.basicDetails?.templeName}
+                            </div>
+                            <div className="mt-1 text-xs text-gray-400">ID: {booking.id}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">
+                          {booking.templeDetails?.basicDetails?.templeName}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {booking.templeDetails?.basicDetails?.templeName}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">
+                          {booking.templeDetails?.basicDetails?.templeName}
+                        </div>
+                        <div className="text-sm font-medium text-amber-900">
+                          {booking.templeDetails?.basicDetails?.templeName}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <StatusBadge status={booking.status} />
+                      </td>
+                      <td className="px-6 py-4 text-sm whitespace-nowrap">
+                        <div className="flex space-x-2">
+                          <button className="text-amber-600 hover:text-amber-800">View</button>
+                          {booking.status === 'PENDING' && (
+                            <button className="text-red-500 hover:text-red-700">Cancel</button>
+                          )}
+                          {booking.status === 'COMPLETED' && (
+                            <button className="text-gray-500 hover:text-gray-700">Receipt</button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <div className="bg-amber-50 py-12 text-center">
+                <AlertCircle className="mx-auto mb-4 h-12 w-12 text-amber-300" />
+                <h3 className="mb-1 text-lg font-medium text-amber-900">No bookings found</h3>
+                <p className="text-gray-500">Try adjusting your filters or search criteria</p>
+              </div>
+            )}
+          </div>
+
+          {/* View More Button */}
+          {visibleBookings.length < filteredBookings.length && (
+            <div className="mt-8 flex justify-center">
+              <button
+                onClick={handleViewMore}
+                className="rounded-md bg-amber-500 px-6 py-2 text-white transition-colors hover:bg-amber-600"
+              >
+                View More
+              </button>
             </div>
           )}
-        </div>
+        </>
       )}
 
       {/* Modal for Booking Details */}
@@ -406,26 +447,6 @@ const BookingCard: React.FC<BookingsCardProps> = ({ booking }) => {
 
   return (
     <div className="overflow-hidden rounded-lg border border-amber-100 bg-white shadow-sm transition-shadow hover:shadow">
-      {/* Status indicator */}
-      {booking.status === 'UPCOMING' && (
-        <div className="flex items-center bg-green-50 p-2">
-          <div className="mr-2 h-2 w-2 rounded-full bg-green-500"></div>
-          <span className="text-sm font-medium text-green-700">Upcoming</span>
-        </div>
-      )}
-      {booking.status === 'COMPLETED' && (
-        <div className="flex items-center bg-blue-50 p-2">
-          <div className="mr-2 h-2 w-2 rounded-full bg-blue-500"></div>
-          <span className="text-sm font-medium text-blue-700">Completed</span>
-        </div>
-      )}
-      {booking.status === 'CANCELLED' && (
-        <div className="flex items-center bg-red-50 p-2">
-          <div className="mr-2 h-2 w-2 rounded-full bg-red-500"></div>
-          <span className="text-sm font-medium text-red-700">Cancelled</span>
-        </div>
-      )}
-
       <div className="relative">
         <img
           src={booking?.templeDetails?.basicDetails?.profilePictureUrl}
@@ -433,8 +454,44 @@ const BookingCard: React.FC<BookingsCardProps> = ({ booking }) => {
           className="h-48 w-full object-cover"
         />
       </div>
+      {/* Status indicator - Replace this section */}
+      {booking.status === 'UPCOMING' && (
+        <div className="flex items-center p-2">
+          <span className="inline-flex items-center rounded-md bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
+            <Clock8 className="mr-1 h-3 w-3" /> Upcoming
+          </span>
+        </div>
+      )}
+      {booking.status === 'COMPLETED' && (
+        <div className="flex items-center p-2">
+          <span className="inline-flex items-center rounded-md bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800">
+            <CheckCircle className="mr-1 h-3 w-3" /> Completed
+          </span>
+        </div>
+      )}
+      {booking.status === 'CANCELLED' && (
+        <div className="flex items-center p-2">
+          <span className="inline-flex items-center rounded-md bg-red-100 px-3 py-1 text-sm font-medium text-red-800">
+            <AlertCircle className="mr-1 h-3 w-3" /> Cancelled
+          </span>
+        </div>
+      )}
+      {booking.status === 'CONFIRMED' && (
+        <div className="flex items-center p-2">
+          <span className="inline-flex items-center rounded-md bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
+            <Clock8 className="mr-1 h-3 w-3" /> Upcoming
+          </span>
+        </div>
+      )}
+      {booking.status === 'PENDING' && (
+        <div className="flex items-center p-2">
+          <span className="inline-flex items-center rounded-md bg-yellow-100 px-3 py-1 text-sm font-medium text-yellow-800">
+            <AlertCircle className="mr-1 h-3 w-3" /> Pending
+          </span>
+        </div>
+      )}
 
-      <div className="p-4">
+      <div className="p-4 pt-0">
         <h3 className="text-xl font-bold text-amber-900">
           {booking.templeDetails.basicDetails?.templeName}
         </h3>
@@ -678,9 +735,7 @@ const BookingDetailsModal = ({
                           />
                         </svg>
                       </div>
-                      <h5 className="text-lg font-semibold text-amber-900">
-                        Pooja: {pooja.name}
-                      </h5>
+                      <h5 className="text-lg font-semibold text-amber-900">Pooja: {pooja.name}</h5>
                     </div>
 
                     <div className="border-l-2 border-amber-200 pl-3">
