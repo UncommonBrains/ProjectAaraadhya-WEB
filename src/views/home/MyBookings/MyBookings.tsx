@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Calendar,
   ChevronLeft,
@@ -21,9 +21,10 @@ import { useBookingViewModel } from '../../../view-models/booking/useBookingView
 import { BookingsCardProps, StatusBadgeProps } from './types';
 import FloatingActionButton from '../../../components/common/Button/FloatingActionButton';
 import React from 'react';
+import { Booking } from './types'; // Ensure you're importing your Booking type
 
 const MyBookings = () => {
-  const [activeTab, setActiveTab] = useState('upcoming');
+  const [activeTab, setActiveTab] = useState('all');
   const [viewMode, setViewMode] = useState('grid');
   // Add state for modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,12 +33,13 @@ const MyBookings = () => {
   // Filter options
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  const { bookings } = useBookingViewModel();
+  const { bookings: fetchedBookings } = useBookingViewModel();
+
+  const bookings = useMemo(() => {
+    return fetchedBookings as Booking[];
+  }, [fetchedBookings]);
   console.log('Bookings:===', bookings);
   console.log('basicDetails:', bookings?.[0]);
-
-  
-  
 
   // Filter bookings based on active tab and search query
   const filteredBookings = bookingsMockData.filter((booking) => {
@@ -76,37 +78,7 @@ const MyBookings = () => {
 
       {/* Tabs */}
       <div className="mb-6 flex border-b border-amber-100">
-        <button
-          onClick={() => setActiveTab('upcoming')}
-          className={`px-4 py-2 text-sm font-medium ${
-            activeTab === 'upcoming'
-              ? 'border-b-2 border-orange-600 text-orange-600'
-              : 'text-gray-600 hover:text-amber-900'
-          }`}
-        >
-          Upcoming
-        </button>
-        <button
-          onClick={() => setActiveTab('completed')}
-          className={`px-4 py-2 text-sm font-medium ${
-            activeTab === 'completed'
-              ? 'border-b-2 border-orange-600 text-orange-600'
-              : 'text-gray-600 hover:text-amber-900'
-          }`}
-        >
-          Completed
-        </button>
-        <button
-          onClick={() => setActiveTab('cancelled')}
-          className={`px-4 py-2 text-sm font-medium ${
-            activeTab === 'cancelled'
-              ? 'border-b-2 border-orange-600 text-orange-600'
-              : 'text-gray-600 hover:text-amber-900'
-          }`}
-        >
-          Cancelled
-        </button>
-        <button
+      <button
           onClick={() => setActiveTab('all')}
           className={`px-4 py-2 text-sm font-medium ${
             activeTab === 'all'
@@ -116,6 +88,37 @@ const MyBookings = () => {
         >
           All Bookings
         </button>
+        <button
+          onClick={() => setActiveTab('CONFIRMED')}
+          className={`px-4 py-2 text-sm font-medium ${
+            activeTab === 'CONFIRMED'
+              ? 'border-b-2 border-orange-600 text-orange-600'
+              : 'text-gray-600 hover:text-amber-900'
+          }`}
+        >
+          Upcoming
+        </button>
+        <button
+          onClick={() => setActiveTab('COMPLETED')}
+          className={`px-4 py-2 text-sm font-medium ${
+            activeTab === 'COMPLETED'
+              ? 'border-b-2 border-orange-600 text-orange-600'
+              : 'text-gray-600 hover:text-amber-900'
+          }`}
+        >
+          Completed
+        </button>
+        <button
+          onClick={() => setActiveTab('PENDING')}
+          className={`px-4 py-2 text-sm font-medium ${
+            activeTab === 'PENDING'
+              ? 'border-b-2 border-orange-600 text-orange-600'
+              : 'text-gray-600 hover:text-amber-900'
+          }`}
+        >
+          Cancelled
+        </button>
+        
       </div>
 
       {/* Search and filter */}
@@ -228,7 +231,7 @@ const MyBookings = () => {
           {bookings.length > 0 ? (
             bookings
               .filter((booking) => booking.id !== undefined)
-              .map((booking) => <BookingCard key={booking.id!} booking={booking as Required<typeof booking>} />)
+              .map((booking) => <BookingCard key={booking.id!} booking={booking} />)
           ) : (
             <div className="col-span-full rounded-lg bg-amber-50 py-12 text-center">
               <AlertCircle className="mx-auto mb-4 h-12 w-12 text-amber-300" />
@@ -273,19 +276,28 @@ const MyBookings = () => {
                             {booking.templeDetails?.basicDetails?.templeName}
                           </div>
                           <div className="flex items-center text-sm text-gray-500">
-                            <MapPin className="mr-1 h-3 w-3" /> {booking.templeDetails?.basicDetails?.templeName}
+                            <MapPin className="mr-1 h-3 w-3" />{' '}
+                            {booking.templeDetails?.basicDetails?.templeName}
                           </div>
                           <div className="mt-1 text-xs text-gray-400">ID: {booking.id}</div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{booking.templeDetails?.basicDetails?.templeName}</div>
-                      <div className="text-sm text-gray-500">{booking.templeDetails?.basicDetails?.templeName}</div>
+                      <div className="text-sm text-gray-900">
+                        {booking.templeDetails?.basicDetails?.templeName}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {booking.templeDetails?.basicDetails?.templeName}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{booking.templeDetails?.basicDetails?.templeName}</div>
-                      <div className="text-sm font-medium text-amber-900">{booking.templeDetails?.basicDetails?.templeName}</div>
+                      <div className="text-sm text-gray-900">
+                        {booking.templeDetails?.basicDetails?.templeName}
+                      </div>
+                      <div className="text-sm font-medium text-amber-900">
+                        {booking.templeDetails?.basicDetails?.templeName}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <StatusBadge status={booking.status} />
@@ -357,28 +369,40 @@ const BookingCard: React.FC<BookingsCardProps> = ({ booking }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const convertTimestampToDateAndTime = (timestamp: { seconds: number; nanoseconds: number }) => {
-  if (!timestamp?.seconds) return { date: 'Invalid', time: 'Invalid' };
+    if (!timestamp?.seconds) return { date: 'Invalid', time: 'Invalid' };
 
-  const milliseconds = timestamp.seconds * 1000 + Math.floor(timestamp.nanoseconds / 1_000_000);
-  const dateObj = new Date(milliseconds);
+    const milliseconds = timestamp.seconds * 1000 + Math.floor(timestamp.nanoseconds / 1_000_000);
+    const dateObj = new Date(milliseconds);
 
-  const date = dateObj.toLocaleDateString('en-IN', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+    const date = dateObj.toLocaleDateString('en-IN', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
 
-  const time = dateObj.toLocaleTimeString('en-IN', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true,
-  });
+    const time = dateObj.toLocaleTimeString('en-IN', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
 
-  return { date, time };
-};
+    return { date, time };
+  };
 
-const { date, time } = convertTimestampToDateAndTime(booking.createdAt);
+  const { date, time } = convertTimestampToDateAndTime(booking.createdAt);
 
+  const distinctMemberCount = useMemo(() => {
+    const memberSet = new Set<string>();
+
+    booking.poojas?.forEach((pooja) => {
+      pooja.members?.forEach((member) => {
+        const key = `${member.name}_${member.starSign}`;
+        memberSet.add(key);
+      });
+    });
+
+    return memberSet.size;
+  }, [booking.poojas]);
 
   return (
     <div className="overflow-hidden rounded-lg border border-amber-100 bg-white shadow-sm transition-shadow hover:shadow">
@@ -403,11 +427,17 @@ const { date, time } = convertTimestampToDateAndTime(booking.createdAt);
       )}
 
       <div className="relative">
-        <img src={booking?.templeDetails?.basicDetails?.profilePictureUrl} alt={booking.templeDetails?.basicDetails?.profilePictureUrl} className="h-48 w-full object-cover" />
+        <img
+          src={booking?.templeDetails?.basicDetails?.profilePictureUrl}
+          alt={booking.templeDetails?.basicDetails?.profilePictureUrl}
+          className="h-48 w-full object-cover"
+        />
       </div>
 
       <div className="p-4">
-        <h3 className="text-xl font-bold text-amber-900">{booking.templeDetails.basicDetails?.templeName}</h3>
+        <h3 className="text-xl font-bold text-amber-900">
+          {booking.templeDetails.basicDetails?.templeName}
+        </h3>
 
         <div className="mt-1 flex items-center text-sm text-gray-500">
           <MapPin className="mr-1 h-4 w-4" />
@@ -420,7 +450,7 @@ const { date, time } = convertTimestampToDateAndTime(booking.createdAt);
               <div className="text-xs text-gray-500">Date</div>
               <div className="mt-1 flex items-center">
                 <Calendar className="mr-2 h-4 w-4 text-amber-700" />
-                
+
                 <span className="text-sm">{date}</span>
               </div>
             </div>
@@ -439,51 +469,56 @@ const { date, time } = convertTimestampToDateAndTime(booking.createdAt);
               <div className="text-xs text-gray-500">Members</div>
               <div className="mt-1 flex items-center">
                 <User className="mr-2 h-4 w-4 text-amber-700" />
-                <span className="text-sm">N/A (N/A)</span>
+                <span className="text-sm">
+                  {booking.poojas[0].name}
+                  {distinctMemberCount > 0
+                    ? ` + ${distinctMemberCount} member${distinctMemberCount > 1 ? 's' : ''}`
+                    : ''}
+                </span>
               </div>
             </div>
 
             <div>
-              <div className="text-xs text-gray-500">Services</div>
+              <div className="text-xs text-gray-500">Poojas</div>
               <div className="mt-1 flex items-center">
-                <span className="text-sm">{booking.service}</span>
+                <span className="text-sm">
+                  {booking.poojas[0]?.poojaDetails?.name}
+                  {booking.poojas.length > 1 &&
+                    ` + ${booking.poojas.length - 1} more ${booking.poojas.length - 1 > 1 ? 's' : ''}`}
+                </span>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="mt-4 flex items-center justify-between">
-          <span className="text-xs text-gray-500">Booking ID: {booking.id}</span>
-          <StatusBadge status={booking.status} />
-
-        <div className="mt-4 bg-amber-50 p-3 rounded-md flex justify-between items-center">
+        <div className="mt-4 flex items-center justify-between rounded-md bg-amber-50 p-3">
           <span className="font-medium text-amber-900">Total Amount:</span>
-          <span className="font-bold text-amber-900">{booking.amount}</span>
+          <span className="font-bold text-amber-900">₹ {booking.price}</span>
         </div>
 
-        <div className="mt-3 flex justify-between items-center">
+        <div className="mt-3 flex items-center justify-between">
           <span className="text-xs text-gray-500">Booking ID: {booking.id}</span>
           <div className="flex space-x-3">
-            <button 
-              className="px-3 py-1 bg-amber-50 rounded-md text-sm font-medium text-amber-600 hover:bg-amber-100"
-              onClick={() => setIsModalOpen(true)} // Open modal when clicked
+            <button
+              className="rounded-md bg-amber-50 px-3 py-1 text-sm font-medium text-amber-600 hover:bg-amber-100"
+              onClick={() => setIsModalOpen(true)}
             >
               View Details
             </button>
 
             {booking.status === 'upcoming' && (
-              <button className="px-3 py-1 bg-red-50 rounded-md text-sm font-medium text-red-500 hover:bg-red-100">
+              <button className="rounded-md bg-red-50 px-3 py-1 text-sm font-medium text-red-500 hover:bg-red-100">
                 Cancel
               </button>
             )}
           </div>
         </div>
-        
+
         {/* Add modal for this card */}
-        <BookingDetailsModal 
-          isOpen={isModalOpen} 
-          onClose={() => setIsModalOpen(false)} 
-          booking={booking} 
+        <BookingDetailsModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          booking={booking}
         />
       </div>
     </div>
@@ -491,22 +526,28 @@ const { date, time } = convertTimestampToDateAndTime(booking.createdAt);
 };
 
 // Modal component for booking details
-const BookingDetailsModal = ({ isOpen, onClose, booking }: { isOpen: boolean; onClose: () => void; booking: any }) => {
-
+const BookingDetailsModal = ({
+  isOpen,
+  onClose,
+  booking,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  booking: any;
+}) => {
   React.useEffect(() => {
     // When modal opens, prevent scrolling on the body
     if (isOpen) {
       document.body.style.overflow = 'hidden';
-    } 
+    }
     // When modal closes, allow scrolling again
     return () => {
       document.body.style.overflow = 'auto';
     };
   }, [isOpen]); // Only re-run when isOpen changes
-  
+
   if (!isOpen || !booking) return null;
-  
-  
+
   // Handle click outside to close
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -518,43 +559,58 @@ const BookingDetailsModal = ({ isOpen, onClose, booking }: { isOpen: boolean; on
   // This structure shows multiple poojas with their participants
   const poojaServices = booking.poojaServices || [
     {
-      poojaName: "Abhishekam",
+      poojaName: 'Abhishekam',
       participants: [
-        { name: "John Doe", starSign: "Aries" },
-        { name: "Jane Doe", starSign: "Libra" }
-      ]
+        { name: 'John Doe', starSign: 'Aries' },
+        { name: 'Jane Doe', starSign: 'Libra' },
+      ],
     },
     {
-      poojaName: "Archana",
+      poojaName: 'Archana',
       participants: [
-        { name: "John Doe", starSign: "Aries" },
-        { name: "Jane Doe", starSign: "Libra" },
-        { name: "Jack Doe", starSign: "Gemini" }
-      ]
-    }
+        { name: 'John Doe', starSign: 'Aries' },
+        { name: 'Jane Doe', starSign: 'Libra' },
+        { name: 'Jack Doe', starSign: 'Gemini' },
+      ],
+    },
   ];
 
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center bg-black/70 z-50"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
       onClick={handleBackdropClick}
     >
-      <div className="relative bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-auto">
+      <div className="relative max-h-[90vh] w-full max-w-2xl overflow-auto rounded-lg bg-white shadow-xl">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         </button>
 
         <div className="p-6">
-          <h2 className="text-2xl font-bold text-amber-900 mb-4">Booking Details</h2>
+          <h2 className="mb-4 text-2xl font-bold text-amber-900">Booking Details</h2>
 
           <div className="mb-6">
-            <div className="flex items-center mb-4">
-              <img src={booking.imageUrl} alt={booking.templeName} className="h-16 w-16 rounded-md object-cover mr-4" />
+            <div className="mb-4 flex items-center">
+              <img
+                src={booking.imageUrl}
+                alt={booking.templeName}
+                className="mr-4 h-16 w-16 rounded-md object-cover"
+              />
               <div>
                 <h3 className="text-xl font-bold text-amber-900">{booking.templeName}</h3>
                 <div className="flex items-center text-gray-500">
@@ -566,9 +622,9 @@ const BookingDetailsModal = ({ isOpen, onClose, booking }: { isOpen: boolean; on
             <StatusBadge status={booking.status} />
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            <div className="border-r pr-4">
-              <h4 className="font-medium text-amber-900 mb-2">Booking Information</h4>
+          <div className="mb-6 grid gap-4">
+            <h4 className="mb-2 font-medium text-amber-900">Booking Information</h4>
+            <div className="grid grid-cols-2 gap-4 border-r pr-4">
               <ul className="space-y-2">
                 <li className="flex justify-between">
                   <span className="text-gray-500">Booking ID:</span>
@@ -578,35 +634,16 @@ const BookingDetailsModal = ({ isOpen, onClose, booking }: { isOpen: boolean; on
                   <span className="text-gray-500">Date:</span>
                   <span className="font-medium">{booking.date}</span>
                 </li>
+              </ul>
+              <ul className="space-y-2">
                 <li className="flex justify-between">
                   <span className="text-gray-500">Time:</span>
                   <span className="font-medium">{booking.time}</span>
                 </li>
-                <li className="flex justify-between">
-                  <span className="text-gray-500">Main Service:</span>
-                  <span className="font-medium">{booking.service}</span>
-                </li>
+
                 <li className="flex justify-between">
                   <span className="text-gray-500">Amount:</span>
                   <span className="font-medium">{booking.amount}</span>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-medium text-amber-900 mb-2">Contact Information</h4>
-              <ul className="space-y-2">
-                <li className="flex justify-between">
-                  <span className="text-gray-500">Name:</span>
-                  <span className="font-medium">John Doe</span>
-                </li>
-                <li className="flex justify-between">
-                  <span className="text-gray-500">Email:</span>
-                  <span className="font-medium">john.doe@example.com</span>
-                </li>
-                <li className="flex justify-between">
-                  <span className="text-gray-500">Phone:</span>
-                  <span className="font-medium">+1 234 567 8901</span>
                 </li>
               </ul>
             </div>
@@ -614,59 +651,88 @@ const BookingDetailsModal = ({ isOpen, onClose, booking }: { isOpen: boolean; on
 
           {/* Pooja Services Section */}
           <div className="mb-6">
-            <h4 className="font-medium text-amber-900 mb-3">Pooja Services</h4>
+            <h4 className="mb-3 font-medium text-amber-900">Pooja Services</h4>
             <div className="space-y-4">
-              {poojaServices.map((pooja: { poojaName: string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | null | undefined; participants: any[]; }, index: React.Key | null | undefined) => (
-                <div key={index} className="bg-amber-50 rounded-md p-4">
-                  <div className="flex items-center mb-3">
-                    <div className="bg-amber-100 p-2 rounded-full mr-3">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-800" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <h5 className="text-lg font-semibold text-amber-900">Pooja: {pooja.poojaName}</h5>
-                  </div>
-                  
-                  <div className="pl-3 border-l-2 border-amber-200">
-                    <p className="text-sm font-medium text-amber-800 mb-2">Participants:</p>
-                    {pooja.participants.map((participant, idx) => (
-                      <div key={idx} className="flex items-center justify-between mb-2 bg-white rounded-md p-2 shadow-sm">
-                        <div className="flex items-center">
-                          <User className="h-4 w-4 text-amber-700 mr-2" />
-                          <span>{participant.name}</span>
-                        </div>
-                        <span className="text-gray-500 text-sm">Star Sign: {participant.starSign}</span>
+              {poojaServices.map(
+                (
+                  pooja: {
+                    name: string;
+
+                    participants: any[];
+                  },
+                  index: React.Key | null | undefined,
+                ) => (
+                  <div key={index} className="rounded-md bg-amber-50 p-4">
+                    <div className="mb-3 flex items-center">
+                      <div className="mr-3 rounded-full bg-amber-100 p-2">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5 text-amber-800"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
                       </div>
-                    ))}
+                      <h5 className="text-lg font-semibold text-amber-900">
+                        Pooja: {pooja.name}
+                      </h5>
+                    </div>
+
+                    <div className="border-l-2 border-amber-200 pl-3">
+                      <p className="mb-2 text-sm font-medium text-amber-800">Participants:</p>
+                      {pooja.participants.map((participant, idx) => (
+                        <div
+                          key={idx}
+                          className="mb-2 flex items-center justify-between rounded-md bg-white p-2 shadow-sm"
+                        >
+                          <div className="flex items-center">
+                            <User className="mr-2 h-4 w-4 text-amber-700" />
+                            <span>{participant.name}</span>
+                          </div>
+                          <span className="text-sm text-gray-500">
+                            Star Sign: {participant.starSign}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ),
+              )}
             </div>
           </div>
 
           {booking.status === 'cancelled' && (
-            <div className="bg-red-50 p-3 rounded mb-6">
-              <h4 className="font-medium text-red-800 mb-1">Cancellation Information</h4>
-              <p className="text-sm text-red-700">{booking.cancellationReason || 'No reason provided'}</p>
-              <p className="text-xs text-red-600 mt-1">Cancelled on: {new Date().toLocaleDateString()}</p>
+            <div className="mb-6 rounded bg-red-50 p-3">
+              <h4 className="mb-1 font-medium text-red-800">Cancellation Information</h4>
+              <p className="text-sm text-red-700">
+                {booking.cancellationReason || 'No reason provided'}
+              </p>
+              <p className="mt-1 text-xs text-red-600">
+                Cancelled on: {new Date().toLocaleDateString()}
+              </p>
             </div>
           )}
 
-          <div className="border-t pt-4 flex justify-between">
+          <div className="flex justify-between border-t pt-4">
             <div>
-              <h4 className="font-medium text-amber-900 mb-2">Total Amount</h4>
+              <h4 className="mb-2 font-medium text-amber-900">Total Amount</h4>
               <p className="text-2xl font-bold text-amber-900">{booking.amount}</p>
             </div>
 
             <div className="flex space-x-2">
               {booking.status === 'upcoming' && (
-                <button className="px-4 py-2 bg-red-50 rounded-md text-red-500 hover:bg-red-100">
+                <button className="rounded-md bg-red-50 px-4 py-2 text-red-500 hover:bg-red-100">
                   Cancel Booking
                 </button>
               )}
               <button
                 onClick={onClose}
-                className="px-4 py-2 bg-amber-500 text-white rounded-md hover:bg-amber-600"
+                className="rounded-md bg-amber-500 px-4 py-2 text-white hover:bg-amber-600"
               >
                 Close
               </button>
@@ -674,7 +740,7 @@ const BookingDetailsModal = ({ isOpen, onClose, booking }: { isOpen: boolean; on
           </div>
         </div>
       </div>
-      <FloatingActionButton/>
+      <FloatingActionButton />
     </div>
   );
 };
