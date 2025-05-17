@@ -613,25 +613,38 @@ const BookingDetailsModal = ({
     }
   };
 
-  // Mock pooja services data (replace with actual data from booking object)
-  // This structure shows multiple poojas with their participants
-  const poojaServices = booking.poojaServices || [
-    {
-      poojaName: 'Abhishekam',
-      participants: [
-        { name: 'John Doe', starSign: 'Aries' },
-        { name: 'Jane Doe', starSign: 'Libra' },
-      ],
-    },
-    {
-      poojaName: 'Archana',
-      participants: [
-        { name: 'John Doe', starSign: 'Aries' },
-        { name: 'Jane Doe', starSign: 'Libra' },
-        { name: 'Jack Doe', starSign: 'Gemini' },
-      ],
-    },
-  ];
+  // Convert timestamp to readable date and time
+  const convertTimestampToDateAndTime = (timestamp: { seconds: number; nanoseconds: number }) => {
+    if (!timestamp?.seconds) return { date: 'Not available', time: 'Not available' };
+
+    const milliseconds = timestamp.seconds * 1000 + Math.floor(timestamp.nanoseconds / 1_000_000);
+    const dateObj = new Date(milliseconds);
+
+    const date = dateObj.toLocaleDateString('en-IN', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+
+    const time = dateObj.toLocaleTimeString('en-IN', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
+
+    return { date, time };
+  };
+
+  const { date, time } = convertTimestampToDateAndTime(booking.createdAt);
+
+  // Get pooja services with participants from booking data
+  const poojaServices = booking.poojas?.map((pooja: any) => ({
+    name: pooja.poojaDetails?.name || pooja.name,
+    participants: pooja.members?.map((member: any) => ({
+      name: member.name,
+      starSign: member.starSign
+    })) || []
+  })) || [];
 
   return (
     <div
@@ -665,14 +678,19 @@ const BookingDetailsModal = ({
           <div className="mb-6">
             <div className="mb-4 flex items-center">
               <img
-                src={booking.imageUrl}
-                alt={booking.templeName}
+                src={booking.templeDetails?.basicDetails?.profilePictureUrl}
+                alt={booking.templeDetails?.basicDetails?.templeName || "Temple"}
                 className="mr-4 h-16 w-16 rounded-md object-cover"
               />
               <div>
-                <h3 className="text-xl font-bold text-amber-900">{booking.templeName}</h3>
+                <h3 className="text-xl font-bold text-amber-900">
+                  {booking.templeDetails?.basicDetails?.templeName}
+                </h3>
                 <div className="flex items-center text-gray-500">
-                  <MapPin className="mr-1 h-4 w-4" /> {booking.location}
+                  <MapPin className="mr-1 h-4 w-4" /> 
+                  {booking.templeDetails?.contactDetails?.address || 
+                   booking.templeDetails?.basicDetails?.location || 
+                   "Location not available"}
                 </div>
               </div>
             </div>
@@ -690,18 +708,18 @@ const BookingDetailsModal = ({
                 </li>
                 <li className="flex justify-between">
                   <span className="text-gray-500">Date:</span>
-                  <span className="font-medium">{booking.date}</span>
+                  <span className="font-medium">{date}</span>
                 </li>
               </ul>
               <ul className="space-y-2">
                 <li className="flex justify-between">
                   <span className="text-gray-500">Time:</span>
-                  <span className="font-medium">{booking.time}</span>
+                  <span className="font-medium">{time}</span>
                 </li>
 
                 <li className="flex justify-between">
                   <span className="text-gray-500">Amount:</span>
-                  <span className="font-medium">{booking.amount}</span>
+                  <span className="font-medium">₹ {booking.price || "N/A"}</span>
                 </li>
               </ul>
             </div>
@@ -711,15 +729,8 @@ const BookingDetailsModal = ({
           <div className="mb-6">
             <h4 className="mb-3 font-medium text-amber-900">Pooja Services</h4>
             <div className="space-y-4">
-              {poojaServices.map(
-                (
-                  pooja: {
-                    name: string;
-
-                    participants: any[];
-                  },
-                  index: React.Key | null | undefined,
-                ) => (
+              {poojaServices.length > 0 ? (
+                poojaServices.map((pooja: any, index: number) => (
                   <div key={index} className="rounded-md bg-amber-50 p-4">
                     <div className="mb-3 flex items-center">
                       <div className="mr-3 rounded-full bg-amber-100 p-2">
@@ -736,40 +747,52 @@ const BookingDetailsModal = ({
                           />
                         </svg>
                       </div>
-                      <h5 className="text-lg font-semibold text-amber-900">Pooja: {pooja.name}</h5>
+                      <h5 className="text-lg font-semibold text-amber-900">
+                        Pooja: {pooja.name || "Unnamed Pooja"}
+                      </h5>
                     </div>
 
-                    <div className="border-l-2 border-amber-200 pl-3">
-                      <p className="mb-2 text-sm font-medium text-amber-800">Participants:</p>
-                      {pooja.participants.map((participant, idx) => (
-                        <div
-                          key={idx}
-                          className="mb-2 flex items-center justify-between rounded-md bg-white p-2 shadow-sm"
-                        >
-                          <div className="flex items-center">
-                            <User className="mr-2 h-4 w-4 text-amber-700" />
-                            <span>{participant.name}</span>
+                    {pooja.participants && pooja.participants.length > 0 ? (
+                      <div className="border-l-2 border-amber-200 pl-3">
+                        <p className="mb-2 text-sm font-medium text-amber-800">Participants:</p>
+                        {pooja.participants.map((participant: any, idx: number) => (
+                          <div
+                            key={idx}
+                            className="mb-2 flex items-center justify-between rounded-md bg-white p-2 shadow-sm"
+                          >
+                            <div className="flex items-center">
+                              <User className="mr-2 h-4 w-4 text-amber-700" />
+                              <span>{participant.name || "Unnamed"}</span>
+                            </div>
+                            <span className="text-sm text-gray-500">
+                              Star Sign: {participant.starSign || "Not specified"}
+                            </span>
                           </div>
-                          <span className="text-sm text-gray-500">
-                            Star Sign: {participant.starSign}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-500">No participants listed</p>
+                    )}
                   </div>
-                ),
+                ))
+              ) : (
+                <div className="rounded-md bg-amber-50 p-4 text-center">
+                  <p className="text-amber-800">No pooja services details available</p>
+                </div>
               )}
             </div>
           </div>
 
-          {booking.status === 'cancelled' && (
+          {booking.status === 'CANCELLED' && (
             <div className="mb-6 rounded bg-red-50 p-3">
               <h4 className="mb-1 font-medium text-red-800">Cancellation Information</h4>
               <p className="text-sm text-red-700">
                 {booking.cancellationReason || 'No reason provided'}
               </p>
               <p className="mt-1 text-xs text-red-600">
-                Cancelled on: {new Date().toLocaleDateString()}
+                Cancelled on: {booking.cancelledAt ? 
+                  new Date(booking.cancelledAt.seconds * 1000).toLocaleDateString() : 
+                  'Date not available'}
               </p>
             </div>
           )}
@@ -777,11 +800,11 @@ const BookingDetailsModal = ({
           <div className="flex justify-between border-t pt-4">
             <div>
               <h4 className="mb-2 font-medium text-amber-900">Total Amount</h4>
-              <p className="text-2xl font-bold text-amber-900">{booking.amount}</p>
+              <p className="text-2xl font-bold text-amber-900">₹ {booking.price || "N/A"}</p>
             </div>
 
             <div className="flex space-x-2">
-              {booking.status === 'upcoming' && (
+              {booking.status === 'PENDING' && (
                 <button className="rounded-md bg-red-50 px-4 py-2 text-red-500 hover:bg-red-100">
                   Cancel Booking
                 </button>
@@ -796,7 +819,6 @@ const BookingDetailsModal = ({
           </div>
         </div>
       </div>
-      <FloatingActionButton />
     </div>
   );
 };
