@@ -733,32 +733,33 @@ const BookingDetailsModal = ({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-3">
                   <div className="flex items-center">
-                    <span className="text-sm text-gray-500 w-28">Booking ID:</span>
-                    <span className="font-medium text-amber-900 overflow-hidden text-ellipsis">{booking.id}</span>
+                    <span className="text-sm text-gray-500 w-20 flex-shrink-0">Booking ID :</span>
+                    <span className="font-medium text-amber-900 overflow-hidden text-ellipsis ">{booking.id}</span>
                   </div>
+                  
                   <div className="flex items-center">
-                    <span className="text-sm text-gray-500 w-28">Date:</span>
-                    <span className="font-medium text-amber-900">{date}</span>
+                    <span className="text-sm text-gray-500 w-20 flex-shrink-0">Amount :</span>
+                    <span className="font-medium text-amber-900 ">₹ {booking.price || 'N/A'}</span>
                   </div>
                 </div>
                 <div className="space-y-3">
-                  <div className="flex items-center">
-                    <span className="text-sm text-gray-500 w-28">Time:</span>
-                    <span className="font-medium text-amber-900">{time}</span>
+                <div className="flex items-center">
+                    <span className="text-sm text-gray-500 w-20 flex-shrink-0">Date :</span>
+                    <span className="font-medium text-amber-900 ">{date}</span>
                   </div>
                   <div className="flex items-center">
-                    <span className="text-sm text-gray-500 w-28">Amount:</span>
-                    <span className="font-medium text-amber-900">₹ {booking.price || 'N/A'}</span>
+                    <span className="text-sm text-gray-500 w-20 flex-shrink-0">Time :</span>
+                    <span className="font-medium text-amber-900 ">{time}</span>
                   </div>
                 </div>
               </div>
               
-              {/* Payment method if available */}
+              {/* Payment method if available - updated with the same spacing */}
               {booking.paymentDetails?.paymentMethod && (
                 <div className="mt-3 pt-3 border-t border-amber-200">
                   <div className="flex items-center">
-                    <span className="text-sm text-gray-500 w-28">Payment Method:</span>
-                    <span className="font-medium text-amber-900">{booking.paymentDetails.paymentMethod}</span>
+                    <span className="text-sm text-gray-500 w-20 flex-shrink-0">Payment:</span>
+                    <span className="font-medium text-amber-900 ml-2">{booking.paymentDetails.paymentMethod}</span>
                   </div>
                 </div>
               )}
@@ -861,9 +862,9 @@ const BookingDetailsModal = ({
             </div>
 
             <div className="flex space-x-2">
-              {booking.status === 'PENDING' && (
-                <button className="rounded-md bg-red-50 px-4 py-2 text-red-500 hover:bg-red-100">
-                  Cancel Booking
+              {(booking.status === 'CONFIRMED' || booking.status === 'COMPLETED')  && (
+                <button className="rounded-md bg-orange-50 px-4 py-2 text-orange-500 hover:bg-orange-100">
+                  Download Reciept
                 </button>
               )}
               <button
