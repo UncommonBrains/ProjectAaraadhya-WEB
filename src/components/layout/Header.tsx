@@ -25,6 +25,7 @@ import { useConfirmation } from '../../hooks/useConfirmation';
 import { useSignoutViewModel } from '../../view-models/auth/useSignoutViewModel';
 import { toast } from '../../utils/toast';
 import { useCart } from '../../hooks/useCart';
+import DevoteeStoreLink from './DevoteeStoreLink';
 
 const Header = () => {
   const { cart } = useCart();
@@ -167,17 +168,8 @@ const Header = () => {
                 {/* More Dropdown */}
                 {showMoreDropdown && (
                   <div className="absolute left-0 z-50 mt-2 w-40 rounded-md border border-amber-100 bg-white py-1 shadow-lg">
-                    <NavLink
-                      to="/devotee-store"
-                      className={({ isActive }) =>
-                        isActive
-                          ? 'block px-4 py-2 font-bold text-orange-600'
-                          : 'block px-4 py-2 text-gray-600 hover:bg-amber-50'
-                      }
-                      onClick={() => setShowMoreDropdown(false)}
-                    >
-                      Devotee Store
-                    </NavLink>
+                    <DevoteeStoreLink onClose={() => setShowMoreDropdown(false)} />
+
                     <NavLink
                       to="/community"
                       className={({ isActive }) =>
