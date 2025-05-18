@@ -1,7 +1,7 @@
 import TempleImage from '../../assets/images/temple-3.jpg';
 
 // Sample booking data
-export const bookings = [
+export const bookingsMockData = [
   {
     id: 'BK1234',
     templeName: 'Sri Venkateswara Temple',
@@ -12,6 +12,8 @@ export const bookings = [
     amount: '₹ 1,100',
     status: 'upcoming',
     imageUrl: TempleImage,
+    updatedAt: '2023-10-01T10:00:00Z',
+
     isPriority: true,
   },
   {
@@ -23,6 +25,8 @@ export const bookings = [
     service: 'Archana',
     amount: '₹ 500',
     status: 'upcoming',
+    updatedAt: '2023-10-01T10:00:00Z',
+
     imageUrl: TempleImage,
   },
   {
@@ -34,6 +38,8 @@ export const bookings = [
     service: 'Darshan',
     amount: '₹ 300',
     status: 'completed',
+    updatedAt: '2023-10-01T10:00:00Z',
+
     imageUrl: TempleImage,
   },
   {
@@ -45,6 +51,8 @@ export const bookings = [
     service: 'Special Darshan',
     amount: '₹ 700',
     status: 'completed',
+    updatedAt: '2023-10-01T10:00:00Z',
+
     imageUrl: TempleImage,
   },
   {
@@ -55,6 +63,8 @@ export const bookings = [
     time: '06:00 AM',
     service: 'Rudrabhishek',
     amount: '₹ 1,500',
+    updatedAt: '2023-10-01T10:00:00Z',
+
     status: 'cancelled',
     cancellationReason: 'Temple closure due to special event',
     imageUrl: TempleImage,

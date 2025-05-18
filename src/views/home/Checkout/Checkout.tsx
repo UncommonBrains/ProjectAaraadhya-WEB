@@ -209,7 +209,7 @@ const Checkout: React.FC = () => {
     if (!hasBankDetails) return null;
 
     return (
-      <div className="rounded-lg border border-gray-200 bg-white p-4">
+      <div className="rounded-lg border border-gray-200 bg-white p-4 ">
         <div className="mb-2 flex items-center justify-between">
           <h3 className="font-medium text-amber-900">Bank Transfer Details</h3>
         </div>
@@ -294,7 +294,7 @@ const Checkout: React.FC = () => {
   const renderPaymentForm = () => {
     if (isSubmitted) {
       return (
-        <div className="mt-4 rounded-lg bg-green-50 p-4">
+        <div className="mt-4 rounded-lg bg-green-50 p-4 ">
           <div className="flex items-center space-x-2">
             <CheckCircle className="h-5 w-5 text-green-500" />
             <h3 className="font-medium text-green-700">
@@ -303,7 +303,7 @@ const Checkout: React.FC = () => {
           </div>
           <p className="mt-2 text-sm text-green-600">
             We're currently verifying your payment with the temple administrator. You'll receive an
-            update on your order status shortly.
+            update on your booking status shortly.
           </p>
           <button
             className="mt-4 flex w-full items-center justify-center rounded-lg bg-amber-600 px-4 py-3 font-medium text-white"

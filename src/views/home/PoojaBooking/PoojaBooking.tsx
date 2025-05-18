@@ -376,7 +376,7 @@ const PoojaBooking: React.FC = () => {
           <div className="container mx-auto">
             <div className="flex overflow-x-auto">
               <button
-                className={`flex-1 px-4 py-4 text-center text-sm font-medium whitespace-nowrap ${
+                className={`flex-1 px-4 py-4 text-center text-sm font-medium whitespace-nowrap cursor-pointer ${
                   mainTab === 'deity'
                     ? 'border-b-2 border-orange-500 text-orange-500'
                     : 'text-gray-600'
@@ -387,7 +387,7 @@ const PoojaBooking: React.FC = () => {
                 By Deity
               </button>
               <button
-                className={`flex-1 px-4 py-4 text-center text-sm font-medium whitespace-nowrap ${
+                className={`flex-1 px-4 py-4 text-center text-sm font-medium whitespace-nowrap cursor-pointer ${
                   mainTab === 'all'
                     ? 'border-b-2 border-orange-500 text-orange-500'
                     : 'text-gray-600'
@@ -416,7 +416,7 @@ const PoojaBooking: React.FC = () => {
         </div>
 
         {/* Content based on selected tab */}
-        <div className="container mx-auto p-4">
+        <div className="container mx-auto p-4 pt-0">
           {/* Deity Tab */}
           {mainTab === 'deity' && (
             <div>
@@ -458,7 +458,7 @@ const PoojaBooking: React.FC = () => {
                     </h3>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+                  <div className="grid grid-cols-1 gap-4 md:!grid-cols-2">
                     {getPoojasByDeity(selectedDeity)
                       .filter((pooja) =>
                         pooja.poojaDetails.name.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -473,10 +473,10 @@ const PoojaBooking: React.FC = () => {
                               <h4 className="font-medium text-amber-900">
                                 {pooja.poojaDetails.name}
                               </h4>
-                              <p className="mt-1 text-sm text-gray-600">₹{pooja.price}</p>
+                              <p className="mt-1 text-sm font-medium text-amber-900">₹{pooja.price}</p>
                             </div>
                             <button
-                              className="flex items-center rounded-lg bg-amber-600 px-3 py-2 text-sm font-medium text-white"
+                              className="flex items-center rounded-lg bg-amber-600 px-3 py-2 text-sm font-medium text-white cursor-pointer"
                               onClick={() => handleAddToCart(pooja)}
                             >
                               <Plus className="mr-1 h-4 w-4" />
@@ -516,8 +516,8 @@ const PoojaBooking: React.FC = () => {
                           <p className="mt-1 text-sm font-medium text-amber-900">₹{pooja.price}</p>
                         </div>
                         <button
-                          className="flex items-center rounded-lg bg-amber-600 px-3 py-2 text-sm font-medium text-white"
-                          // onClick={() => handleAddToCart(pooja)}
+                          className="flex items-center rounded-lg bg-amber-600 px-3 py-2 text-sm font-medium text-white cursor-pointer"
+                          onClick={() => handleAddToCart(pooja)}
                         >
                           <Plus className="mr-1 h-4 w-4" />
                           Book
