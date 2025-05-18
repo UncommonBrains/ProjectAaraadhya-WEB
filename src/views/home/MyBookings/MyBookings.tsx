@@ -446,18 +446,7 @@ const BookingCard: React.FC<BookingsCardProps> = ({ booking }) => {
 
   const { date, time } = convertTimestampToDateAndTime(booking.createdAt);
 
-  const distinctMemberCount = useMemo(() => {
-    const memberSet = new Set<string>();
-
-    booking.poojas?.forEach((pooja) => {
-      pooja.members?.forEach((member) => {
-        const key = `${member.name}_${member.starSign}`;
-        memberSet.add(key);
-      });
-    });
-
-    return memberSet.size;
-  }, [booking.poojas]);
+  
 
   return (
     <div className="overflow-hidden rounded-lg border border-amber-100 bg-white shadow-sm transition-shadow hover:shadow">
@@ -519,7 +508,7 @@ const BookingCard: React.FC<BookingsCardProps> = ({ booking }) => {
         <div className="mt-4 space-y-3">
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <div className="text-xs text-gray-500">Date</div>
+              <div className="text-xs text-gray-500">Booking Date</div>
               <div className="mt-1 flex items-center">
                 <Calendar className="mr-2 h-4 w-4 text-amber-700" />
 
@@ -528,7 +517,7 @@ const BookingCard: React.FC<BookingsCardProps> = ({ booking }) => {
             </div>
 
             <div>
-              <div className="text-xs text-gray-500">Time</div>
+              <div className="text-xs text-gray-500">Booking Time</div>
               <div className="mt-1 flex items-center">
                 <Clock className="mr-2 h-4 w-4 text-amber-700" />
                 <span className="text-sm">{time}</span>
@@ -537,18 +526,7 @@ const BookingCard: React.FC<BookingsCardProps> = ({ booking }) => {
           </div>
 
           <div className="grid grid-cols-2 gap-2">
-            <div>
-              <div className="text-xs text-gray-500">Members</div>
-              <div className="mt-1 flex items-center">
-                <User className="mr-2 h-4 w-4 text-amber-700" />
-                <span className="text-sm">
-                  {booking.poojas[0].name}
-                  {distinctMemberCount > 0
-                    ? ` + ${distinctMemberCount} member${distinctMemberCount > 1 ? 's' : ''}`
-                    : ''}
-                </span>
-              </div>
-            </div>
+            
 
             <div>
               <div className="text-xs text-gray-500">Poojas</div>
@@ -649,7 +627,7 @@ const BookingDetailsModal = ({
     return { date, time };
   };
 
-  const { date, time } = convertTimestampToDateAndTime(booking.createdAt);
+  const { date,  } = convertTimestampToDateAndTime(booking.createdAt);
 
   // Get pooja services with participants from booking data
   const poojaServices = booking.poojas?.map((pooja: any) => {
@@ -758,13 +736,10 @@ const BookingDetailsModal = ({
                 </div>
                 <div className="space-y-3">
                 <div className="flex items-center">
-                    <span className="text-sm text-gray-500 w-20 flex-shrink-0">Date :</span>
-                    <span className="font-medium text-amber-900 ">{date}</span>
+                    <span className="text-sm text-gray-500  flex-shrink-0">Booking Date : </span>
+                    <span className="font-medium text-amber-900 "> {date}</span>
                   </div>
-                  <div className="flex items-center">
-                    <span className="text-sm text-gray-500 w-20 flex-shrink-0">Time :</span>
-                    <span className="font-medium text-amber-900 ">{time}</span>
-                  </div>
+
                 </div>
               </div>
               
