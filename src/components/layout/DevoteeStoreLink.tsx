@@ -9,20 +9,19 @@ const DevoteeStoreLink: React.FC<DevoteeStoreLinkProps> = ({ onClose }) => {
   const location = useLocation();
   const isActive = location.pathname === '/devotee-store';
   const REACT_APP_AUTH_API_BASE_URL= "http://localhost:5000"
+  const REACT_APP_BASE_URL= "http://localhost:3002"
 
   const handleClick = async () => {
     onClose?.(); // Close dropdown if provided
 
     const dummyUser = {
-      uid: "demoUser123",
-      name: "Gokul Bhattathiri",
-      email: "gokul@example.com",
-      phone: "9999999999",
-      joinedAt: new Date().toISOString()
+      name: "Gokul Bhagttathiri23",
+      email: "gokul@e3x3ample.com",
+      mobile: "9999943999",
     };
 
     try {
-      const response = await fetch(`${REACT_APP_AUTH_API_BASE_URL}/api/auth/user`, {
+      const response = await fetch(`${REACT_APP_AUTH_API_BASE_URL}/api/auth/user/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -33,7 +32,8 @@ const DevoteeStoreLink: React.FC<DevoteeStoreLinkProps> = ({ onClose }) => {
       const result = await response.json();
       if (response.ok) {
         console.log("User sent to Devotee Store:", result);
-        window.open("https://store.aaraadhya.in", "_blank");
+        // window.open("https://store.aaraadhya.in", "_blank");
+        window.open(`${REACT_APP_BASE_URL}`, "_blank");
       } else {
         console.error("Failed to send:", result);
       }
