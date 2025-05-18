@@ -33,7 +33,7 @@ const MyBookings = () => {
   console.log('Fetched Bookings:', fetchedBookings);
 
   const bookings = useMemo(() => {
-    return fetchedBookings as Booking[];
+    return fetchedBookings as unknown as Booking[];
   }, [fetchedBookings]);
 
   // Filter bookings based on active tab and search query
@@ -102,11 +102,11 @@ const MyBookings = () => {
         </button>
         <button
           onClick={() => {
-            setActiveTab('PENDING');
+            setActiveTab('pending');
             setVisibleCount(3);
           }}
           className={`px-4 py-2 text-sm font-medium ${
-            activeTab === 'PENDING'
+            activeTab === 'pending'
               ? 'border-b-2 border-orange-600 text-orange-600'
               : 'text-gray-600 hover:text-amber-900'
           }`}
@@ -115,11 +115,11 @@ const MyBookings = () => {
         </button>
         <button
           onClick={() => {
-            setActiveTab('CONFIRMED');
+            setActiveTab('confirmed');
             setVisibleCount(3);
           }}
           className={`px-4 py-2 text-sm font-medium ${
-            activeTab === 'CONFIRMED'
+            activeTab === 'confirmed'
               ? 'border-b-2 border-orange-600 text-orange-600'
               : 'text-gray-600 hover:text-amber-900'
           }`}
@@ -129,11 +129,11 @@ const MyBookings = () => {
 
         <button
           onClick={() => {
-            setActiveTab('COMPLETED');
+            setActiveTab('completed');
             setVisibleCount(3);
           }}
           className={`px-4 py-2 text-sm font-medium ${
-            activeTab === 'COMPLETED'
+            activeTab === 'completed'
               ? 'border-b-2 border-orange-600 text-orange-600'
               : 'text-gray-600 hover:text-amber-900'
           }`}
@@ -333,10 +333,10 @@ const MyBookings = () => {
                       <td className="px-6 py-4 text-sm whitespace-nowrap">
                         <div className="flex space-x-2">
                           <button className="text-amber-600 hover:text-amber-800">View</button>
-                          {booking.status === 'PENDING' && (
+                          {booking.status === 'pending' && (
                             <button className="text-red-500 hover:text-red-700">Cancel</button>
                           )}
-                          {booking.status === 'COMPLETED' && (
+                          {booking.status === 'completed' && (
                             <button className="text-gray-500 hover:text-gray-700">Receipt</button>
                           )}
                         </div>
@@ -381,7 +381,7 @@ const MyBookings = () => {
 // Status badge component
 const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
   switch (status) {
-    case 'PENDING':
+    case 'pending':
       return (
         <div className="flex items-center p-2">
           <span className="inline-flex items-center rounded-md bg-yellow-100 px-3 py-1 text-sm font-medium text-yellow-800">
@@ -389,7 +389,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
           </span>
         </div>
       );
-    case 'CONFIRMED':
+    case 'confirmed':
       return (
         <div className="flex items-center p-2">
           <span className="inline-flex items-center rounded-md bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800">
@@ -397,7 +397,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
           </span>
         </div>
       );
-    case 'COMPLETED':
+    case 'completed':
       return (
         <div className="flex items-center p-2">
           <span className="inline-flex items-center rounded-md bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
@@ -446,8 +446,6 @@ const BookingCard: React.FC<BookingsCardProps> = ({ booking }) => {
 
   const { date, time } = convertTimestampToDateAndTime(booking.createdAt);
 
-  
-
   return (
     <div className="overflow-hidden rounded-lg border border-amber-100 bg-white shadow-sm transition-shadow hover:shadow">
       <div className="relative">
@@ -459,35 +457,35 @@ const BookingCard: React.FC<BookingsCardProps> = ({ booking }) => {
       </div>
       {/* Status indicator  */}
 
-      {booking.status === 'COMPLETED' && (
+      {booking.status === 'completed' && (
         <div className="flex items-center p-2">
           <span className="inline-flex items-center rounded-md bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800">
             <CheckCircle className="mr-1 h-3 w-3" /> Completed
           </span>
         </div>
       )}
-      {booking.status === 'CANCELLED' && (
+      {booking.status === 'cancelled' && (
         <div className="flex items-center p-2">
           <span className="inline-flex items-center rounded-md bg-red-100 px-3 py-1 text-sm font-medium text-red-800">
             <AlertCircle className="mr-1 h-3 w-3" /> Cancelled
           </span>
         </div>
       )}
-      {booking.status === 'REFUNDED' && (
+      {booking.status === 'refunded' && (
         <div className="flex items-center p-2">
           <span className="inline-flex items-center rounded-md bg-red-100 px-3 py-1 text-sm font-medium text-red-800">
             <AlertCircle className="mr-1 h-3 w-3" /> Refunded
           </span>
         </div>
       )}
-      {booking.status === 'CONFIRMED' && (
+      {booking.status === 'confirmed' && (
         <div className="flex items-center p-2">
           <span className="inline-flex items-center rounded-md bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
             <Clock8 className="mr-1 h-3 w-3" /> Confirmed
           </span>
         </div>
       )}
-      {booking.status === 'PENDING' && (
+      {booking.status === 'pending' && (
         <div className="flex items-center p-2">
           <span className="inline-flex items-center rounded-md bg-yellow-100 px-3 py-1 text-sm font-medium text-yellow-800">
             <AlertCircle className="mr-1 h-3 w-3" /> Pending
@@ -526,8 +524,6 @@ const BookingCard: React.FC<BookingsCardProps> = ({ booking }) => {
           </div>
 
           <div className="grid grid-cols-2 gap-2">
-            
-
             <div>
               <div className="text-xs text-gray-500">Poojas</div>
               <div className="mt-1 flex items-center">
@@ -627,23 +623,24 @@ const BookingDetailsModal = ({
     return { date, time };
   };
 
-  const { date,  } = convertTimestampToDateAndTime(booking.createdAt);
+  const { date } = convertTimestampToDateAndTime(booking.createdAt);
 
   // Get pooja services with participants from booking data
-  const poojaServices = booking.poojas?.map((pooja: any) => {
-    const participent1 = { name: pooja.name, starSign: pooja.starSign };
-    const otherParticipants =
-      pooja.members?.map((member: any) => ({
-        name: member.name,
-        starSign: member.starSign,
-      })) || [];
+  const poojaServices =
+    booking.poojas?.map((pooja: any) => {
+      const participent1 = { name: pooja.name, starSign: pooja.starSign };
+      const otherParticipants =
+        pooja.members?.map((member: any) => ({
+          name: member.name,
+          starSign: member.starSign,
+        })) || [];
 
-    return {
-      name: pooja.poojaDetails?.name || pooja.name,
-      poojaDate: pooja.poojaDate, // Include the poojaDate from the pooja object
-      participants: [participent1, ...otherParticipants],
-    };
-  }) || [];
+      return {
+        name: pooja.poojaDetails?.name || pooja.name,
+        poojaDate: pooja.poojaDate, // Include the poojaDate from the pooja object
+        participants: [participent1, ...otherParticipants],
+      };
+    }) || [];
 
   // Format date helper function
   const formatPoojaDate = (dateString: string) => {
@@ -651,12 +648,12 @@ const BookingDetailsModal = ({
 
     try {
       const date = new Date(dateString);
-      
+
       // Check if date is valid
       if (isNaN(date.getTime())) {
         return 'Invalid date format';
       }
-      
+
       return date.toLocaleDateString('en-IN', {
         year: 'numeric',
         month: 'long',
@@ -721,34 +718,37 @@ const BookingDetailsModal = ({
 
           <div className="mb-6 grid gap-4">
             <h4 className="mb-2 font-medium text-amber-900">Booking Information</h4>
-            <div className="bg-amber-50 rounded-lg p-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="rounded-lg bg-amber-50 p-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="space-y-3">
                   <div className="flex items-center">
-                    <span className="text-sm text-gray-500 w-20 flex-shrink-0">Booking ID :</span>
-                    <span className="font-medium text-amber-900 overflow-hidden text-ellipsis ">{booking.id}</span>
-                  </div>
-                  
-                  <div className="flex items-center">
-                    <span className="text-sm text-gray-500 w-20 flex-shrink-0">Amount :</span>
-                    <span className="font-medium text-amber-900 ">₹ {booking.price || 'N/A'}</span>
-                  </div>
-                </div>
-                <div className="space-y-3">
-                <div className="flex items-center">
-                    <span className="text-sm text-gray-500  flex-shrink-0">Booking Date : </span>
-                    <span className="font-medium text-amber-900 "> {date}</span>
+                    <span className="w-20 flex-shrink-0 text-sm text-gray-500">Booking ID :</span>
+                    <span className="overflow-hidden font-medium text-ellipsis text-amber-900">
+                      {booking.id}
+                    </span>
                   </div>
 
+                  <div className="flex items-center">
+                    <span className="w-20 flex-shrink-0 text-sm text-gray-500">Amount :</span>
+                    <span className="font-medium text-amber-900">₹ {booking.price || 'N/A'}</span>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex items-center">
+                    <span className="flex-shrink-0 text-sm text-gray-500">Booking Date : </span>
+                    <span className="font-medium text-amber-900"> {date}</span>
+                  </div>
                 </div>
               </div>
-              
+
               {/* Payment method if available - updated with the same spacing */}
               {booking.paymentDetails?.paymentMethod && (
-                <div className="mt-3 pt-3 border-t border-amber-200">
+                <div className="mt-3 border-t border-amber-200 pt-3">
                   <div className="flex items-center">
-                    <span className="text-sm text-gray-500 w-20 flex-shrink-0">Payment:</span>
-                    <span className="font-medium text-amber-900 ml-2">{booking.paymentDetails.paymentMethod}</span>
+                    <span className="w-20 flex-shrink-0 text-sm text-gray-500">Payment:</span>
+                    <span className="ml-2 font-medium text-amber-900">
+                      {booking.paymentDetails.paymentMethod}
+                    </span>
                   </div>
                 </div>
               )}
@@ -779,17 +779,13 @@ const BookingDetailsModal = ({
                           </svg>
                         </div>
                         <h5 className="text-lg font-semibold text-amber-900">
-                          {pooja.name || "Unnamed Pooja"}  - 
+                          {pooja.name || 'Unnamed Pooja'} -
                         </h5>
-                        <div className=" flex items-center text-lg text-amber-700 font-semibold ml-2">
-                        <Calendar className="mr-1 h-4 w-4" />
-                        <span className="">
-                          {formatPoojaDate(pooja.poojaDate)}
-                        </span>
+                        <div className="ml-2 flex items-center text-lg font-semibold text-amber-700">
+                          <Calendar className="mr-1 h-4 w-4" />
+                          <span className="">{formatPoojaDate(pooja.poojaDate)}</span>
+                        </div>
                       </div>
-                      </div>
-                      
-                     
                     </div>
 
                     {/* Participant List */}
@@ -828,8 +824,8 @@ const BookingDetailsModal = ({
               )}
             </div>
           </div>
-          
-          {booking.status === 'CANCELLED' && (
+
+          {booking.status === 'cancelled' && (
             <div className="mb-6 rounded bg-red-50 p-3">
               <h4 className="mb-1 font-medium text-red-800">Cancellation Information</h4>
               <p className="text-sm text-red-700">
@@ -851,7 +847,7 @@ const BookingDetailsModal = ({
             </div>
 
             <div className="flex space-x-2">
-              {(booking.status === 'CONFIRMED' || booking.status === 'COMPLETED')  && (
+              {(booking.status === 'confirmed' || booking.status === 'completed') && (
                 <button className="rounded-md bg-orange-50 px-4 py-2 text-orange-500 hover:bg-orange-100">
                   Download Reciept
                 </button>

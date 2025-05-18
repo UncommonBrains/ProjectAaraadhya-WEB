@@ -12,3 +12,16 @@ export const formatTimeString = (timeStr?: string) => {
     return formatted;
   }
 };
+
+export const getDateFromISOString = (isoString: string): string => {
+  try {
+    const dateTime = new Date(isoString);
+    // Format as YYYY-MM-DD only
+    return `${dateTime.getFullYear().toString().padStart(4, '0')}-${(dateTime.getMonth() + 1)
+      .toString()
+      .padStart(2, '0')}-${dateTime.getDate().toString().padStart(2, '0')}`;
+  } catch (e) {
+    // If parsing fails, return the original string
+    return isoString;
+  }
+};
