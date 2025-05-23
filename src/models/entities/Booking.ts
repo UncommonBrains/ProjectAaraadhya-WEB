@@ -20,10 +20,12 @@ export interface Booking {
 }
 
 interface BookedPoojaDetails extends Member {
+  id: string;
   poojaId: string;
   scheduleId: string;
   poojaDate: string;
   members?: Member[];
+  isCompleted: boolean;
   pooja?: Pooja;
 }
 
