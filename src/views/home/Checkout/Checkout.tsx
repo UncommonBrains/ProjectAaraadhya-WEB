@@ -9,6 +9,7 @@ import {
   ChevronLeft,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 import { useCart } from '../../../hooks/useCart';
 import { useTempleViewModel } from '../../../view-models/temple/useTempleViewModel';
 import { generateUpiUrl, initiateUpiPayment } from '../../../utils/paymentHandler';
@@ -100,12 +101,14 @@ const Checkout: React.FC = () => {
         userId: firebaseUser.uid,
         templeId: temple.id,
         poojas: cart.items.map(({ poojaId, scheduleId, poojaDate, name, starSign, members }) => ({
+          id: uuidv4(),
           poojaId,
           scheduleId,
           poojaDate,
           name,
           starSign,
           members,
+          isCompleted: false,
         })),
         price: cart.totalPrice,
         status: BookingStatus.PENDING,
