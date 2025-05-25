@@ -20,6 +20,11 @@ export const useTemplePoojasViewModel = () => {
           operator: '==',
           value: id,
         },
+        {
+          field: 'isActive',
+          operator: '==',
+          value: true,
+        },
       ]);
 
       const poojasList = await Promise.all(
