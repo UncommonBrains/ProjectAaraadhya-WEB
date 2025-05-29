@@ -29,6 +29,6 @@ export enum ScheduleMode {
 }
 
 enum PoojaType {
-  pooja,
-  specialPooja,
+  pooja = 'pooja',
+  specialPooja = 'specialPooja',
 }

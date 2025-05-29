@@ -6,15 +6,15 @@ import { poojaService } from '../../services/poojaService';
 import {templeService} from '../../services/templeService';
 import { ScheduleMode } from '../../models/entities/Pooja';
 
-export const usePoojasViewModel = () => {
-  const [poojas, setPoojas] = useState<Pooja[]>([]);
+export const useSpecialPoojasViewModel = () => {
+  const [specialPoojas, setPoojas] = useState<Pooja[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [lastVisible, setLastVisible] = useState<DocumentSnapshot | null>(null);
   const [hasMore, setHasMore] = useState<boolean>(true);
 
-  const PAGE_SIZE = 9;
+  const PAGE_SIZE = 10;
 
   // Load initial Poojas
   const loadPoojas = useCallback(async () => {
@@ -34,7 +34,7 @@ export const usePoojasViewModel = () => {
         {
           field: 'scheduleMode',
           operator: '==',
-          value: ScheduleMode.repeat,
+          value: ScheduleMode.once,
           
         }
       ]);
@@ -52,7 +52,7 @@ export const usePoojasViewModel = () => {
       setHasMore(result.hasMore);
       setError(null);
     } catch (err) {
-      setError('Failed to load poojas');
+      setError('Failed to load specialPoojas');
     } finally {
       setLoading(false);
     }
@@ -88,7 +88,7 @@ export const usePoojasViewModel = () => {
   }, [loadPoojas]);
 
   return {
-    poojas,
+    specialPoojas,
     loading,
     loadingMore,
     hasMore,
