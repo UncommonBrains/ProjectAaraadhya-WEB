@@ -1,25 +1,23 @@
 import { useState, useEffect } from 'react';
-import {
-  ChevronRight,
-  Calendar,
-  Filter,
-  Clock,
-  Info,
-  ArrowUpDown,
-  ListFilter,
-  X,
-} from 'lucide-react';
+import { Calendar, Filter, Clock, Info, ArrowUpDown, ListFilter, X } from 'lucide-react';
 import SearchInputField from '../../../components/common/Input/SearchInputField';
 import FloatingActionButton from '../../../components/common/Button/FloatingActionButton';
 import { usePoojasViewModel } from '../../../view-models/pooja/usePoojasViewModel';
 import { useSpecialPoojasViewModel } from '../../../view-models/pooja/useSpecialPoojasViewModel';
+import LoadingSpinner from '../../../components/common/LoadingSpinner';
 
 const UpcomingPoojas = () => {
   const [activeFilter, setActiveFilter] = useState('All');
   const [activeSortBy, setActiveSortBy] = useState('Price');
   const [showMobileFilter, setShowMobileFilter] = useState(false);
-  const { poojas } = usePoojasViewModel();
-  const { specialPoojas } = useSpecialPoojasViewModel();
+  const { poojas, hasMore, loading, loadingMore, loadMorePoojas } = usePoojasViewModel();
+  const {
+    specialPoojas,
+    hasMore: hasMoreSpecial,
+    loading: loadingSpecial,
+    loadingMore: loadingMoreSpecial,
+    loadMoreSpecialPoojas,
+  } = useSpecialPoojasViewModel();
 
   useEffect(() => {
     console.log('Pooja ViewModel Data:', poojas);
@@ -257,7 +255,9 @@ const UpcomingPoojas = () => {
             <p className="text-sm text-gray-600">
               Showing{' '}
               <span className="font-medium">
-                {filteredNormalPoojas.length > 0 && filteredSpecialPoojas.length > 0 ? filteredNormalPoojas.length + filteredSpecialPoojas.length : 'No'}{' '}
+                {filteredNormalPoojas.length > 0 && filteredSpecialPoojas.length > 0
+                  ? filteredNormalPoojas.length + filteredSpecialPoojas.length
+                  : 'No'}{' '}
                 {activeFilter === 'All' ? '' : activeFilter.toLowerCase()}{' '}
               </span>{' '}
               poojas
@@ -296,134 +296,55 @@ const UpcomingPoojas = () => {
           <div>
             <div className="flex items-center justify-between">
               <h3 className="font-serif text-xl text-amber-900">Upcoming Poojas</h3>
-
-              <a href="/" className="flex items-center text-sm text-orange-500">
-                View All <ChevronRight className="h-4 w-4" />
-              </a>
             </div>
             <p className="mb-6 text-sm text-gray-600">
               Your spiritual schedule and recommended ceremonies
             </p>
-            <div className="xm:grid-cols-1 grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-              {getSortedNormalPoojas().length === 0 && (
-                <div className="col-span-3 text-center text-gray-500">
-                  No upcoming poojas available
-                </div>
-              )}
-              {getSortedNormalPoojas().map((pooja) => (
-                <div key={pooja.id} className="rounded-lg bg-white/80 p-4 backdrop-blur-sm">
-                  <div className="flex justify-between">
-                    <div>
-                      <h4 className="font-bold text-amber-900">{pooja.poojaDetails.name}</h4>
-                      <p className="text-sm text-gray-600">
-                        {pooja.templeDetails?.basicDetails?.templeName}
-                      </p>
-
-                      {/* Time & Deity */}
-                      <div className="my-2 flex items-center justify-between text-xs text-gray-600">
-                        <div className="flex items-center">
-                          <Clock className="mr-1 h-3 w-3" />
-                          <span>{pooja.poojaTime}</span>
-                        </div>
-                      </div>
-
-                      {/* Pooja Days */}
-                      <div className="mb-4 flex items-center text-xs text-gray-600">
-                        <Calendar className="mr-1 h-3 w-3" />
-                        <span>
-                          {pooja.poojaDays
-                            ?.map((isActive, index) =>
-                              isActive
-                                ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][index]
-                                : null,
-                            )
-                            .filter(Boolean)
-                            .join(', ') || 'No scheduled days'}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Price & Status */}
-                    <div className="text-center">
-                      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-100">
-                        <div className="font-medium text-orange-500">
-                          <span className="text-xl">₹</span>
-                          <span className="text-lg">{pooja.price}</span>
-                        </div>
-                      </div>
-                      <p className="mt-1 text-xs text-gray-500">
-                        <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-800">
-                          {pooja.deityName}
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Description and Details */}
-                  <div className="mt-2 flex items-center justify-between text-xs text-gray-600">
-                    <span className="truncate pr-2">
-                      {pooja.poojaDetails.description || 'No description available'}
-                    </span>
-                    <button className="flex flex-shrink-0 items-center rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
-                      <Info className="mr-1 h-3 w-3" />
-                      Details
-                    </button>
-                  </div>
-
-                  {/* Book Now Button */}
-                  <button className="mt-3 w-full rounded bg-orange-500 py-2 text-sm text-white">
-                    Book Now
-                  </button>
-                </div>
-              ))}
-              {/* View More Button */}
-              {getSortedNormalPoojas().length > 10 && (
-                <div className="col-span-3 flex justify-center">
-                  <button className="rounded bg-amber-500 px-6 py-2 text-white transition hover:bg-amber-600">
-                    View More
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-          {/* Special Upcoming Festival Poojas */}
-          {getSortedSpecialPoojas().length > 0 && (
-            <div className="mt-8 rounded-lg bg-gradient-to-r from-amber-100 to-orange-100 p-4">
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="font-serif text-lg text-amber-900">Special Festival Poojas</h3>
-                <span className="rounded-full bg-orange-500 px-3 py-1 text-xs text-white">
-                  Limited Bookings
-                </span>
+            {loading ? (
+              <div className="flex h-full items-center justify-center p-12">
+                <LoadingSpinner message="Loading poojas..." />
               </div>
-              <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
-                {getSortedSpecialPoojas().length === 0 && (
+            ) : (
+              <div className="xm:grid-cols-1 grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                {getSortedNormalPoojas().length === 0 && (
                   <div className="col-span-3 text-center text-gray-500">
-                    No upcoming special poojas available
+                    No upcoming poojas available
                   </div>
                 )}
-                {getSortedSpecialPoojas().map((pooja) => (
+                {getSortedNormalPoojas().map((pooja) => (
                   <div key={pooja.id} className="rounded-lg bg-white/80 p-4 backdrop-blur-sm">
                     <div className="flex justify-between">
                       <div>
-                        <h4 className="font-medium text-amber-900">{pooja.poojaDetails.name}</h4>
+                        <h4 className="font-bold text-amber-900">{pooja.poojaDetails.name}</h4>
                         <p className="text-sm text-gray-600">
                           {pooja.templeDetails?.basicDetails?.templeName}
                         </p>
-                        <div className="mt-2 flex items-center text-xs text-gray-600">
+
+                        {/* Time & Deity */}
+                        <div className="my-2 flex items-center justify-between text-xs text-gray-600">
+                          <div className="flex items-center">
+                            <Clock className="mr-1 h-3 w-3" />
+                            <span>{pooja.poojaTime}</span>
+                          </div>
+                        </div>
+
+                        {/* Pooja Days */}
+                        <div className="mb-4 flex items-center text-xs text-gray-600">
                           <Calendar className="mr-1 h-3 w-3" />
                           <span>
-                            {pooja.poojaDateAndTime
-                              ? new Date(pooja.poojaDateAndTime).toLocaleString('en-IN', {
-                                  day: 'numeric',
-                                  month: 'short',
-                                  year: 'numeric',
-                                  hour: '2-digit',
-                                  minute: '2-digit',
-                                })
-                              : 'Date Not Available'}
+                            {pooja.poojaDays
+                              ?.map((isActive, index) =>
+                                isActive
+                                  ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][index]
+                                  : null,
+                              )
+                              .filter(Boolean)
+                              .join(', ') || 'No scheduled days'}
                           </span>
                         </div>
                       </div>
+
+                      {/* Price & Status */}
                       <div className="text-center">
                         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-100">
                           <div className="font-medium text-orange-500">
@@ -432,24 +353,143 @@ const UpcomingPoojas = () => {
                           </div>
                         </div>
                         <p className="mt-1 text-xs text-gray-500">
-                          {pooja.isActive ? 'Slots Available' : 'Booking Closed'}
+                          <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-800">
+                            {pooja.deityName}
+                          </span>
                         </p>
                       </div>
                     </div>
+
+                    {/* Description and Details */}
+                    <div className="mt-2 flex items-center justify-between text-xs text-gray-600">
+                      <span className="truncate pr-2">
+                        {pooja.poojaDetails.description || 'No description available'}
+                      </span>
+                      <button className="flex flex-shrink-0 items-center rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+                        <Info className="mr-1 h-3 w-3" />
+                        Details
+                      </button>
+                    </div>
+
+                    {/* Book Now Button */}
                     <button className="mt-3 w-full rounded bg-orange-500 py-2 text-sm text-white">
                       Book Now
                     </button>
                   </div>
                 ))}
-                {getSortedSpecialPoojas().length > 10 && (
-                  <div className="col-span-3 flex justify-center">
-                    <button className="rounded bg-amber-500 px-6 py-2 text-white transition hover:bg-amber-600">
-                      View More
-                    </button>
-                  </div>
+                {/* View More Button */}
+                {hasMore && (
+                  <>
+                    {loadingMore ? (
+                      <div className="mt-6 flex justify-center">
+                        <LoadingSpinner message="Loading more poojas..." />
+                      </div>
+                    ) : (
+                      <div className="col-span-3 flex justify-center">
+                        <button
+                          onClick={loadMorePoojas}
+                          className="rounded bg-amber-500 px-6 py-2 text-white transition hover:bg-amber-600"
+                        >
+                          View More
+                        </button>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
+            )}
+          </div>
+          {/* Special Upcoming Festival Poojas */}
+          {loadingSpecial ? (
+            <div className="mt-8 rounded-lg bg-gradient-to-r from-amber-100 to-orange-100 p-4">
+              <div className="mb-4 flex items-center justify-between">
+                <h3 className="font-serif text-lg text-amber-900">Special Festival Poojas</h3>
+                <span className="rounded-full bg-orange-500 px-3 py-1 text-xs text-white">
+                  Limited Bookings
+                </span>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
+                <div className="col-span-3 text-center text-gray-500">
+                  <LoadingSpinner message="Loading special poojas..." />
+                </div>
+              </div>
             </div>
+          ) : (
+            getSortedSpecialPoojas().length > 0 && (
+              <div className="mt-8 rounded-lg bg-gradient-to-r from-amber-100 to-orange-100 p-4">
+                <div className="mb-4 flex items-center justify-between">
+                  <h3 className="font-serif text-lg text-amber-900">Special Festival Poojas</h3>
+                  <span className="rounded-full bg-orange-500 px-3 py-1 text-xs text-white">
+                    Limited Bookings
+                  </span>
+                </div>
+                <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
+                  {getSortedSpecialPoojas().length === 0 && (
+                    <div className="col-span-3 text-center text-gray-500">
+                      No upcoming special poojas available
+                    </div>
+                  )}
+                  {getSortedSpecialPoojas().map((pooja) => (
+                    <div key={pooja.id} className="rounded-lg bg-white/80 p-4 backdrop-blur-sm">
+                      <div className="flex justify-between">
+                        <div>
+                          <h4 className="font-medium text-amber-900">{pooja.poojaDetails.name}</h4>
+                          <p className="text-sm text-gray-600">
+                            {pooja.templeDetails?.basicDetails?.templeName}
+                          </p>
+                          <div className="mt-2 flex items-center text-xs text-gray-600">
+                            <Calendar className="mr-1 h-3 w-3" />
+                            <span>
+                              {pooja.poojaDateAndTime
+                                ? new Date(pooja.poojaDateAndTime).toLocaleString('en-IN', {
+                                    day: 'numeric',
+                                    month: 'short',
+                                    year: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                  })
+                                : 'Date Not Available'}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-100">
+                            <div className="font-medium text-orange-500">
+                              <span className="text-xl">₹</span>
+                              <span className="text-lg">{pooja.price}</span>
+                            </div>
+                          </div>
+                          <p className="mt-1 text-xs text-gray-500">
+                            {pooja.isActive ? 'Slots Available' : 'Booking Closed'}
+                          </p>
+                        </div>
+                      </div>
+                      <button className="mt-3 w-full rounded bg-orange-500 py-2 text-sm text-white">
+                        Book Now
+                      </button>
+                    </div>
+                  ))}
+                  {hasMoreSpecial && (
+                    <>
+                      {loadingMoreSpecial ? (
+                        <div className="mt-6 flex justify-center">
+                          <LoadingSpinner message="Loading more poojas..." />
+                        </div>
+                      ) : (
+                        <div className="col-span-3 flex justify-center">
+                          <button
+                            onClick={loadMoreSpecialPoojas}
+                            className="rounded bg-amber-500 px-6 py-2 text-white transition hover:bg-amber-600"
+                          >
+                            View More
+                          </button>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              </div>
+            )
           )}
         </div>
       </main>

@@ -3,11 +3,11 @@ import { DocumentSnapshot } from 'firebase/firestore';
 import { Pooja } from '../../models/entities/Pooja';
 import { templePoojaService } from '../../services/templePoojaSerivice';
 import { poojaService } from '../../services/poojaService';
-import {templeService} from '../../services/templeService';
+import { templeService } from '../../services/templeService';
 import { ScheduleMode } from '../../models/entities/Pooja';
 
 export const useSpecialPoojasViewModel = () => {
-  const [specialPoojas, setPoojas] = useState<Pooja[]>([]);
+  const [specialPoojas, setSpecialPoojas] = useState<Pooja[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -17,10 +17,10 @@ export const useSpecialPoojasViewModel = () => {
   const PAGE_SIZE = 10;
 
   // Load initial Poojas
-  const loadPoojas = useCallback(async () => {
+  const loadSpecialPoojas = useCallback(async () => {
     try {
       setLoading(true);
-      setPoojas([]);
+      setSpecialPoojas([]);
       setLastVisible(null);
       setHasMore(true);
 
@@ -29,14 +29,12 @@ export const useSpecialPoojasViewModel = () => {
           field: 'isActive',
           operator: '==',
           value: true,
-          
         },
         {
           field: 'scheduleMode',
           operator: '==',
           value: ScheduleMode.once,
-          
-        }
+        },
       ]);
 
       const poojasList = await Promise.all(
@@ -44,10 +42,10 @@ export const useSpecialPoojasViewModel = () => {
           const poojaDetails = await poojaService.getById(doc.poojaId);
           const templeDetails = await templeService.getById(doc.templeId);
           return { ...doc, poojaDetails, templeDetails };
-        }),
-      );
+        }),
+      );
 
-      setPoojas(poojasList as Array<Pooja>);
+      setSpecialPoojas(poojasList as Array<Pooja>);
       setLastVisible(result.lastVisible);
       setHasMore(result.hasMore);
       setError(null);
@@ -59,21 +57,34 @@ export const useSpecialPoojasViewModel = () => {
   }, []);
 
   // Load more Poojas (next page)
-  const loadMorePoojas = async () => {
+  const loadMoreSpecialPoojas = async () => {
     if (!hasMore || !lastVisible || loadingMore) return;
 
     try {
       setLoadingMore(true);
 
-      const result = await templePoojaService.queryPaginated(PAGE_SIZE, lastVisible, [
+      const result = await templePoojaService.queryPaginated(PAGE_SIZE, null, [
         {
           field: 'isActive',
           operator: '==',
           value: true,
         },
+        {
+          field: 'scheduleMode',
+          operator: '==',
+          value: ScheduleMode.once,
+        },
       ]);
 
-      setPoojas((prevPoojas) => [...prevPoojas, ...result.data]);
+      const poojasList = await Promise.all(
+        result.data.map(async (doc) => {
+          const poojaDetails = await poojaService.getById(doc.poojaId);
+          const templeDetails = await templeService.getById(doc.templeId);
+          return { ...doc, poojaDetails, templeDetails };
+        }),
+      );
+
+      setSpecialPoojas((prevPoojas) => [...prevPoojas, ...(poojasList as Array<Pooja>)]);
       setLastVisible(result.lastVisible);
       setHasMore(result.hasMore);
     } catch (err) {
@@ -84,8 +95,8 @@ export const useSpecialPoojasViewModel = () => {
   };
 
   useEffect(() => {
-    loadPoojas();
-  }, [loadPoojas]);
+    loadSpecialPoojas();
+  }, [loadSpecialPoojas]);
 
   return {
     specialPoojas,
@@ -93,7 +104,7 @@ export const useSpecialPoojasViewModel = () => {
     loadingMore,
     hasMore,
     error,
-    loadPoojas,
-    loadMorePoojas,
+    loadSpecialPoojas,
+    loadMoreSpecialPoojas,
   };
 };

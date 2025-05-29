@@ -3,7 +3,7 @@ import { DocumentSnapshot } from 'firebase/firestore';
 import { Pooja } from '../../models/entities/Pooja';
 import { templePoojaService } from '../../services/templePoojaSerivice';
 import { poojaService } from '../../services/poojaService';
-import {templeService} from '../../services/templeService';
+import { templeService } from '../../services/templeService';
 import { ScheduleMode } from '../../models/entities/Pooja';
 
 export const usePoojasViewModel = () => {
@@ -14,7 +14,7 @@ export const usePoojasViewModel = () => {
   const [lastVisible, setLastVisible] = useState<DocumentSnapshot | null>(null);
   const [hasMore, setHasMore] = useState<boolean>(true);
 
-  const PAGE_SIZE = 9;
+  const PAGE_SIZE = 12;
 
   // Load initial Poojas
   const loadPoojas = useCallback(async () => {
@@ -29,14 +29,12 @@ export const usePoojasViewModel = () => {
           field: 'isActive',
           operator: '==',
           value: true,
-          
         },
         {
           field: 'scheduleMode',
           operator: '==',
           value: ScheduleMode.repeat,
-          
-        }
+        },
       ]);
 
       const poojasList = await Promise.all(
@@ -44,8 +42,8 @@ export const usePoojasViewModel = () => {
           const poojaDetails = await poojaService.getById(doc.poojaId);
           const templeDetails = await templeService.getById(doc.templeId);
           return { ...doc, poojaDetails, templeDetails };
-        }),
-      );
+        }),
+      );
 
       setPoojas(poojasList as Array<Pooja>);
       setLastVisible(result.lastVisible);
@@ -71,9 +69,22 @@ export const usePoojasViewModel = () => {
           operator: '==',
           value: true,
         },
+        {
+          field: 'scheduleMode',
+          operator: '==',
+          value: ScheduleMode.repeat,
+        },
       ]);
 
-      setPoojas((prevPoojas) => [...prevPoojas, ...result.data]);
+      const poojasList = await Promise.all(
+        result.data.map(async (doc) => {
+          const poojaDetails = await poojaService.getById(doc.poojaId);
+          const templeDetails = await templeService.getById(doc.templeId);
+          return { ...doc, poojaDetails, templeDetails };
+        }),
+      );
+
+      setPoojas((prevPoojas) => [...prevPoojas, ...(poojasList as Array<Pooja>)]);
       setLastVisible(result.lastVisible);
       setHasMore(result.hasMore);
     } catch (err) {
