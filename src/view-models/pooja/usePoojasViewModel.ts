@@ -3,6 +3,8 @@ import { DocumentSnapshot } from 'firebase/firestore';
 import { Pooja } from '../../models/entities/Pooja';
 import { templePoojaService } from '../../services/templePoojaSerivice';
 import { poojaService } from '../../services/poojaService';
+import {templeService} from '../../services/templeService';
+import { ScheduleMode } from '../../models/entities/Pooja';
 
 export const usePoojasViewModel = () => {
   const [poojas, setPoojas] = useState<Pooja[]>([]);
@@ -27,15 +29,23 @@ export const usePoojasViewModel = () => {
           field: 'isActive',
           operator: '==',
           value: true,
+          
         },
+        {
+          field: 'scheduleMode',
+          operator: '==',
+          value: ScheduleMode.repeat,
+          
+        }
       ]);
 
       const poojasList = await Promise.all(
         result.data.map(async (doc) => {
           const poojaDetails = await poojaService.getById(doc.poojaId);
-          return { ...doc, poojaDetails };
-        }),
-      );
+          const templeDetails = await templeService.getById(doc.templeId);
+          return { ...doc, poojaDetails, templeDetails };
+        }),
+      );
 
       setPoojas(poojasList as Array<Pooja>);
       setLastVisible(result.lastVisible);

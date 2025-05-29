@@ -1,3 +1,4 @@
+import { Temple } from './Temple';
 export interface Pooja {
   id: string;
   poojaId: string;
@@ -10,6 +11,7 @@ export interface Pooja {
   poojaDays: Array<boolean>;
   poojaTime: string;
   scheduleMode: ScheduleMode;
+  templeDetails?: Temple;
 }
 
 export interface PoojaDetails {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   ChevronRight,
   Calendar,
@@ -14,17 +14,23 @@ import {
 } from 'lucide-react';
 import SearchInputField from '../../../components/common/Input/SearchInputField';
 import FloatingActionButton from '../../../components/common/Button/FloatingActionButton';
-import { poojas, recommendedPoojas } from '../../../mock/data/poojas';
+import { recommendedPoojas } from '../../../mock/data/poojas';
+import { usePoojasViewModel } from '../../../view-models/pooja/usePoojasViewModel';
 
 const UpcomingPoojas = () => {
   const [activeFilter, setActiveFilter] = useState('All');
   const [activeSortBy, setActiveSortBy] = useState('Date');
   const [showMyPoojas, setShowMyPoojas] = useState(false);
   const [showMobileFilter, setShowMobileFilter] = useState(false);
+  const { poojas } = usePoojasViewModel();
+
+  useEffect(() => {
+    console.log('Pooja ViewModel Data:', poojas);
+  }, [poojas]);
 
   // Filter poojas based on active filter
   const filteredMyPoojas =
-    activeFilter === 'All' ? poojas : poojas.filter((pooja) => pooja.deity === activeFilter);
+    activeFilter === 'All' ? poojas : poojas.filter((pooja) => pooja.deityName === activeFilter);
 
   const filteredRecommendedPoojas =
     activeFilter === 'All'
@@ -34,14 +40,7 @@ const UpcomingPoojas = () => {
   // Get sorted poojas based on active sort
   const getSortedMyPoojas = () => {
     switch (activeSortBy) {
-      case 'Date':
-        return [...filteredMyPoojas].sort(
-          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-        );
-      case 'Popular':
-        return [...filteredMyPoojas].sort((a, b) =>
-          b.isPopular === a.isPopular ? 0 : b.isPopular ? 1 : -1,
-        );
+      
       case 'Price':
         return [...filteredMyPoojas].sort(
           (a, b) =>
@@ -343,7 +342,7 @@ const UpcomingPoojas = () => {
         <div className="space-y-6 md:col-span-3">
           {/* Filters */}
           <div className="no-scrollbar flex space-x-3 overflow-x-auto pb-2">
-            {['All', 'Vishnu', 'Shiva', 'Krishna', 'Devi', 'Ganapathy'].map((filter) => (
+            {['All', 'Vishnu', 'Shiva', 'Krishna', 'Devi', 'Ganapathy', 'Durga'].map((filter) => (
               <button
                 key={filter}
                 className={`${
@@ -428,14 +427,14 @@ const UpcomingPoojas = () => {
                   >
                     <div className="border-l-4 border-orange-500 p-4">
                       <div className="flex justify-between">
-                        <h4 className="font-medium text-amber-900">{pooja.name}</h4>
+                        <h4 className="font-medium text-amber-900">{pooja.poojaDetails.name}</h4>
                         <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-700">
                           Booked
                         </span>
                       </div>
 
                       <div className="mt-2">
-                        <p className="mb-1 text-sm text-gray-600">{pooja.temple}</p>
+                        <p className="mb-1 text-sm text-gray-600">{pooja.templeDetails?.basicDetails?.templeName}</p>
                         <p className="text-xs text-gray-500">{pooja.location}</p>
                       </div>
 
