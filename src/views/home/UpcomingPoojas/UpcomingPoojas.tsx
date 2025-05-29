@@ -149,48 +149,7 @@ const UpcomingPoojas = () => {
                     <ListFilter className="h-5 w-5 text-amber-800" />
                   </div>
 
-                  {/* Deity Filter */}
-                  <div className="mb-4">
-                    <h4 className="text-sm font-medium text-gray-700">Deity</h4>
-                    <div className="space-y-1">
-                      {['Vishnu', 'Shiva', 'Shakti', 'Ganesh', 'Murugan'].map((deity) => (
-                        <div key={deity} className="flex items-center">
-                          <input
-                            type="checkbox"
-                            id={`mobile-${deity}`}
-                            className="h-4 w-4 accent-orange-500"
-                          />
-                          <label htmlFor={`mobile-${deity}`} className="ml-2 text-sm text-gray-600">
-                            {deity}
-                          </label>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Purpose Filter */}
-                  <div className="mb-4">
-                    <h4 className="text-sm font-medium text-gray-700">Purpose</h4>
-                    <div className="space-y-1">
-                      {['Marriage', 'Fertility', 'Education', 'Wealth', 'Health', 'Ancestral'].map(
-                        (deity) => (
-                          <div key={deity} className="flex items-center">
-                            <input
-                              type="checkbox"
-                              id={`mobile-${deity}`}
-                              className="h-4 w-4 accent-orange-500"
-                            />
-                            <label
-                              htmlFor={`mobile-${deity}`}
-                              className="ml-2 text-sm text-gray-600"
-                            >
-                              {deity}
-                            </label>
-                          </div>
-                        ),
-                      )}
-                    </div>
-                  </div>
+                 
 
                   {/* Price Range */}
                   <div className="mb-4">
