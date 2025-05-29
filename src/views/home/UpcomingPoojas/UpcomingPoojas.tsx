@@ -64,33 +64,7 @@ const UpcomingPoojas = () => {
       <main className="relative container mx-auto grid grid-cols-1 gap-6 p-4 md:grid-cols-4">
         {/* Left Column - Desktop Filter Sidebar */}
         <div className="hidden space-y-6 md:!block">
-          {/* Profile Section */}
-          <div className="rounded-lg border border-amber-100 bg-white p-4 shadow-sm">
-            <div className="flex items-center">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-600 font-medium text-white">
-                R
-              </div>
-              <div className="ml-3">
-                <h3 className="font-serif text-amber-900">Rahul</h3>
-                <p className="text-xs text-gray-600">Active Devotee</p>
-              </div>
-            </div>
-            <div className="mt-4 grid grid-cols-3 gap-2 text-center text-xs">
-              <div className="rounded bg-amber-50 p-2">
-                <p className="text-sm font-medium text-amber-900">12</p>
-                <p className="text-gray-600">Temples</p>
-              </div>
-              <div className="rounded bg-amber-50 p-2">
-                <p className="text-sm font-medium text-amber-900">28</p>
-                <p className="text-gray-600">Poojas</p>
-              </div>
-              <div className="rounded bg-amber-50 p-2">
-                <p className="text-sm font-medium text-amber-900">6</p>
-                <p className="text-gray-600">Donations</p>
-              </div>
-            </div>
-          </div>
-
+          
           
 
           {/* Filter Section */}
