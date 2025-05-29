@@ -8,8 +8,6 @@ import {
   ArrowUpDown,
   CalendarDays,
   ListFilter,
-  ChevronUp,
-  ChevronDown,
   X,
 } from 'lucide-react';
 import SearchInputField from '../../../components/common/Input/SearchInputField';
@@ -20,7 +18,6 @@ import { usePoojasViewModel } from '../../../view-models/pooja/usePoojasViewMode
 const UpcomingPoojas = () => {
   const [activeFilter, setActiveFilter] = useState('All');
   const [activeSortBy, setActiveSortBy] = useState('Date');
-  const [showMyPoojas, setShowMyPoojas] = useState(false);
   const [showMobileFilter, setShowMobileFilter] = useState(false);
   const { poojas } = usePoojasViewModel();
 
@@ -40,7 +37,6 @@ const UpcomingPoojas = () => {
   // Get sorted poojas based on active sort
   const getSortedMyPoojas = () => {
     switch (activeSortBy) {
-      
       case 'Price':
         return [...filteredMyPoojas].sort(
           (a, b) =>
@@ -51,34 +47,9 @@ const UpcomingPoojas = () => {
     }
   };
 
-  const getSortedRecommendedPoojas = () => {
-    switch (activeSortBy) {
-      case 'Date':
-        return [...filteredRecommendedPoojas].sort(
-          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-        );
-      case 'Popular':
-        return [...filteredRecommendedPoojas].sort((a, b) =>
-          b.isPopular === a.isPopular ? 0 : b.isPopular ? 1 : -1,
-        );
-      case 'Price':
-        return [...filteredRecommendedPoojas].sort(
-          (a, b) =>
-            parseInt(a.price.replace(/[^\d]/g, '')) - parseInt(b.price.replace(/[^\d]/g, '')),
-        );
-      case 'Distance':
-        return [...filteredRecommendedPoojas].sort(
-          (a, b) => parseInt(a.distance ?? '0') - parseInt(b.distance ?? '0'),
-        );
-      default:
-        return filteredRecommendedPoojas;
-    }
-  };
+  
 
-  // Toggle the visibility of My Booked Poojas section
-  const toggleMyPoojas = () => {
-    setShowMyPoojas(!showMyPoojas);
-  };
+  
 
   // Toggle mobile filter sidebar
   const toggleMobileFilter = () => {
@@ -170,20 +141,7 @@ const UpcomingPoojas = () => {
               <ListFilter className="h-5 w-5 text-amber-800" />
             </div>
 
-            {/* Deity Filter */}
-            <div className="mb-4">
-              <h4 className="text-sm font-medium text-gray-700">Deity</h4>
-              <div className="space-y-1">
-                {['Vishnu', 'Shiva', 'Shakti', 'Ganesh', 'Murugan'].map((deity) => (
-                  <div key={deity} className="flex items-center">
-                    <input type="checkbox" id={deity} className="h-4 w-4 accent-orange-500" />
-                    <label htmlFor={deity} className="ml-2 text-sm text-gray-600">
-                      {deity}
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </div>
+            
 
             {/* Price Range */}
             <div className="mb-4">
@@ -409,50 +367,40 @@ const UpcomingPoojas = () => {
               Your spiritual schedule and recommended ceremonies
             </p>
             <div className="xm:grid-cols-1 grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
-              {getSortedRecommendedPoojas().map((pooja) => (
+              {getSortedMyPoojas().map((pooja) => (
                 <div
                   key={pooja.id}
                   className="overflow-hidden rounded-lg border border-amber-100 bg-white shadow-sm"
                 >
                   <div className="relative h-24 bg-amber-200/30">
-                    {pooja.isPopular && (
-                      <div className="absolute top-2 left-2">
-                        <span className="rounded-full bg-orange-500 px-2 py-0.5 text-xs text-white">
-                          Popular
-                        </span>
-                      </div>
-                    )}
+                   
                     <div className="absolute right-0 bottom-0 left-0 bg-gradient-to-t from-amber-900/70 to-transparent p-3">
-                      <h4 className="font-medium text-white">{pooja.name}</h4>
-                      <p className="text-xs text-amber-50">{pooja.temple}</p>
+                      <h4 className="font-medium text-white">{pooja.poojaDetails.name}</h4>
+                      <p className="text-xs text-amber-50">{pooja.templeDetails?.basicDetails?.templeName}</p>
                     </div>
                   </div>
                   <div className="p-3">
                     <div className="mb-2 flex items-center justify-between">
                       <div className="flex items-center text-xs text-gray-600">
                         <Clock className="mr-1 h-3 w-3" />
-                        <span>{pooja.time}</span>
+                        <span>{pooja.poojaTime}</span>
                       </div>
                       <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-800">
-                        {pooja.deity}
+                        {pooja.deityName}
                       </span>
                     </div>
 
                     <div className="mb-2 flex items-center justify-between">
                       <div className="flex items-center text-xs text-gray-600">
                         <Calendar className="mr-1 h-3 w-3" />
-                        <span>{pooja.date}</span>
+                        <span>{pooja.poojaTime}</span>
                       </div>
-                      <span className="rounded bg-blue-50 px-2 py-0.5 text-xs text-blue-600">
-                        {pooja.distance}
-                      </span>
+                      
                     </div>
 
                     <div className="mb-3 flex items-center justify-between">
-                      <span className="text-xs text-gray-600">
-                        <span className="font-medium">{pooja.slots}</span> slots available
-                      </span>
-                      <span className="text-sm font-medium text-amber-900">{pooja.price}</span>
+
+                      <span className="text-sm font-medium text-amber-900">₹ {pooja.price}</span>
                     </div>
 
                     <div className="flex justify-between">
