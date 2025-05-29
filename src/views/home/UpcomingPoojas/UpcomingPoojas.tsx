@@ -91,48 +91,7 @@ const UpcomingPoojas = () => {
             </div>
           </div>
 
-          {/* Calendar Widget */}
-          <div className="rounded-lg border border-amber-100 bg-white p-4 shadow-sm">
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-serif text-amber-900">Calendar</h3>
-              <CalendarDays className="h-5 w-5 text-amber-800" />
-            </div>
-            <div className="rounded-lg bg-amber-50 p-3">
-              <div className="grid grid-cols-7 gap-1 text-center text-xs font-medium text-gray-600">
-                <div>Su</div>
-                <div>Mo</div>
-                <div>Tu</div>
-                <div>We</div>
-                <div>Th</div>
-                <div>Fr</div>
-                <div>Sa</div>
-              </div>
-              <div className="mt-2 grid grid-cols-7 gap-1">
-                {Array.from({ length: 31 }, (_, i) => (
-                  <div
-                    key={i}
-                    className={`flex aspect-square w-full items-center justify-center rounded-full text-xs ${i + 1 === 21 ? 'bg-orange-500 text-white' : ''} ${
-                      i + 1 === 23 || i + 1 === 25 || i + 1 === 28
-                        ? 'bg-amber-200 text-amber-900'
-                        : 'text-gray-600'
-                    }`}
-                  >
-                    {i + 1}
-                  </div>
-                ))}
-              </div>
-              <div className="mt-3 space-y-2">
-                <div className="flex items-center text-xs">
-                  <div className="mr-2 h-3 w-3 rounded-full bg-orange-500"></div>
-                  <span className="text-gray-700">Today</span>
-                </div>
-                <div className="flex items-center text-xs">
-                  <div className="mr-2 h-3 w-3 rounded-full bg-amber-200"></div>
-                  <span className="text-gray-700">Booked Poojas</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          
 
           {/* Filter Section */}
           <div className="rounded-lg border border-amber-100 bg-white p-4 shadow-sm">
