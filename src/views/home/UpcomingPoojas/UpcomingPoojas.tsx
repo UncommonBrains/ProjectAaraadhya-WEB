@@ -25,6 +25,18 @@ const UpcomingPoojas = () => {
   useEffect(() => {
     console.log('specialPoojas ViewModel Data:', specialPoojas);
   }, [specialPoojas]);
+  const [wordLimit, setWordLimit] = useState(13); // default to 13 for md+
+
+  useEffect(() => {
+    const updateLimit = () => {
+      setWordLimit(window.innerWidth < 640 ? 9 : 13); // Change word limit based on screen size
+    };
+
+    updateLimit(); // run on mount
+    window.addEventListener('resize', updateLimit); // run on resize
+
+    return () => window.removeEventListener('resize', updateLimit);
+  }, []);
 
   // Filter Normal poojas based on active filter
   const filteredNormalPoojas =
@@ -156,7 +168,7 @@ const UpcomingPoojas = () => {
                     </div>
                   </div>
 
-                  {/* Deity Filter */}
+                  {/* Purpose Filter */}
                   <div className="mb-4">
                     <h4 className="text-sm font-medium text-gray-700">Purpose</h4>
                     <div className="space-y-1">
@@ -305,7 +317,7 @@ const UpcomingPoojas = () => {
                 <LoadingSpinner message="Loading poojas..." />
               </div>
             ) : (
-              <div className="xm:grid-cols-1 grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
                 {getSortedNormalPoojas().length === 0 && (
                   <div className="col-span-3 text-center text-gray-500">
                     No upcoming poojas available
@@ -362,9 +374,16 @@ const UpcomingPoojas = () => {
 
                     {/* Description and Details */}
                     <div className="mt-2 flex items-center justify-between text-xs text-gray-600">
-                      <span className="truncate pr-2">
-                        {pooja.poojaDetails.description || 'No description available'}
+                      <span className="pr-2">
+                        {(pooja.poojaDetails.description
+                          ?.split(' ')
+                          .slice(0, wordLimit)
+                          .join(' ') || 'No description available') +
+                          (pooja.poojaDetails.description?.split(' ').length > wordLimit
+                            ? '...'
+                            : '')}
                       </span>
+
                       <button className="flex flex-shrink-0 items-center rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
                         <Info className="mr-1 h-3 w-3" />
                         Details
