@@ -35,6 +35,11 @@ export const useSpecialPoojasViewModel = () => {
           operator: '==',
           value: ScheduleMode.once,
         },
+        {
+          field: 'poojaDateAndTime',
+          operator: '>=',
+          value: new Date(Date.now() + 60 * 60 * 1000).toISOString(), // 1 hour from now
+        },
       ]);
 
       const poojasList = await Promise.all(
@@ -63,7 +68,7 @@ export const useSpecialPoojasViewModel = () => {
     try {
       setLoadingMore(true);
 
-      const result = await templePoojaService.queryPaginated(PAGE_SIZE, null, [
+      const result = await templePoojaService.queryPaginated(PAGE_SIZE, lastVisible, [
         {
           field: 'isActive',
           operator: '==',
@@ -73,6 +78,11 @@ export const useSpecialPoojasViewModel = () => {
           field: 'scheduleMode',
           operator: '==',
           value: ScheduleMode.once,
+        },
+        {
+          field: 'poojaDateAndTime',
+          operator: '>=',
+          value: new Date(Date.now() + 60 * 60 * 1000).toISOString(), // 1 hour from now
         },
       ]);
 
