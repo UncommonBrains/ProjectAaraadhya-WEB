@@ -213,12 +213,8 @@ const BookingFormModal: React.FC<BookingFormModalProps> = ({
               />
             ) : (
               <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Pooja Date & Time
-                </label>
-                <h3>
-                  {moment(selectedPooja.poojaDateAndTime).format('MMMM Do YYYY [-] h:mm A')}
-                </h3>
+                <label className="block text-sm font-medium text-gray-700">Pooja Date & Time</label>
+                <h3>{moment(selectedPooja.poojaDateAndTime).format('MMMM Do YYYY [-] h:mm A')}</h3>
                 <br />
               </div>
             )}

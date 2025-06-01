@@ -5,6 +5,12 @@ import FloatingActionButton from '../../../components/common/Button/FloatingActi
 import { usePoojasViewModel } from '../../../view-models/pooja/usePoojasViewModel';
 import { useSpecialPoojasViewModel } from '../../../view-models/pooja/useSpecialPoojasViewModel';
 import LoadingSpinner from '../../../components/common/LoadingSpinner';
+import { CartItem, Member } from '../../../models/entities/Cart';
+import { Pooja, ScheduleMode } from '../../../models/entities/Pooja';
+import { toast } from '../../../utils/toast';
+import { CartForm } from '../PoojaBooking/types';
+import { useCart } from '../../../hooks/useCart';
+import BookingFormModal from '../../../components/common/BookingFormModal';
 
 const UpcomingPoojas = () => {
   const [activeFilter, setActiveFilter] = useState('All');
@@ -18,6 +24,18 @@ const UpcomingPoojas = () => {
     loadingMore: loadingMoreSpecial,
     loadMoreSpecialPoojas,
   } = useSpecialPoojasViewModel();
+  const { cart, addToCart } = useCart();
+  const [deities, setDeities] = useState<Array<string>>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [selectedPooja, setSelectedPooja] = useState<Pooja | null>(null);
+  const [dates, setDates] = useState<Date[]>([]);
+  const [availableDates, setAvailableDates] = useState<Date[]>([]);
+  const [formData, setFormData] = useState<CartForm>({
+    name: '',
+    starSign: '',
+    members: [],
+    poojaDate: '',
+  });
 
   useEffect(() => {
     console.log('Pooja ViewModel Data:', poojas);
@@ -71,6 +89,121 @@ const UpcomingPoojas = () => {
       default:
         return filteredSpecialPoojas;
     }
+  };
+
+  useEffect(() => {
+    const deities: Array<string> = [];
+
+    poojas.map((pooja) => {
+      !deities.includes(pooja.deityName) && deities.push(pooja.deityName);
+    });
+
+    setDeities(deities);
+  }, [poojas]);
+
+  // Set the additional member price (percentage of base price)
+  const additionalMemberRate = 1; // 100% of base price for each additional member
+
+  // Handle adding a pooja to cart
+  const handleAddToCart = (pooja: Pooja): void => {
+    if (cart?.items && cart.items.length > 0 && cart.items[0].templeId != pooja.templeId) {
+      return toast.error('Please clear the cart before adding a pooja from a different temple.');
+    }
+
+    if (pooja?.scheduleMode == ScheduleMode.repeat) {
+      const today = new Date();
+      const daysAfter =
+        parseInt(pooja?.templeDetails?.advancedOptions?.advancedOnlneBookingLimit ?? '10') - 1;
+      const dates: Date[] = [];
+
+      for (let i = 0; i <= daysAfter; i++) {
+        const d = new Date(today);
+        d.setDate(today.getDate() + i);
+        dates.push(d);
+      }
+
+      setDates(dates);
+      setAvailableDates(dates.filter((date) => pooja?.poojaDays[date.getDay()]));
+    }
+
+    setFormData({
+      ...formData,
+      poojaDate:
+        pooja.scheduleMode === ScheduleMode.once
+          ? (pooja.poojaDateAndTime ?? new Date().toISOString())
+          : (dates.find((date) => pooja?.poojaDays[date.getDay()])?.toISOString() ??
+            new Date().toISOString()),
+    });
+    setSelectedPooja(pooja);
+  };
+
+  // Calculate the total price based on number of additional members
+  const calculateTotalPrice = (basePrice: number, additionalMembers: Member[]): number => {
+    const additionalPrice = additionalMembers.length * (basePrice * additionalMemberRate);
+    return basePrice + additionalPrice;
+  };
+
+  // Handle form submission
+  const handleFormSubmit = (e: React.FormEvent): void => {
+    e.preventDefault();
+
+    if (!selectedPooja) return;
+
+    // Calculate the total price with additional members
+    const totalPrice = calculateTotalPrice(parseFloat(selectedPooja.price), formData.members);
+
+    const newCartItem: CartItem = {
+      poojaId: selectedPooja.poojaId,
+      templeId: selectedPooja.templeId,
+      scheduleId: selectedPooja.id,
+      poojaPrice: selectedPooja.price,
+      price: totalPrice.toString(),
+      ...formData,
+    };
+
+    setCartItems([...cartItems, newCartItem]);
+
+    addToCart(newCartItem);
+
+    setSelectedPooja(null);
+    setFormData({
+      name: '',
+      starSign: '',
+      members: [],
+      poojaDate: '',
+    });
+    toast.success('Pooja added to cart!');
+  };
+
+  // Handle adding additional member
+  const handleAddMember = (): void => {
+    setFormData({
+      ...formData,
+      members: [...formData.members, { name: '', starSign: '' }],
+    });
+  };
+
+  // Handle removing additional member
+  const handleRemoveMember = (index: number): void => {
+    const updatedMembers = [...formData.members];
+    updatedMembers.splice(index, 1);
+    setFormData({
+      ...formData,
+      members: updatedMembers,
+    });
+  };
+
+  // Handle updating member info
+  const handleMemberChange = (index: number, field: keyof Member, value: string): void => {
+    const updatedMembers = [...formData.members];
+    updatedMembers[index] = {
+      ...updatedMembers[index],
+      [field]: value,
+    };
+    setFormData({
+      ...formData,
+      members: updatedMembers,
+    });
   };
 
   // Toggle mobile filter sidebar
@@ -149,8 +282,6 @@ const UpcomingPoojas = () => {
                     <ListFilter className="h-5 w-5 text-amber-800" />
                   </div>
 
-                 
-
                   {/* Price Range */}
                   <div className="mb-4">
                     <h4 className="mb-2 text-sm font-medium text-gray-700">Price Range</h4>
@@ -209,7 +340,7 @@ const UpcomingPoojas = () => {
         <div className="space-y-6 md:col-span-3">
           {/* Filters */}
           <div className="no-scrollbar flex space-x-3 overflow-x-auto pb-2">
-            {['All', 'Vishnu', 'Shiva', 'Krishna', 'Devi', 'Ganapathy', 'Durga'].map((filter) => (
+            {['All', ...deities].map((filter) => (
               <button
                 key={filter}
                 className={`${
@@ -350,7 +481,10 @@ const UpcomingPoojas = () => {
                     </div>
 
                     {/* Book Now Button */}
-                    <button className="mt-3 w-full rounded bg-orange-500 py-2 text-sm text-white">
+                    <button
+                      onClick={() => handleAddToCart(pooja)}
+                      className="mt-3 w-full rounded bg-orange-500 py-2 text-sm text-white"
+                    >
                       Book Now
                     </button>
                   </div>
@@ -442,7 +576,10 @@ const UpcomingPoojas = () => {
                           </p>
                         </div>
                       </div>
-                      <button className="mt-3 w-full rounded bg-orange-500 py-2 text-sm text-white">
+                      <button
+                        onClick={() => handleAddToCart(pooja)}
+                        className="mt-3 w-full rounded bg-orange-500 py-2 text-sm text-white"
+                      >
                         Book Now
                       </button>
                     </div>
@@ -474,6 +611,22 @@ const UpcomingPoojas = () => {
 
       {/* Floating Action Button - Adjusted position for mobile */}
       <FloatingActionButton />
+
+      {/* Booking Form Modal */}
+      <BookingFormModal
+        selectedPooja={selectedPooja}
+        formData={formData}
+        dates={dates}
+        availableDates={availableDates}
+        additionalMemberRate={additionalMemberRate}
+        onClose={() => setSelectedPooja(null)}
+        onFormDataChange={setFormData}
+        onFormSubmit={handleFormSubmit}
+        onAddMember={handleAddMember}
+        onRemoveMember={handleRemoveMember}
+        onMemberChange={handleMemberChange}
+        calculateTotalPrice={calculateTotalPrice}
+      />
     </div>
   );
 };
