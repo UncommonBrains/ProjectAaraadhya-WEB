@@ -4,12 +4,11 @@ import { Pooja } from '../../models/entities/Pooja';
 import { templePoojaService } from '../../services/templePoojaSerivice';
 import { poojaService } from '../../services/poojaService';
 import { templeService } from '../../services/templeService';
-import { ScheduleMode } from '../../models/entities/Pooja';
 
-export const usePoojasViewModel = () => {
+export const useSearchPoojasViewModel = () => {
   const [poojas, setPoojas] = useState<Pooja[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [lastVisible, setLastVisible] = useState<DocumentSnapshot | null>(null);
@@ -17,22 +16,32 @@ export const usePoojasViewModel = () => {
 
   const PAGE_SIZE = 12;
 
-  // Load initial Poojas
-  const loadPoojas = useCallback(async () => {
+  // Load initial Poojas based on search term
+  const loadPoojas = useCallback(async (searchQuery: string = '') => {
     try {
       setLoading(true);
       setPoojas([]);
       setLastVisible(null);
       setHasMore(true);
 
-      const result = await templePoojaService.queryPaginated(PAGE_SIZE, null, [
+      const filters: Array<{ field: string; operator: '==' | 'array-contains'; value: any }> = [
         {
           field: 'isActive',
           operator: '==',
           value: true,
-        },
-        { field: 'keywords', operator: 'array-contains', value: searchTerm.toLowerCase() },
-      ]);
+        }
+      ];
+
+      // Add search filter only if search term exists
+      if (searchQuery.trim()) {
+        filters.push({
+          field: 'keywords',
+          operator: 'array-contains',
+          value: searchQuery.trim() ? searchQuery.toLowerCase().trim() !== '' : false,
+        });
+      }
+
+      const result = await templePoojaService.queryPaginated(PAGE_SIZE, null, filters);
 
       const poojasList = await Promise.all(
         result.data.map(async (doc) => {
@@ -48,30 +57,37 @@ export const usePoojasViewModel = () => {
       setError(null);
     } catch (err) {
       setError('Failed to load poojas');
+      console.error('Search error:', err);
     } finally {
       setLoading(false);
     }
   }, []);
 
-  // Load more Poojas (next page)
+  // Load more Poojas (next page) with current search term
   const loadMorePoojas = async () => {
     if (!hasMore || !lastVisible || loadingMore) return;
 
     try {
       setLoadingMore(true);
 
-      const result = await templePoojaService.queryPaginated(PAGE_SIZE, lastVisible, [
+      const filters = [
         {
           field: 'isActive',
           operator: '==',
           value: true,
-        },
-        {
-          field: 'scheduleMode',
-          operator: '==',
-          value: ScheduleMode.repeat,
-        },
-      ]);
+        }
+      ];
+
+      // Add search filter only if search term exists
+      if (searchTerm.trim()) {
+        filters.push({
+          field: 'keywords',
+          operator: 'array-contains',
+          value: searchTerm.trim() !== '',
+        });
+      }
+
+      const result = await templePoojaService.queryPaginated(PAGE_SIZE, lastVisible, filters as Array<{ field: string; operator: '==' | 'array-contains'; value: any }>);
 
       const poojasList = await Promise.all(
         result.data.map(async (doc) => {
@@ -85,24 +101,41 @@ export const usePoojasViewModel = () => {
       setLastVisible(result.lastVisible);
       setHasMore(result.hasMore);
     } catch (err) {
-      setError('Failed to load more posts');
+      setError('Failed to load more poojas');
+      console.error('Load more error:', err);
     } finally {
       setLoadingMore(false);
     }
   };
 
+  // Handle search term change
+  const handleSearch = useCallback((term: string) => {
+    setSearchTerm(term);
+    loadPoojas(term);
+  }, [loadPoojas]);
+
+  // Clear search
+  const clearSearch = useCallback(() => {
+    setSearchTerm('');
+    loadPoojas('');
+  }, [loadPoojas]);
+
+  // Initial load
   useEffect(() => {
     loadPoojas();
   }, [loadPoojas]);
 
   return {
     poojas,
+    searchTerm,
     loading,
     loadingMore,
     hasMore,
     error,
     loadPoojas,
     loadMorePoojas,
-    searchTerm
+    handleSearch,
+    clearSearch,
+    setSearchTerm
   };
 };

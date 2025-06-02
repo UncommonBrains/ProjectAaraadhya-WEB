@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Calendar, Filter, Clock, Info, ArrowUpDown, ListFilter, X } from 'lucide-react';
 import SearchInputField from '../../../components/common/Input/SearchInputField';
 import FloatingActionButton from '../../../components/common/Button/FloatingActionButton';
-import { usePoojasViewModel } from '../../../view-models/pooja/usePoojasViewModel';
+import { useSearchPoojasViewModel } from '../../../view-models/pooja/useSearchPoojasViewModel';
 import { useSpecialPoojasViewModel } from '../../../view-models/pooja/useSpecialPoojasViewModel';
 import LoadingSpinner from '../../../components/common/LoadingSpinner';
 import { CartItem, Member } from '../../../models/entities/Cart';
@@ -16,7 +16,16 @@ const UpcomingPoojas = () => {
   const [activeFilter, setActiveFilter] = useState('All');
   const [activeSortBy, setActiveSortBy] = useState('Price');
   const [showMobileFilter, setShowMobileFilter] = useState(false);
-  const { poojas, hasMore, loading, loadingMore, loadMorePoojas } = usePoojasViewModel();
+  const { 
+    poojas, 
+    hasMore, 
+    loading, 
+    loadingMore, 
+    loadMorePoojas, 
+    searchTerm, 
+    handleSearch,
+    clearSearch 
+  } = useSearchPoojasViewModel();
   const {
     specialPoojas,
     hasMore: hasMoreSpecial,
@@ -213,7 +222,12 @@ const UpcomingPoojas = () => {
 
   return (
     <div className="min-h-screen bg-amber-50 font-sans">
-      <SearchInputField />
+      <SearchInputField 
+        value={searchTerm}
+        onChange={handleSearch}
+        onClear={clearSearch}
+        placeholder="Search poojas, temples, deities..."
+      />
 
       {/* Main Content */}
       <main className="relative container mx-auto grid grid-cols-1 gap-6 p-4 md:grid-cols-4">
@@ -357,12 +371,23 @@ const UpcomingPoojas = () => {
             <p className="text-sm text-gray-600">
               Showing{' '}
               <span className="font-medium">
-                {filteredNormalPoojas.length > 0 && filteredSpecialPoojas.length > 0
-                  ? filteredNormalPoojas.length + filteredSpecialPoojas.length
-                  : 'No'}{' '}
-                {activeFilter === 'All' ? '' : activeFilter.toLowerCase()}{' '}
-              </span>{' '}
-              poojas
+                {(() => {
+                  const normalCount = filteredNormalPoojas.length;
+                  const specialCount = filteredSpecialPoojas.length;
+                  const total = normalCount + specialCount;
+                  return total > 0 ? total : 'No';
+                })()}{' '}
+                {searchTerm ? `results for "${searchTerm}"` : 
+                 `${activeFilter === 'All' ? '' : activeFilter.toLowerCase()} poojas`}
+              </span>
+              {searchTerm && (
+                <button 
+                  onClick={clearSearch}
+                  className="ml-2 text-xs text-orange-500 hover:text-orange-700"
+                >
+                  Clear search
+                </button>
+              )}
             </p>
 
             <div className="flex space-x-3">
@@ -402,15 +427,43 @@ const UpcomingPoojas = () => {
             <p className="mb-6 text-sm text-gray-600">
               Your spiritual schedule and recommended ceremonies
             </p>
+            {searchTerm && (
+              <div className="mb-4 rounded-lg bg-blue-50 border border-blue-200 p-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-blue-800">
+                    🔍 Searching for: <strong>"{searchTerm}"</strong>
+                  </span>
+                  <button 
+                    onClick={clearSearch}
+                    className="text-xs text-blue-600 hover:text-blue-800 underline"
+                  >
+                    Clear
+                  </button>
+                </div>
+              </div>
+            )}
             {loading ? (
               <div className="flex h-full items-center justify-center p-12">
                 <LoadingSpinner message="Loading poojas..." />
               </div>
             ) : (
               <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
-                {getSortedNormalPoojas().length === 0 && (
-                  <div className="col-span-3 text-center text-gray-500">
-                    No upcoming poojas available
+                {getSortedNormalPoojas().length === 0 && !loading && (
+                  <div className="col-span-3 text-center text-gray-500 py-8">
+                    {searchTerm ? (
+                      <div>
+                        <p className="text-lg mb-2">No poojas found for "{searchTerm}"</p>
+                        <p className="text-sm mb-4">Try searching with different keywords or</p>
+                        <button 
+                          onClick={clearSearch}
+                          className="bg-orange-500 text-white px-4 py-2 rounded-lg text-sm"
+                        >
+                          View All Poojas
+                        </button>
+                      </div>
+                    ) : (
+                      'No upcoming poojas available'
+                    )}
                   </div>
                 )}
                 {getSortedNormalPoojas().map((pooja) => (
