@@ -32,12 +32,12 @@ export const useSearchPoojasViewModel = () => {
         }
       ];
 
-      // Add search filter only if search term exists
-      if (searchQuery.trim()) {
+      // Add search filter only if search term exists and is not empty
+      if (searchQuery && searchQuery.trim() !== '') {
         filters.push({
           field: 'keywords',
           operator: 'array-contains',
-          value: searchQuery.trim() ? searchQuery.toLowerCase().trim() !== '' : false,
+          value: searchQuery.toLowerCase().trim(), // Fixed: Use the actual search term
         });
       }
 
@@ -70,7 +70,7 @@ export const useSearchPoojasViewModel = () => {
     try {
       setLoadingMore(true);
 
-      const filters = [
+      const filters: Array<{ field: string; operator: '==' | 'array-contains'; value: any }> = [
         {
           field: 'isActive',
           operator: '==',
@@ -78,16 +78,16 @@ export const useSearchPoojasViewModel = () => {
         }
       ];
 
-      // Add search filter only if search term exists
-      if (searchTerm.trim()) {
+      // Add search filter only if search term exists and is not empty
+      if (searchTerm && searchTerm.trim() !== '') {
         filters.push({
           field: 'keywords',
           operator: 'array-contains',
-          value: searchTerm.trim() !== '',
+          value: searchTerm.toLowerCase().trim(), // Fixed: Use the actual search term
         });
       }
 
-      const result = await templePoojaService.queryPaginated(PAGE_SIZE, lastVisible, filters as Array<{ field: string; operator: '==' | 'array-contains'; value: any }>);
+      const result = await templePoojaService.queryPaginated(PAGE_SIZE, lastVisible, filters);
 
       const poojasList = await Promise.all(
         result.data.map(async (doc) => {
@@ -120,7 +120,7 @@ export const useSearchPoojasViewModel = () => {
     loadPoojas('');
   }, [loadPoojas]);
 
-  // Initial load
+  // Initial load - load all poojas without search filter
   useEffect(() => {
     loadPoojas();
   }, [loadPoojas]);
