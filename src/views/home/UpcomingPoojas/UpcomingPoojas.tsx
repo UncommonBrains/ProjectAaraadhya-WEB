@@ -423,9 +423,12 @@ const UpcomingPoojas = () => {
                   </div>
                 )}
                 {getSortedNormalPoojas().map((pooja) => (
-                  <div key={pooja.id} className="rounded-lg bg-white/80 p-4 backdrop-blur-sm">
+                  <div
+                    key={pooja.id}
+                    className="flex h-full flex-col rounded-lg bg-white/80 p-4 backdrop-blur-sm"
+                  >
                     <div className="flex justify-between">
-                      <div>
+                      <div className="flex-1">
                         <h4 className="font-bold text-amber-900">{pooja.poojaDetails.name}</h4>
                         <p className="text-sm text-gray-600">
                           {pooja.templeDetails?.basicDetails?.templeName}
@@ -456,7 +459,7 @@ const UpcomingPoojas = () => {
                       </div>
 
                       {/* Price & Status */}
-                      <div className="text-center">
+                      <div className="ml-4 flex-shrink-0 text-center">
                         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-100">
                           <div className="font-medium text-orange-500">
                             <span className="text-xl">₹</span>
@@ -471,25 +474,27 @@ const UpcomingPoojas = () => {
                       </div>
                     </div>
 
-                    {/* Description and Details */}
-                    <div className="mt-2 flex items-center justify-between text-xs text-gray-600">
-                      <span className="pr-2">
-                        {(pooja.poojaDetails.description
-                          ?.split(' ')
-                          .slice(0, wordLimit)
-                          .join(' ') || 'No description available') +
-                          (pooja.poojaDetails.description?.split(' ').length > wordLimit
-                            ? '...'
-                            : '')}
-                      </span>
+                    {/* Description and Details - This grows to fill available space */}
+                    <div className="mt-2 flex-grow">
+                      <div className="flex items-start justify-between text-xs text-gray-600">
+                        <span className="flex-1 pr-2">
+                          {(pooja.poojaDetails.description
+                            ?.split(' ')
+                            .slice(0, wordLimit)
+                            .join(' ') || 'No description available') +
+                            (pooja.poojaDetails.description?.split(' ').length > wordLimit
+                              ? '...'
+                              : '')}
+                        </span>
 
-                      <button className="flex flex-shrink-0 items-center rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
-                        <Info className="mr-1 h-3 w-3" />
-                        Details
-                      </button>
+                        <button className="flex flex-shrink-0 items-center rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+                          <Info className="mr-1 h-3 w-3" />
+                          Details
+                        </button>
+                      </div>
                     </div>
 
-                    {/* Book Now Button */}
+                    {/* Book Now Button - Always at bottom */}
                     <button
                       onClick={() => handleAddToCart(pooja)}
                       className="mt-3 w-full rounded bg-orange-500 py-2 text-sm text-white"
@@ -498,6 +503,7 @@ const UpcomingPoojas = () => {
                     </button>
                   </div>
                 ))}
+
                 {/* View More Button */}
                 {hasMore && (
                   <>
@@ -544,16 +550,19 @@ const UpcomingPoojas = () => {
                     Limited Bookings
                   </span>
                 </div>
-                <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {getSortedSpecialPoojas().length === 0 && (
                     <div className="col-span-3 text-center text-gray-500">
                       No upcoming special poojas available
                     </div>
                   )}
                   {getSortedSpecialPoojas().map((pooja) => (
-                    <div key={pooja.id} className="rounded-lg bg-white/80 p-4 backdrop-blur-sm">
+                    <div
+                      key={pooja.id}
+                      className="flex h-full flex-col rounded-lg bg-white/80 p-4 backdrop-blur-sm"
+                    >
                       <div className="flex justify-between">
-                        <div>
+                        <div className="flex-1">
                           <h4 className="font-medium text-amber-900">{pooja.poojaDetails.name}</h4>
                           <p className="text-sm text-gray-600">
                             {pooja.templeDetails?.basicDetails?.templeName}
@@ -573,7 +582,7 @@ const UpcomingPoojas = () => {
                             </span>
                           </div>
                         </div>
-                        <div className="text-center">
+                        <div className="ml-4 flex-shrink-0 text-center">
                           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-100">
                             <div className="font-medium text-orange-500">
                               <span className="text-xl">₹</span>
@@ -585,6 +594,10 @@ const UpcomingPoojas = () => {
                           </p>
                         </div>
                       </div>
+
+                      {/* Spacer to push button to bottom */}
+                      <div className="flex-grow"></div>
+
                       <button
                         onClick={() => handleAddToCart(pooja)}
                         className="mt-3 w-full rounded bg-orange-500 py-2 text-sm text-white"
