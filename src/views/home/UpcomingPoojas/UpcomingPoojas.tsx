@@ -504,27 +504,39 @@ const UpcomingPoojas = () => {
                 ))}
 
                 {/* View More Button */}
-                
               </div>
             )}
-            {hasMore && (
-                  <>
-                    {loadingMore ? (
-                      <div className="mt-6 flex justify-center">
-                        <LoadingSpinner message="Loading more poojas..." />
-                      </div>
-                    ) : (
-                      <div className="col-span-full mt-6 flex justify-center">
-                        <button
-                          onClick={isSearchResult ? loadMoreSeachResults : loadMorePoojas}
-                          className="rounded-lg bg-amber-500 px-6 py-2 text-white transition hover:bg-amber-600"
-                        >
-                          View More
-                        </button>
-                      </div>
-                    )}
-                  </>
+            {hasMore ? (
+              <>
+                {loadingMore ? (
+                  <div className="mt-6 flex justify-center">
+                    <LoadingSpinner message="Loading more poojas..." />
+                  </div>
+                ) : (
+                  <div className="col-span-full mt-6 flex justify-center">
+                    <button
+                      onClick={isSearchResult ? loadMoreSeachResults : loadMorePoojas}
+                      className="rounded-lg bg-amber-500 px-6 py-2 text-white transition hover:bg-amber-600"
+                    >
+                      View More
+                    </button>
+                  </div>
                 )}
+              </>
+            ) : (
+              getSortedNormalPoojas().length > 0 && (
+                <div className="col-span-full mt-6 flex justify-center">
+                  <div className="rounded-lg bg-amber-100 px-6 py-3 text-center">
+                    <p className="text-sm font-medium text-amber-800">
+                      🙏 You have reached the end of listed poojas
+                    </p>
+                    <p className="mt-1 text-xs text-amber-600">
+                      Check back later for new spiritual offerings
+                    </p>
+                  </div>
+                </div>
+              )
+            )}
           </div>
           {/* Special Upcoming Festival Poojas */}
           {loadingSpecial ? (
@@ -610,30 +622,42 @@ const UpcomingPoojas = () => {
                       </button>
                     </div>
                   ))}
-                  
                 </div>
-                {hasMoreSpecial && (
-                    <>
-                      {loadingMoreSpecial ? (
-                        <div className="mt-6 flex justify-center">
-                          <LoadingSpinner message="Loading more poojas..." />
-                        </div>
-                      ) : (
-                        <div className="col-span-3 flex justify-center">
-                          <button
-                            onClick={
-                              isSearchResultSpecial
-                                ? loadMoreSpecialPoojasSeachResults
-                                : loadMoreSpecialPoojas
-                            }
-                            className="rounded bg-amber-500 px-6 py-2 text-white transition hover:bg-amber-600"
-                          >
-                            View More
-                          </button>
-                        </div>
-                      )}
-                    </>
-                  )}
+                {hasMoreSpecial ? (
+                  <>
+                    {loadingMoreSpecial ? (
+                      <div className="mt-6 flex justify-center">
+                        <LoadingSpinner message="Loading more poojas..." />
+                      </div>
+                    ) : (
+                      <div className="col-span-3 flex justify-center">
+                        <button
+                          onClick={
+                            isSearchResultSpecial
+                              ? loadMoreSpecialPoojasSeachResults
+                              : loadMoreSpecialPoojas
+                          }
+                          className="rounded bg-amber-500 px-6 py-2 text-white transition hover:bg-amber-600"
+                        >
+                          View More
+                        </button>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  getSortedSpecialPoojas().length > 0 && (
+                    <div className="col-span-3 mt-4 flex justify-center">
+                      <div className="rounded-lg bg-orange-100 px-6 py-3 text-center">
+                        <p className="text-sm font-medium text-orange-800">
+                          ✨ You have reached the end of special festival poojas
+                        </p>
+                        <p className="mt-1 text-xs text-orange-600">
+                          Stay tuned for upcoming festival celebrations
+                        </p>
+                      </div>
+                    </div>
+                  )
+                )}
               </div>
             )
           )}
