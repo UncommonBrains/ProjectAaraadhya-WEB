@@ -416,7 +416,7 @@ const UpcomingPoojas = () => {
                 <LoadingSpinner message="Loading poojas..." />
               </div>
             ) : (
-              <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                 {getSortedNormalPoojas().length === 0 && (
                   <div className="col-span-3 text-center text-gray-500">
                     No upcoming poojas available
@@ -544,7 +544,7 @@ const UpcomingPoojas = () => {
                     Limited Bookings
                   </span>
                 </div>
-                <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
+                <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                   {getSortedSpecialPoojas().length === 0 && (
                     <div className="col-span-3 text-center text-gray-500">
                       No upcoming special poojas available
