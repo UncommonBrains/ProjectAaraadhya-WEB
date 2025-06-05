@@ -1,47 +1,16 @@
 import { useEffect, useState } from 'react';
-import { ChevronLeft, Search, Plus, Minus, ShoppingCart, X, User, List, Sun } from 'lucide-react';
+import { ChevronLeft, Search, Plus, User, List, Sun } from 'lucide-react';
 import { CartForm } from './types';
 import { useNavigate } from 'react-router-dom';
 import { useTemplePoojasViewModel } from '../../../view-models/temple/useTemplePoojasViewModel';
 import { Pooja, ScheduleMode } from '../../../models/entities/Pooja';
-import CustomDatePicker from '../../../components/common/CustomDatePicker';
 import { useTempleViewModel } from '../../../view-models/temple/useTempleViewModel';
-import moment from 'moment';
 import CartBox from '../CartPage/CartBox';
 import { CartItem, Member } from '../../../models/entities/Cart';
 import { useCart } from '../../../hooks/useCart';
 import { toast } from '../../../utils/toast';
+import  BookingFormModal  from  '../../../components/common/BookingFormModal';
 
-const starSigns: string[] = [
-  'Aswathi (അശ്വതി)',
-  'Bharani (ഭരണി)',
-  'Karthika (കാർത്തിക)',
-  'Rohini (രോഹിണി)',
-  'Makayiram (മകയിരം)',
-  'Thiruvaathira (തിരുവാതിര)',
-  'Punartham (പുണർതം)',
-  'Pooyam (പൂയം)',
-  'Ayilyam (ആയില്യം)',
-  'Makam (മകം)',
-  'Pooram (പൂരം)',
-  'Uthram (ഉത്രം)',
-  'Atham (അത്തം)',
-  'Chithira (ചിത്തിര)',
-  'Chothi (ചോതി)',
-  'Vishakam (വിശാഖം)',
-  'Anizham (അനിഴം)',
-  'Thrikketta (തൃക്കേട്ട)',
-  'Moolam (മൂലം)',
-  'Puradam (പൂരാടം)',
-  'Uthradam (ഉത്രാടം)',
-  'Thiruvonam (തിരുവോണം)',
-  'Avittom (അവിട്ടം)',
-  'Chathayam (ചതയം)',
-  'Pururuttathi (പുരുരുട്ടാതി)',
-  'Uthruttathi (ഉത്രട്ടാതി)',
-  'Revathi (രേവതി)',
-  'Shubha Nakshathram (ശുഭ നക്ഷത്രം)',
-];
 
 const PoojaBooking: React.FC = () => {
   const navigate = useNavigate();
@@ -181,179 +150,6 @@ const PoojaBooking: React.FC = () => {
     return poojas.filter((pooja) => pooja.deityName === deityName);
   };
 
-  // Render booking form modal
-  const renderBookingForm = (): React.ReactNode => {
-    if (!selectedPooja) return null;
-
-    // Calculate dynamic price based on current number of additional members
-    const currentPrice = calculateTotalPrice(parseFloat(selectedPooja.price), formData.members);
-
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-        <div className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-lg bg-white">
-          <div className="sticky top-0 rounded-t-lg bg-amber-100 p-4">
-            <div className="flex items-center justify-between">
-              <h3 className="font-serif text-lg text-amber-900">Book Pooja</h3>
-              <button
-                onClick={() => setSelectedPooja(null)}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-200 text-amber-900"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-          </div>
-
-          <div className="p-4">
-            <div className="mb-4 rounded-lg bg-amber-50 p-3">
-              <p className="font-medium text-amber-900">{selectedPooja.poojaDetails.name}</p>
-              <div className="mt-1 flex justify-between">
-                <p className="text-sm text-gray-600">Base Price: ₹{selectedPooja.price}</p>
-                {formData.members.length > 0 && (
-                  <p className="font-medium text-amber-900">Total: ₹{currentPrice}</p>
-                )}
-              </div>
-            </div>
-
-            <form onSubmit={handleFormSubmit}>
-              {/* Main Devotee */}
-              <div className="mb-4">
-                <label className="mb-1 block text-sm font-medium text-gray-700">Your Name</label>
-                <input
-                  type="text"
-                  className="w-full rounded-lg border border-amber-200 p-3 focus:ring-2 focus:ring-amber-300 focus:outline-none"
-                  placeholder="Enter your full name"
-                  required
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                />
-              </div>
-
-              <div className="mb-4">
-                <label className="mb-1 block text-sm font-medium text-gray-700">
-                  Star Sign (Nakshatra)
-                </label>
-                <select
-                  className="w-full rounded-lg border border-amber-200 p-3 focus:ring-2 focus:ring-amber-300 focus:outline-none"
-                  required
-                  value={formData.starSign}
-                  onChange={(e) => setFormData({ ...formData, starSign: e.target.value })}
-                >
-                  <option value="">Select your star sign</option>
-                  {starSigns.map((sign) => (
-                    <option key={sign} value={sign}>
-                      {sign}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Additional Members */}
-              <div className="mb-4">
-                <div className="mb-2 flex items-center justify-between">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Additional Family Members
-                  </label>
-                  <button
-                    type="button"
-                    onClick={handleAddMember}
-                    className="flex items-center justify-center rounded-full bg-amber-100 p-1 text-amber-900"
-                  >
-                    <Plus className="h-4 w-4" />
-                  </button>
-                </div>
-
-                {formData.members.length > 0 && (
-                  <p className="mb-2 text-xs text-amber-700">
-                    Each additional member costs {additionalMemberRate * 100}% of the base price
-                  </p>
-                )}
-
-                {formData.members.map((member, index) => (
-                  <div key={index} className="mb-3 rounded-lg bg-amber-50 p-3">
-                    <div className="mb-2 flex items-center justify-between">
-                      <span className="text-sm font-medium text-amber-900">
-                        Member {index + 1} (₹
-                        {(parseFloat(selectedPooja.price) * additionalMemberRate).toFixed(0)})
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveMember(index)}
-                        className="flex items-center justify-center rounded-full bg-amber-100 p-1 text-amber-900"
-                      >
-                        <Minus className="h-4 w-4" />
-                      </button>
-                    </div>
-
-                    <div className="mb-2">
-                      <input
-                        type="text"
-                        className="w-full rounded-lg border border-amber-200 p-2 focus:ring-2 focus:ring-amber-300 focus:outline-none"
-                        placeholder="Full name"
-                        value={member.name}
-                        onChange={(e) => handleMemberChange(index, 'name', e.target.value)}
-                        required
-                      />
-                    </div>
-
-                    <div>
-                      <select
-                        className="w-full rounded-lg border border-amber-200 p-2 focus:ring-2 focus:ring-amber-300 focus:outline-none"
-                        value={member.starSign}
-                        onChange={(e) => handleMemberChange(index, 'starSign', e.target.value)}
-                        required
-                      >
-                        <option value="">Select star sign</option>
-                        {starSigns.map((sign) => (
-                          <option key={sign} value={sign}>
-                            {sign}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Date and Calendar */}
-              {selectedPooja.scheduleMode === ScheduleMode.repeat ? (
-                <CustomDatePicker
-                  onSelected={(date) => {
-                    if (date) {
-                      setFormData({
-                        ...formData,
-                        poojaDate: date.toISOString(),
-                      });
-                    }
-                  }}
-                  dates={dates}
-                  availableDates={availableDates}
-                />
-              ) : (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Pooja Date & Time
-                  </label>
-                  <h3>
-                    {moment(selectedPooja.poojaDateAndTime).format('MMMM Do YYYY [-] h:mm A')}
-                  </h3>
-                  <br />
-                </div>
-              )}
-
-              <button
-                type="submit"
-                className="flex w-full items-center justify-center rounded-lg bg-amber-600 px-4 py-3 font-medium text-white"
-              >
-                <ShoppingCart className="mr-2 h-4 w-4" />
-                Add to Cart - ₹{currentPrice}
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   return (
     <div className="min-h-screen bg-amber-50 font-sans">
       {/* Header with back button */}
@@ -376,7 +172,7 @@ const PoojaBooking: React.FC = () => {
           <div className="container mx-auto">
             <div className="flex overflow-x-auto">
               <button
-                className={`flex-1 px-4 py-4 text-center text-sm font-medium whitespace-nowrap ${
+                className={`flex-1 cursor-pointer px-4 py-4 text-center text-sm font-medium whitespace-nowrap ${
                   mainTab === 'deity'
                     ? 'border-b-2 border-orange-500 text-orange-500'
                     : 'text-gray-600'
@@ -387,7 +183,7 @@ const PoojaBooking: React.FC = () => {
                 By Deity
               </button>
               <button
-                className={`flex-1 px-4 py-4 text-center text-sm font-medium whitespace-nowrap ${
+                className={`flex-1 cursor-pointer px-4 py-4 text-center text-sm font-medium whitespace-nowrap ${
                   mainTab === 'all'
                     ? 'border-b-2 border-orange-500 text-orange-500'
                     : 'text-gray-600'
@@ -416,7 +212,7 @@ const PoojaBooking: React.FC = () => {
         </div>
 
         {/* Content based on selected tab */}
-        <div className="container mx-auto p-4">
+        <div className="container mx-auto p-4 pt-0">
           {/* Deity Tab */}
           {mainTab === 'deity' && (
             <div>
@@ -458,7 +254,7 @@ const PoojaBooking: React.FC = () => {
                     </h3>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+                  <div className="grid grid-cols-1 gap-4 md:!grid-cols-2">
                     {getPoojasByDeity(selectedDeity)
                       .filter((pooja) =>
                         pooja.poojaDetails.name.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -473,10 +269,12 @@ const PoojaBooking: React.FC = () => {
                               <h4 className="font-medium text-amber-900">
                                 {pooja.poojaDetails.name}
                               </h4>
-                              <p className="mt-1 text-sm text-gray-600">₹{pooja.price}</p>
+                              <p className="mt-1 text-sm font-medium text-amber-900">
+                                ₹{pooja.price}
+                              </p>
                             </div>
                             <button
-                              className="flex items-center rounded-lg bg-amber-600 px-3 py-2 text-sm font-medium text-white"
+                              className="flex cursor-pointer items-center rounded-lg bg-amber-600 px-3 py-2 text-sm font-medium text-white"
                               onClick={() => handleAddToCart(pooja)}
                             >
                               <Plus className="mr-1 h-4 w-4" />
@@ -516,8 +314,8 @@ const PoojaBooking: React.FC = () => {
                           <p className="mt-1 text-sm font-medium text-amber-900">₹{pooja.price}</p>
                         </div>
                         <button
-                          className="flex items-center rounded-lg bg-amber-600 px-3 py-2 text-sm font-medium text-white"
-                          // onClick={() => handleAddToCart(pooja)}
+                          className="flex cursor-pointer items-center rounded-lg bg-amber-600 px-3 py-2 text-sm font-medium text-white"
+                          onClick={() => handleAddToCart(pooja)}
                         >
                           <Plus className="mr-1 h-4 w-4" />
                           Book
@@ -535,7 +333,20 @@ const PoojaBooking: React.FC = () => {
       </div>
 
       {/* Booking Form Modal */}
-      {renderBookingForm()}
+      <BookingFormModal
+        selectedPooja={selectedPooja}
+        formData={formData}
+        dates={dates}
+        availableDates={availableDates}
+        additionalMemberRate={additionalMemberRate}
+        onClose={() => setSelectedPooja(null)}
+        onFormDataChange={setFormData}
+        onFormSubmit={handleFormSubmit}
+        onAddMember={handleAddMember}
+        onRemoveMember={handleRemoveMember}
+        onMemberChange={handleMemberChange}
+        calculateTotalPrice={calculateTotalPrice}
+      />
     </div>
   );
 };

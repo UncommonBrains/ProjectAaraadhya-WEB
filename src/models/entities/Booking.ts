@@ -15,20 +15,24 @@ export interface Booking {
     screenshotUrl?: string;
   };
   status: BookingStatus;
+  poojaDates: string[];
   templeDetails?: Temple;
 }
 
 interface BookedPoojaDetails extends Member {
+  id: string;
   poojaId: string;
   scheduleId: string;
+  poojaDate: string;
   members?: Member[];
+  isCompleted: boolean;
   pooja?: Pooja;
 }
 
 export enum BookingStatus {
-  PENDING = 'PENDING',
-  CONFIRMED = 'CONFIRMED',
-  CANCELLED = 'CANCELLED',
-  COMPLETED = 'COMPLETED',
-  REFUNDED = 'REFUNDED',
+  PENDING = 'pending',
+  CONFIRMED = 'confirmed',
+  CANCELLED = 'cancelled',
+  COMPLETED = 'completed',
+  REFUNDED = 'refunded',
 }

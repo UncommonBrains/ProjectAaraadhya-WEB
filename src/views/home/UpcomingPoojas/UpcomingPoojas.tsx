@@ -1,84 +1,229 @@
-import { useState } from 'react';
-import {
-  ChevronRight,
-  Calendar,
-  Filter,
-  Clock,
-  Info,
-  ArrowUpDown,
-  CalendarDays,
-  ListFilter,
-  ChevronUp,
-  ChevronDown,
-  X,
-} from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Calendar, Filter, Clock, Info, ArrowUpDown, ListFilter, X } from 'lucide-react';
 import SearchInputField from '../../../components/common/Input/SearchInputField';
 import FloatingActionButton from '../../../components/common/Button/FloatingActionButton';
-import { poojas, recommendedPoojas } from '../../../mock/data/poojas';
+import { usePoojasViewModel } from '../../../view-models/pooja/usePoojasViewModel';
+import { useSpecialPoojasViewModel } from '../../../view-models/pooja/useSpecialPoojasViewModel';
+import LoadingSpinner from '../../../components/common/LoadingSpinner';
+import { CartItem, Member } from '../../../models/entities/Cart';
+import { Pooja, ScheduleMode } from '../../../models/entities/Pooja';
+import { toast } from '../../../utils/toast';
+import { CartForm } from '../PoojaBooking/types';
+import { useCart } from '../../../hooks/useCart';
+import BookingFormModal from '../../../components/common/BookingFormModal';
+import { debounce } from '../../../utils/debounce';
 
 const UpcomingPoojas = () => {
   const [activeFilter, setActiveFilter] = useState('All');
-  const [activeSortBy, setActiveSortBy] = useState('Date');
-  const [showMyPoojas, setShowMyPoojas] = useState(false);
+  const [activeSortBy, setActiveSortBy] = useState('Price');
   const [showMobileFilter, setShowMobileFilter] = useState(false);
+  const {
+    poojas,
+    hasMore,
+    loading,
+    loadingMore,
+    isSearchResult,
+    loadPoojas,
+    loadMorePoojas,
+    searchPoojas,
+    loadMoreSeachResults,
+  } = usePoojasViewModel();
+  const {
+    specialPoojas,
+    hasMore: hasMoreSpecial,
+    loading: loadingSpecial,
+    loadingMore: loadingMoreSpecial,
+    isSearchResult: isSearchResultSpecial,
+    loadSpecialPoojas,
+    loadMoreSpecialPoojas,
+    searchSpecialPoojas,
+    loadMoreSpecialPoojasSeachResults,
+  } = useSpecialPoojasViewModel();
+  const { cart, addToCart } = useCart();
+  const [deities, setDeities] = useState<Array<string>>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [selectedPooja, setSelectedPooja] = useState<Pooja | null>(null);
+  const [dates, setDates] = useState<Date[]>([]);
+  const [availableDates, setAvailableDates] = useState<Date[]>([]);
+  const [formData, setFormData] = useState<CartForm>({
+    name: '',
+    starSign: '',
+    members: [],
+    poojaDate: '',
+  });
 
-  // Filter poojas based on active filter
-  const filteredMyPoojas =
-    activeFilter === 'All' ? poojas : poojas.filter((pooja) => pooja.deity === activeFilter);
+  const [wordLimit, setWordLimit] = useState(13); // default to 13 for md+
 
-  const filteredRecommendedPoojas =
+  useEffect(() => {
+    const updateLimit = () => {
+      setWordLimit(window.innerWidth < 640 ? 9 : 13); // Change word limit based on screen size
+    };
+
+    updateLimit(); // run on mount
+    window.addEventListener('resize', updateLimit); // run on resize
+
+    return () => window.removeEventListener('resize', updateLimit);
+  }, []);
+
+  // Filter Normal poojas based on active filter
+  const filteredNormalPoojas =
+    activeFilter === 'All' ? poojas : poojas.filter((pooja) => pooja.deityName === activeFilter);
+
+  // Get sorted normal poojas based on active sort
+  const getSortedNormalPoojas = () => {
+    switch (activeSortBy) {
+      case 'Price':
+        return [...filteredNormalPoojas].sort(
+          (a, b) =>
+            parseInt(a.price.replace(/[^\d]/g, '')) - parseInt(b.price.replace(/[^\d]/g, '')),
+        );
+      default:
+        return filteredNormalPoojas;
+    }
+  };
+  // Filter Normal poojas based on active filter
+  const filteredSpecialPoojas =
     activeFilter === 'All'
-      ? recommendedPoojas
-      : recommendedPoojas.filter((pooja) => pooja.deity === activeFilter);
+      ? specialPoojas
+      : specialPoojas.filter((pooja) => pooja.deityName === activeFilter);
 
-  // Get sorted poojas based on active sort
-  const getSortedMyPoojas = () => {
+  // Get sorted normal poojas based on active sort
+  const getSortedSpecialPoojas = () => {
     switch (activeSortBy) {
-      case 'Date':
-        return [...filteredMyPoojas].sort(
-          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-        );
-      case 'Popular':
-        return [...filteredMyPoojas].sort((a, b) =>
-          b.isPopular === a.isPopular ? 0 : b.isPopular ? 1 : -1,
-        );
       case 'Price':
-        return [...filteredMyPoojas].sort(
+        return [...filteredSpecialPoojas].sort(
           (a, b) =>
             parseInt(a.price.replace(/[^\d]/g, '')) - parseInt(b.price.replace(/[^\d]/g, '')),
         );
       default:
-        return filteredMyPoojas;
+        return filteredSpecialPoojas;
     }
   };
 
-  const getSortedRecommendedPoojas = () => {
-    switch (activeSortBy) {
-      case 'Date':
-        return [...filteredRecommendedPoojas].sort(
-          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-        );
-      case 'Popular':
-        return [...filteredRecommendedPoojas].sort((a, b) =>
-          b.isPopular === a.isPopular ? 0 : b.isPopular ? 1 : -1,
-        );
-      case 'Price':
-        return [...filteredRecommendedPoojas].sort(
-          (a, b) =>
-            parseInt(a.price.replace(/[^\d]/g, '')) - parseInt(b.price.replace(/[^\d]/g, '')),
-        );
-      case 'Distance':
-        return [...filteredRecommendedPoojas].sort(
-          (a, b) => parseInt(a.distance ?? '0') - parseInt(b.distance ?? '0'),
-        );
-      default:
-        return filteredRecommendedPoojas;
+  useEffect(() => {
+    const deities: Array<string> = [];
+
+    poojas.map((pooja) => {
+      !deities.includes(pooja.deityName) && deities.push(pooja.deityName);
+    });
+
+    setDeities(deities);
+  }, [poojas]);
+
+  const handleSearch = (searchTerm: string) => {
+    if (searchTerm.replace(/\s+/g, '') === '') {
+      // If search term is empty, reset the poojas
+      loadPoojas();
+      loadSpecialPoojas();
+    } else {
+      searchPoojas(searchTerm.replace(/\s+/g, '').toLowerCase());
+      searchSpecialPoojas(searchTerm.replace(/\s+/g, '').toLowerCase());
     }
   };
 
-  // Toggle the visibility of My Booked Poojas section
-  const toggleMyPoojas = () => {
-    setShowMyPoojas(!showMyPoojas);
+  // Set the additional member price (percentage of base price)
+  const additionalMemberRate = 1; // 100% of base price for each additional member
+
+  // Handle adding a pooja to cart
+  const handleAddToCart = (pooja: Pooja): void => {
+    if (cart?.items && cart.items.length > 0 && cart.items[0].templeId != pooja.templeId) {
+      return toast.error('Please clear the cart before adding a pooja from a different temple.');
+    }
+
+    if (pooja?.scheduleMode == ScheduleMode.repeat) {
+      const today = new Date();
+      const daysAfter =
+        parseInt(pooja?.templeDetails?.advancedOptions?.advancedOnlneBookingLimit ?? '10') - 1;
+      const dates: Date[] = [];
+
+      for (let i = 0; i <= daysAfter; i++) {
+        const d = new Date(today);
+        d.setDate(today.getDate() + i);
+        dates.push(d);
+      }
+
+      setDates(dates);
+      setAvailableDates(dates.filter((date) => pooja?.poojaDays[date.getDay()]));
+    }
+
+    setFormData({
+      ...formData,
+      poojaDate:
+        pooja.scheduleMode === ScheduleMode.once
+          ? (pooja.poojaDateAndTime ?? new Date().toISOString())
+          : (dates.find((date) => pooja?.poojaDays[date.getDay()])?.toISOString() ??
+            new Date().toISOString()),
+    });
+    setSelectedPooja(pooja);
+  };
+
+  // Calculate the total price based on number of additional members
+  const calculateTotalPrice = (basePrice: number, additionalMembers: Member[]): number => {
+    const additionalPrice = additionalMembers.length * (basePrice * additionalMemberRate);
+    return basePrice + additionalPrice;
+  };
+
+  // Handle form submission
+  const handleFormSubmit = (e: React.FormEvent): void => {
+    e.preventDefault();
+
+    if (!selectedPooja) return;
+
+    // Calculate the total price with additional members
+    const totalPrice = calculateTotalPrice(parseFloat(selectedPooja.price), formData.members);
+
+    const newCartItem: CartItem = {
+      poojaId: selectedPooja.poojaId,
+      templeId: selectedPooja.templeId,
+      scheduleId: selectedPooja.id,
+      poojaPrice: selectedPooja.price,
+      price: totalPrice.toString(),
+      ...formData,
+    };
+
+    setCartItems([...cartItems, newCartItem]);
+
+    addToCart(newCartItem);
+
+    setSelectedPooja(null);
+    setFormData({
+      name: '',
+      starSign: '',
+      members: [],
+      poojaDate: '',
+    });
+    toast.success('Pooja added to cart!');
+  };
+
+  // Handle adding additional member
+  const handleAddMember = (): void => {
+    setFormData({
+      ...formData,
+      members: [...formData.members, { name: '', starSign: '' }],
+    });
+  };
+
+  // Handle removing additional member
+  const handleRemoveMember = (index: number): void => {
+    const updatedMembers = [...formData.members];
+    updatedMembers.splice(index, 1);
+    setFormData({
+      ...formData,
+      members: updatedMembers,
+    });
+  };
+
+  // Handle updating member info
+  const handleMemberChange = (index: number, field: keyof Member, value: string): void => {
+    const updatedMembers = [...formData.members];
+    updatedMembers[index] = {
+      ...updatedMembers[index],
+      [field]: value,
+    };
+    setFormData({
+      ...formData,
+      members: updatedMembers,
+    });
   };
 
   // Toggle mobile filter sidebar
@@ -88,113 +233,17 @@ const UpcomingPoojas = () => {
 
   return (
     <div className="min-h-screen bg-amber-50 font-sans">
-      <SearchInputField />
+      <SearchInputField onChange={debounce(handleSearch, 1000)} placeholder="Search Poojas" />
 
       {/* Main Content */}
       <main className="relative container mx-auto grid grid-cols-1 gap-6 p-4 md:grid-cols-4">
         {/* Left Column - Desktop Filter Sidebar */}
         <div className="hidden space-y-6 md:!block">
-          {/* Profile Section */}
-          <div className="rounded-lg border border-amber-100 bg-white p-4 shadow-sm">
-            <div className="flex items-center">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-600 font-medium text-white">
-                R
-              </div>
-              <div className="ml-3">
-                <h3 className="font-serif text-amber-900">Rahul</h3>
-                <p className="text-xs text-gray-600">Active Devotee</p>
-              </div>
-            </div>
-            <div className="mt-4 grid grid-cols-3 gap-2 text-center text-xs">
-              <div className="rounded bg-amber-50 p-2">
-                <p className="text-sm font-medium text-amber-900">12</p>
-                <p className="text-gray-600">Temples</p>
-              </div>
-              <div className="rounded bg-amber-50 p-2">
-                <p className="text-sm font-medium text-amber-900">28</p>
-                <p className="text-gray-600">Poojas</p>
-              </div>
-              <div className="rounded bg-amber-50 p-2">
-                <p className="text-sm font-medium text-amber-900">6</p>
-                <p className="text-gray-600">Donations</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Calendar Widget */}
-          <div className="rounded-lg border border-amber-100 bg-white p-4 shadow-sm">
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-serif text-amber-900">Calendar</h3>
-              <CalendarDays className="h-5 w-5 text-amber-800" />
-            </div>
-            <div className="rounded-lg bg-amber-50 p-3">
-              <div className="grid grid-cols-7 gap-1 text-center text-xs font-medium text-gray-600">
-                <div>Su</div>
-                <div>Mo</div>
-                <div>Tu</div>
-                <div>We</div>
-                <div>Th</div>
-                <div>Fr</div>
-                <div>Sa</div>
-              </div>
-              <div className="mt-2 grid grid-cols-7 gap-1">
-                {Array.from({ length: 31 }, (_, i) => (
-                  <div
-                    key={i}
-                    className={`flex aspect-square w-full items-center justify-center rounded-full text-xs ${i + 1 === 21 ? 'bg-orange-500 text-white' : ''} ${
-                      i + 1 === 23 || i + 1 === 25 || i + 1 === 28
-                        ? 'bg-amber-200 text-amber-900'
-                        : 'text-gray-600'
-                    }`}
-                  >
-                    {i + 1}
-                  </div>
-                ))}
-              </div>
-              <div className="mt-3 space-y-2">
-                <div className="flex items-center text-xs">
-                  <div className="mr-2 h-3 w-3 rounded-full bg-orange-500"></div>
-                  <span className="text-gray-700">Today</span>
-                </div>
-                <div className="flex items-center text-xs">
-                  <div className="mr-2 h-3 w-3 rounded-full bg-amber-200"></div>
-                  <span className="text-gray-700">Booked Poojas</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
           {/* Filter Section */}
           <div className="rounded-lg border border-amber-100 bg-white p-4 shadow-sm">
             <div className="mb-4 flex items-center justify-between">
               <h3 className="font-serif text-amber-900">Filter Poojas</h3>
               <ListFilter className="h-5 w-5 text-amber-800" />
-            </div>
-
-            {/* Deity Filter */}
-            <div className="mb-4">
-              <h4 className="text-sm font-medium text-gray-700">Deity</h4>
-              <div className="space-y-1">
-                {['Vishnu', 'Shiva', 'Shakti', 'Ganesh', 'Murugan'].map((deity) => (
-                  <div key={deity} className="flex items-center">
-                    <input type="checkbox" id={deity} className="h-4 w-4 accent-orange-500" />
-                    <label htmlFor={deity} className="ml-2 text-sm text-gray-600">
-                      {deity}
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Price Range */}
-            <div className="mb-4">
-              <h4 className="mb-2 text-sm font-medium text-gray-700">Price Range</h4>
-              <input type="range" min="100" max="2000" className="w-full accent-orange-500" />
-              <div className="mt-1 flex justify-between text-xs text-gray-500">
-                <span>₹100</span>
-                <span>₹1000</span>
-                <span>₹2000+</span>
-              </div>
             </div>
 
             {/* Date Range */}
@@ -240,49 +289,6 @@ const UpcomingPoojas = () => {
                   <div className="mb-4 flex items-center justify-between">
                     <h3 className="font-serif text-amber-900">Filter Poojas</h3>
                     <ListFilter className="h-5 w-5 text-amber-800" />
-                  </div>
-
-                  {/* Deity Filter */}
-                  <div className="mb-4">
-                    <h4 className="text-sm font-medium text-gray-700">Deity</h4>
-                    <div className="space-y-1">
-                      {['Vishnu', 'Shiva', 'Shakti', 'Ganesh', 'Murugan'].map((deity) => (
-                        <div key={deity} className="flex items-center">
-                          <input
-                            type="checkbox"
-                            id={`mobile-${deity}`}
-                            className="h-4 w-4 accent-orange-500"
-                          />
-                          <label htmlFor={`mobile-${deity}`} className="ml-2 text-sm text-gray-600">
-                            {deity}
-                          </label>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Deity Filter */}
-                  <div className="mb-4">
-                    <h4 className="text-sm font-medium text-gray-700">Purpose</h4>
-                    <div className="space-y-1">
-                      {['Marriage', 'Fertility', 'Education', 'Wealth', 'Health', 'Ancestral'].map(
-                        (deity) => (
-                          <div key={deity} className="flex items-center">
-                            <input
-                              type="checkbox"
-                              id={`mobile-${deity}`}
-                              className="h-4 w-4 accent-orange-500"
-                            />
-                            <label
-                              htmlFor={`mobile-${deity}`}
-                              className="ml-2 text-sm text-gray-600"
-                            >
-                              {deity}
-                            </label>
-                          </div>
-                        ),
-                      )}
-                    </div>
                   </div>
 
                   {/* Price Range */}
@@ -343,7 +349,7 @@ const UpcomingPoojas = () => {
         <div className="space-y-6 md:col-span-3">
           {/* Filters */}
           <div className="no-scrollbar flex space-x-3 overflow-x-auto pb-2">
-            {['All', 'Vishnu', 'Shiva', 'Krishna', 'Devi', 'Ganapathy'].map((filter) => (
+            {['All', ...deities].map((filter) => (
               <button
                 key={filter}
                 className={`${
@@ -360,7 +366,10 @@ const UpcomingPoojas = () => {
             <p className="text-sm text-gray-600">
               Showing{' '}
               <span className="font-medium">
-                {filteredMyPoojas.length + filteredRecommendedPoojas.length}
+                {filteredNormalPoojas.length > 0 && filteredSpecialPoojas.length > 0
+                  ? filteredNormalPoojas.length + filteredSpecialPoojas.length
+                  : 'No'}{' '}
+                {activeFilter === 'All' ? '' : activeFilter.toLowerCase()}{' '}
               </span>{' '}
               poojas
             </p>
@@ -374,10 +383,8 @@ const UpcomingPoojas = () => {
                     value={activeSortBy}
                     onChange={(e) => setActiveSortBy(e.target.value)}
                   >
-                    <option value="Date">Date</option>
                     <option value="Popular">Popular</option>
                     <option value="Price">Price</option>
-                    <option value="Distance">Distance</option>
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                     <ArrowUpDown className="h-4 w-4" />
@@ -391,226 +398,290 @@ const UpcomingPoojas = () => {
                 <Filter className="h-4 w-4" />
               </button>
 
-              <button className="rounded border border-amber-200 bg-white p-2 text-gray-600">
+              {/* <button className="rounded border border-amber-200 bg-white p-2 text-gray-600">
                 <Calendar className="h-4 w-4" />
-              </button>
+              </button> */}
             </div>
-          </div>
-          {/* My Booked Poojas Section with Toggle Button */}
-          <div className="mb-8 overflow-hidden rounded-lg border border-amber-100 bg-white shadow-sm">
-            {/* Toggle Header */}
-            <div
-              className="flex cursor-pointer items-center justify-between bg-amber-50/50 p-4"
-              onClick={toggleMyPoojas}
-            >
-              <h3 className="flex items-center font-serif text-lg text-amber-900">
-                My Booked Poojas
-                <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-800">
-                  {filteredMyPoojas.length}
-                </span>
-              </h3>
-              <button className="rounded-full p-1 text-amber-900 transition-colors duration-200 hover:bg-amber-100">
-                {showMyPoojas ? (
-                  <ChevronUp className="h-5 w-5" />
-                ) : (
-                  <ChevronDown className="h-5 w-5" />
-                )}
-              </button>
-            </div>
-
-            {/* Collapsible Content */}
-            {showMyPoojas && (
-              <div className="xm:grid-cols-1 grid gap-4 p-4 sm:grid-cols-2 md:grid-cols-2">
-                {getSortedMyPoojas().map((pooja) => (
-                  <div
-                    key={pooja.id}
-                    className="overflow-hidden rounded-lg border border-amber-100 bg-white shadow-sm"
-                  >
-                    <div className="border-l-4 border-orange-500 p-4">
-                      <div className="flex justify-between">
-                        <h4 className="font-medium text-amber-900">{pooja.name}</h4>
-                        <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-700">
-                          Booked
-                        </span>
-                      </div>
-
-                      <div className="mt-2">
-                        <p className="mb-1 text-sm text-gray-600">{pooja.temple}</p>
-                        <p className="text-xs text-gray-500">{pooja.location}</p>
-                      </div>
-
-                      <div className="mt-3 grid grid-cols-3 gap-2">
-                        <div className="rounded bg-amber-50 p-2">
-                          <p className="text-xs text-gray-500">Date</p>
-                          <p className="text-sm text-amber-900">{pooja.date}</p>
-                        </div>
-                        <div className="rounded bg-amber-50 p-2">
-                          <p className="text-xs text-gray-500">Time</p>
-                          <p className="text-sm text-amber-900">{pooja.time}</p>
-                        </div>
-                        <div className="rounded bg-amber-50 p-2">
-                          <p className="text-xs text-gray-500">Price</p>
-                          <p className="text-sm text-amber-900">{pooja.price}</p>
-                        </div>
-                      </div>
-
-                      <div className="mt-4 flex items-center justify-between">
-                        <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-800">
-                          {pooja.deity}
-                        </span>
-                        <div className="flex space-x-2">
-                          <button className="rounded bg-gray-100 px-3 py-1 text-xs text-gray-600">
-                            Modify
-                          </button>
-                          <button className="rounded bg-orange-100 px-3 py-1 text-xs text-orange-500">
-                            View Details
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
           {/* Upcoming Poojas Section */}
           <div>
             <div className="flex items-center justify-between">
               <h3 className="font-serif text-xl text-amber-900">Upcoming Poojas</h3>
-
-              <a href="/" className="flex items-center text-sm text-orange-500">
-                View All <ChevronRight className="h-4 w-4" />
-              </a>
             </div>
             <p className="mb-6 text-sm text-gray-600">
               Your spiritual schedule and recommended ceremonies
             </p>
-            <div className="xm:grid-cols-1 grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
-              {getSortedRecommendedPoojas().map((pooja) => (
-                <div
-                  key={pooja.id}
-                  className="overflow-hidden rounded-lg border border-amber-100 bg-white shadow-sm"
-                >
-                  <div className="relative h-24 bg-amber-200/30">
-                    {pooja.isPopular && (
-                      <div className="absolute top-2 left-2">
-                        <span className="rounded-full bg-orange-500 px-2 py-0.5 text-xs text-white">
-                          Popular
+            {loading ? (
+              <div className="flex h-full items-center justify-center p-12">
+                <LoadingSpinner message="Loading poojas..." />
+              </div>
+            ) : (
+              <div className="grid auto-rows-fr gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                {getSortedNormalPoojas().length === 0 && (
+                  <div className="col-span-3 text-center text-gray-500">
+                    No upcoming poojas available
+                  </div>
+                )}
+                {getSortedNormalPoojas().map((pooja) => (
+                  <div
+                    key={pooja.id}
+                    className="flex h-full flex-col justify-between rounded-lg bg-white/80 p-4 backdrop-blur-sm"
+                  >
+                    {/* Top content section */}
+                    <div className="flex-grow">
+                      <div className="mb-4 flex items-start justify-between">
+                        <div className="flex-1 pr-4">
+                          <h4 className="font-bold text-amber-900">{pooja.poojaDetails.name}</h4>
+                          <p className="text-sm text-gray-600">
+                            {pooja.templeDetails?.basicDetails?.templeName}
+                          </p>
+                        </div>
+
+                        {/* Price circle - fixed alignment */}
+                        <div className="flex-shrink-0">
+                          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-100">
+                            <div className="text-center font-medium text-orange-500">
+                              <span className="text-xl">₹</span>
+                              <span className="text-lg">{pooja.price}</span>
+                            </div>
+                          </div>
+                          <p className="mt-1 text-center text-xs text-gray-500">
+                            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-800">
+                              {pooja.deityName}
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Time & Deity */}
+                      <div className="mb-2 flex items-center text-xs text-gray-600">
+                        <Clock className="mr-1 h-3 w-3" />
+                        <span>{pooja.poojaTime}</span>
+                      </div>
+
+                      {/* Pooja Days */}
+                      <div className="mb-4 flex items-center text-xs text-gray-600">
+                        <Calendar className="mr-1 h-3 w-3" />
+                        <span>
+                          {pooja.poojaDays
+                            ?.map((isActive, index) =>
+                              isActive
+                                ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][index]
+                                : null,
+                            )
+                            .filter(Boolean)
+                            .join(', ') || 'No scheduled days'}
                         </span>
                       </div>
-                    )}
-                    <div className="absolute right-0 bottom-0 left-0 bg-gradient-to-t from-amber-900/70 to-transparent p-3">
-                      <h4 className="font-medium text-white">{pooja.name}</h4>
-                      <p className="text-xs text-amber-50">{pooja.temple}</p>
+
+                      {/* Description and Details */}
+                      <div className="flex items-start justify-between text-xs text-gray-600">
+                        <span className="flex-1 pr-2">
+                          {(pooja.poojaDetails.description
+                            ?.split(' ')
+                            .slice(0, wordLimit)
+                            .join(' ') || 'No description available') +
+                            (pooja.poojaDetails.description?.split(' ').length > wordLimit
+                              ? '...'
+                              : '')}
+                        </span>
+
+                        <button className="flex flex-shrink-0 items-center rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+                          <Info className="mr-1 h-3 w-3" />
+                          Details
+                        </button>
+                      </div>
                     </div>
+
+                    {/* Book Now Button - Always at bottom */}
+                    <button
+                      onClick={() => handleAddToCart(pooja)}
+                      className="mt-4 w-full rounded bg-orange-500 py-2 text-sm text-white"
+                    >
+                      Book Now
+                    </button>
                   </div>
-                  <div className="p-3">
-                    <div className="mb-2 flex items-center justify-between">
-                      <div className="flex items-center text-xs text-gray-600">
-                        <Clock className="mr-1 h-3 w-3" />
-                        <span>{pooja.time}</span>
+                ))}
+
+                {/* View More Button */}
+              </div>
+            )}
+            {hasMore ? (
+              <>
+                {loadingMore ? (
+                  <div className="mt-6 flex justify-center">
+                    <LoadingSpinner message="Loading more poojas..." />
+                  </div>
+                ) : (
+                  <div className="col-span-full mt-6 flex justify-center">
+                    <button
+                      onClick={isSearchResult ? loadMoreSeachResults : loadMorePoojas}
+                      className="rounded-lg bg-amber-500 px-6 py-2 text-white transition hover:bg-amber-600"
+                    >
+                      View More
+                    </button>
+                  </div>
+                )}
+              </>
+            ) : (
+              getSortedNormalPoojas().length > 0 && (
+                <div className="col-span-full mt-6 flex justify-center">
+                  <div className="rounded-lg bg-amber-100 px-6 py-3 text-center">
+                    <p className="text-sm font-medium text-amber-800">
+                      🙏 You have reached the end of listed poojas
+                    </p>
+                    <p className="mt-1 text-xs text-amber-600">
+                      Check back later for new spiritual offerings
+                    </p>
+                  </div>
+                </div>
+              )
+            )}
+          </div>
+          {/* Special Upcoming Festival Poojas */}
+          {loadingSpecial ? (
+            <div className="mt-8 rounded-lg bg-gradient-to-r from-amber-100 to-orange-100 p-4">
+              <div className="mb-4 flex items-center justify-between">
+                <h3 className="font-serif text-lg text-amber-900">Special Festival Poojas</h3>
+                <span className="rounded-full bg-orange-500 px-3 py-1 text-xs text-white">
+                  Limited Bookings
+                </span>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
+                <div className="col-span-3 text-center text-gray-500">
+                  <LoadingSpinner message="Loading special poojas..." />
+                </div>
+              </div>
+            </div>
+          ) : (
+            getSortedSpecialPoojas().length > 0 && (
+              <div className="mt-8 rounded-lg bg-gradient-to-r from-amber-100 to-orange-100 p-4">
+                <div className="mb-4 flex items-center justify-between">
+                  <h3 className="font-serif text-lg text-amber-900">Special Festival Poojas</h3>
+                  <span className="rounded-full bg-orange-500 px-3 py-1 text-xs text-white">
+                    Limited Bookings
+                  </span>
+                </div>
+                <div className="grid auto-rows-fr grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {getSortedSpecialPoojas().length === 0 && (
+                    <div className="col-span-3 text-center text-gray-500">
+                      No upcoming special poojas available
+                    </div>
+                  )}
+                  {getSortedSpecialPoojas().map((pooja) => (
+                    <div
+                      key={pooja.id}
+                      className="flex h-full flex-col justify-between rounded-lg bg-white/80 p-4 backdrop-blur-sm"
+                    >
+                      {/* Top content section */}
+                      <div className="flex-grow">
+                        <div className="mb-4 flex items-start justify-between">
+                          <div className="flex-1 pr-4">
+                            <h4 className="font-medium text-amber-900">
+                              {pooja.poojaDetails.name}
+                            </h4>
+                            <p className="text-sm text-gray-600">
+                              {pooja.templeDetails?.basicDetails?.templeName}
+                            </p>
+                            <div className="mt-2 flex items-center text-xs text-gray-600">
+                              <Calendar className="mr-1 h-3 w-3" />
+                              <span>
+                                {pooja.poojaDateAndTime
+                                  ? new Date(pooja.poojaDateAndTime).toLocaleString('en-IN', {
+                                      day: 'numeric',
+                                      month: 'short',
+                                      year: 'numeric',
+                                      hour: '2-digit',
+                                      minute: '2-digit',
+                                    })
+                                  : 'Date Not Available'}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="flex-shrink-0">
+                            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-100">
+                              <div className="text-center font-medium text-orange-500">
+                                <span className="text-xl">₹</span>
+                                <span className="text-lg">{pooja.price}</span>
+                              </div>
+                            </div>
+                            <p className="mt-1 text-center text-xs text-gray-500">
+                              {pooja.isActive ? 'Slots Available' : 'Booking Closed'}
+                            </p>
+                          </div>
+                        </div>
                       </div>
-                      <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-800">
-                        {pooja.deity}
-                      </span>
-                    </div>
 
-                    <div className="mb-2 flex items-center justify-between">
-                      <div className="flex items-center text-xs text-gray-600">
-                        <Calendar className="mr-1 h-3 w-3" />
-                        <span>{pooja.date}</span>
-                      </div>
-                      <span className="rounded bg-blue-50 px-2 py-0.5 text-xs text-blue-600">
-                        {pooja.distance}
-                      </span>
-                    </div>
-
-                    <div className="mb-3 flex items-center justify-between">
-                      <span className="text-xs text-gray-600">
-                        <span className="font-medium">{pooja.slots}</span> slots available
-                      </span>
-                      <span className="text-sm font-medium text-amber-900">{pooja.price}</span>
-                    </div>
-
-                    <div className="flex justify-between">
-                      <button className="flex items-center rounded bg-gray-100 px-3 py-1 text-xs text-gray-600">
-                        <Info className="mr-1 h-3 w-3" />
-                        Details
-                      </button>
-                      <button className="rounded bg-orange-500 px-3 py-1 text-xs text-white">
+                      {/* Bottom button - always at bottom */}
+                      <button
+                        onClick={() => handleAddToCart(pooja)}
+                        className="mt-4 w-full rounded bg-orange-500 py-2 text-sm text-white"
+                      >
                         Book Now
                       </button>
                     </div>
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-          {/* Special Upcoming Festival Poojas */}
-          <div className="mt-8 rounded-lg bg-gradient-to-r from-amber-100 to-orange-100 p-4">
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-serif text-lg text-amber-900">Special Festival Poojas</h3>
-              <span className="rounded-full bg-orange-500 px-3 py-1 text-xs text-white">
-                Limited Bookings
-              </span>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
-              <div className="rounded-lg bg-white/80 p-4 backdrop-blur-sm">
-                <div className="flex justify-between">
-                  <div>
-                    <h4 className="font-medium text-amber-900">Holika Dahan Special Pooja</h4>
-                    <p className="text-sm text-gray-600">Mathura Krishna Temple</p>
-                    <div className="mt-2 flex items-center text-xs text-gray-600">
-                      <Calendar className="mr-1 h-3 w-3" />
-                      <span>Mar 24, 2025 • 6:00 PM</span>
-                    </div>
-                  </div>
-                  <div className="text-center">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-100">
-                      <div className="font-medium text-orange-500">
-                        <span className="text-xl">₹</span>
-                        <span className="text-lg">1,116</span>
+                {hasMoreSpecial ? (
+                  <>
+                    {loadingMoreSpecial ? (
+                      <div className="mt-6 flex justify-center">
+                        <LoadingSpinner message="Loading more poojas..." />
+                      </div>
+                    ) : (
+                      <div className="col-span-3 flex justify-center">
+                        <button
+                          onClick={
+                            isSearchResultSpecial
+                              ? loadMoreSpecialPoojasSeachResults
+                              : loadMoreSpecialPoojas
+                          }
+                          className="rounded bg-amber-500 px-6 py-2 text-white transition hover:bg-amber-600"
+                        >
+                          View More
+                        </button>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  getSortedSpecialPoojas().length > 0 && (
+                    <div className="col-span-3 mt-4 flex justify-center">
+                      <div className="rounded-lg bg-orange-100 px-6 py-3 text-center">
+                        <p className="text-sm font-medium text-orange-800">
+                          ✨ You have reached the end of special festival poojas
+                        </p>
+                        <p className="mt-1 text-xs text-orange-600">
+                          Stay tuned for upcoming festival celebrations
+                        </p>
                       </div>
                     </div>
-                    <p className="mt-1 text-xs text-gray-500">Only 5 slots left</p>
-                  </div>
-                </div>
-                <button className="mt-3 w-full rounded bg-orange-500 py-2 text-sm text-white">
-                  Book Now
-                </button>
+                  )
+                )}
               </div>
-
-              <div className="rounded-lg bg-white/80 p-4 backdrop-blur-sm">
-                <div className="flex justify-between">
-                  <div>
-                    <h4 className="font-medium text-amber-900">Vishu Special Pooja</h4>
-                    <p className="text-sm text-gray-600">Guruvayoor</p>
-                    <div className="mt-2 flex items-center text-xs text-gray-600">
-                      <Calendar className="mr-1 h-3 w-3" />
-                      <span>Mar 29, 2025 • 7:30 PM</span>
-                    </div>
-                  </div>
-                  <div className="text-center">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-100">
-                      <div className="font-medium text-orange-500">
-                        <span className="text-xl">₹</span>
-                        <span className="text-lg">501</span>
-                      </div>
-                    </div>
-                    <p className="mt-1 text-xs text-gray-500">12 slots available</p>
-                  </div>
-                </div>
-                <button className="mt-3 w-full rounded bg-orange-500 py-2 text-sm text-white">
-                  Book Now
-                </button>
-              </div>
-            </div>
-          </div>{' '}
+            )
+          )}
         </div>
       </main>
 
       {/* Floating Action Button - Adjusted position for mobile */}
       <FloatingActionButton />
+
+      {/* Booking Form Modal */}
+      <BookingFormModal
+        selectedPooja={selectedPooja}
+        formData={formData}
+        dates={dates}
+        availableDates={availableDates}
+        additionalMemberRate={additionalMemberRate}
+        onClose={() => setSelectedPooja(null)}
+        onFormDataChange={setFormData}
+        onFormSubmit={handleFormSubmit}
+        onAddMember={handleAddMember}
+        onRemoveMember={handleRemoveMember}
+        onMemberChange={handleMemberChange}
+        calculateTotalPrice={calculateTotalPrice}
+      />
     </div>
   );
 };

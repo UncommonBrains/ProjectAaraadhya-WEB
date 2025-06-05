@@ -9,6 +9,7 @@ import {
   ChevronLeft,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 import { useCart } from '../../../hooks/useCart';
 import { useTempleViewModel } from '../../../view-models/temple/useTempleViewModel';
 import { generateUpiUrl, initiateUpiPayment } from '../../../utils/paymentHandler';
@@ -18,6 +19,7 @@ import { useBookingViewModel } from '../../../view-models/booking/useBookingView
 import { useAuth } from '../../../hooks/useAuth';
 import { BookingStatus } from '../../../models/entities/Booking';
 import { toast } from '../../../utils/toast';
+import { getDateFromISOString } from '../../../utils/dateFormatters';
 
 const Checkout: React.FC = () => {
   const navigate = useNavigate();
@@ -98,12 +100,15 @@ const Checkout: React.FC = () => {
       await bookPooja({
         userId: firebaseUser.uid,
         templeId: temple.id,
-        poojas: cart.items.map(({ poojaId, scheduleId, name, starSign, members }) => ({
+        poojas: cart.items.map(({ poojaId, scheduleId, poojaDate, name, starSign, members }) => ({
+          id: uuidv4(),
           poojaId,
           scheduleId,
+          poojaDate,
           name,
           starSign,
           members,
+          isCompleted: false,
         })),
         price: cart.totalPrice,
         status: BookingStatus.PENDING,
@@ -111,6 +116,7 @@ const Checkout: React.FC = () => {
           paymentMethod: paymentDetails.paymentMethod,
           screenshot: paymentDetails.screenshot,
         },
+        poojaDates: cart.items.map(({ poojaDate }) => getDateFromISOString(poojaDate)),
       });
 
       setIsSubmitted(true);
@@ -302,7 +308,7 @@ const Checkout: React.FC = () => {
           </div>
           <p className="mt-2 text-sm text-green-600">
             We're currently verifying your payment with the temple administrator. You'll receive an
-            update on your order status shortly.
+            update on your booking status shortly.
           </p>
           <button
             className="mt-4 flex w-full items-center justify-center rounded-lg bg-amber-600 px-4 py-3 font-medium text-white"

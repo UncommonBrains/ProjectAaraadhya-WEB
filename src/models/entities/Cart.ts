@@ -15,7 +15,7 @@ export interface CartItem {
   name: string;
   starSign: string;
   members: Member[];
-  poojaDate: String;
+  poojaDate: string;
   poojaDetails?: PoojaDetails;
 }
 
