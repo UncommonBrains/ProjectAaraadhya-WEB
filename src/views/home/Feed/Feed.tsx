@@ -1,7 +1,6 @@
 import {
   ChevronRight,
   Plus,
-  // Check,
   Clock,
   Star,
   Calendar,
@@ -10,15 +9,15 @@ import {
   User,
   MapPin,
   Play,
-  // Heart,
-  // Users,
+ Bell,
   Video,
-  // Bell,
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import FloatingActionButton from '../../../components/common/Button/FloatingActionButton';
 
 const Feed = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-amber-50 font-sans">
       <div className="">
@@ -613,11 +612,52 @@ const Feed = () => {
               Explore all live events <ChevronRight className="h-4 w-4" />
             </Link>
           </div>
+          
         </div>
+        {/* Overlay Layer */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+        <div className="max-w-md rounded-lg bg-white p-8 text-center shadow-xl">
+          <div className="mb-4 flex justify-center">
+            <div className="rounded-full bg-orange-100 p-4">
+              <Calendar className="h-12 w-12 text-orange-600" />
+            </div>
+          </div>
+
+          <h2 className="mb-3 text-2xl font-bold text-gray-800">Coming Soon!</h2>
+
+          <p className="mb-6 text-gray-600">
+          Get ready for a smarter way to stay connected. Soon, you’ll start seeing real-time updates from your favourite temples — from poojas and events to announcements and special moments. All in one place, right in your feed.
+          </p>
+
+          <div className="mb-6 rounded-lg border border-orange-100 bg-orange-50 p-4">
+            <h3 className="mb-2 font-medium text-amber-900">Get notified when we launch</h3>
+
+            <div className="flex">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="flex-grow rounded-l-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-orange-500 focus:outline-none"
+              />
+              <button className="flex items-center rounded-r-md bg-orange-500 px-4 py-2 text-white hover:bg-orange-600">
+                <Bell className="mr-2 h-4 w-4" /> Notify Me
+              </button>
+            </div>
+          </div>
+
+          <button
+            className="font-medium text-orange-600 hover:text-orange-700"
+            onClick={() => navigate('/')}
+          >
+            Return to Home
+          </button>
+        </div>
+      </div>
       </main>
 
       {/* Floating Action Button - Adjusted position for mobile */}
       <FloatingActionButton />
+
+      
     </div>
   );
 };
