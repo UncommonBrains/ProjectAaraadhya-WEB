@@ -268,7 +268,7 @@ const Header = () => {
                             Settings
                           </NavLink>
                         </li>
-                        <li>
+                        {/* <li>
                           <NavLink
                             to="/my-temples"
                             className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
@@ -276,7 +276,7 @@ const Header = () => {
                             <AiFillHeart className="mr-3 h-4 w-4 text-gray-500" />
                             My Temples
                           </NavLink>
-                        </li>
+                        </li> */}
                         <li>
                           <NavLink
                             to="/my-bookings"
@@ -322,7 +322,7 @@ const Header = () => {
                             Feedback
                           </NavLink>
                         </li>
-                        <li>
+                        {/* <li>
                           <NavLink
                             to="/temple-store"
                             className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
@@ -330,7 +330,7 @@ const Header = () => {
                             <ShoppingBag className="mr-3 h-4 w-4 text-gray-500" />
                             Temple Store
                           </NavLink>
-                        </li>
+                        </li> */}
                       </ul>
                       <div className="border-t border-amber-100 py-1">
                         <button
@@ -392,7 +392,7 @@ const Header = () => {
                 <Home className="mr-3 h-5 w-5" />
                 Feed
               </NavLink>
-              <NavLink
+              {/* <NavLink
                 to="/my-temples"
                 className={({ isActive }) =>
                   isActive
@@ -403,7 +403,7 @@ const Header = () => {
               >
                 <AiFillHeart className="mr-3 h-5 w-5" />
                 My Temples
-              </NavLink>
+              </NavLink> */}
               <NavLink
                 to="/my-bookings"
                 className={({ isActive }) =>
@@ -550,7 +550,7 @@ const Header = () => {
                 <Calendar className="mr-3 h-5 w-5" />
                 My Bookings
               </NavLink>
-              <NavLink
+              {/* <NavLink
                 to="/my-temples"
                 className={({ isActive }) =>
                   isActive
@@ -561,7 +561,7 @@ const Header = () => {
               >
                 <AiFillHeart className="mr-3 h-5 w-5" />
                 My Temples
-              </NavLink>
+              </NavLink> */}
 
               <NavLink
                 to="/community"
