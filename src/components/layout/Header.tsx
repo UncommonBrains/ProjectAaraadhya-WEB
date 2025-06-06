@@ -1,6 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { MdTempleHindu } from 'react-icons/md';
-import { AiFillHeart } from 'react-icons/ai';
 import { FaPeopleGroup } from 'react-icons/fa6';
 import {
   Bell,
