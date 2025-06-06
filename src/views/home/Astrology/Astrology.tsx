@@ -9,7 +9,6 @@ import {
   Users,
   Bell,
 } from 'lucide-react';
-import SearchInputField from '../../../components/common/Input/SearchInputField';
 import FloatingActionButton from '../../../components/common/Button/FloatingActionButton';
 import { NavLink, useNavigate } from 'react-router-dom';
 
@@ -21,7 +20,6 @@ const Astrology = () => {
       {/* Original Component would render here */}
 
       <div className="min-h-screen bg-amber-50 font-sans">
-        <SearchInputField />
 
         {/* Main Content */}
         <main className="container mx-auto grid grid-cols-1 gap-6 p-4 md:grid-cols-4">

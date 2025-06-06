@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import { Star, Filter, Map, Clock, ArrowUpDown, X, Heart } from 'lucide-react';
-import SearchInputField from '../../../components/common/Input/SearchInputField';
 import FloatingActionButton from '../../../components/common/Button/FloatingActionButton';
 import { NavLink } from 'react-router-dom';
 import { useTemplesListViewModel } from '../../../view-models/temple/useTemplesListViewModel';
@@ -66,7 +65,6 @@ const ExploreTemples = () => {
 
   return (
     <div className="min-h-screen bg-amber-50 font-sans">
-      <SearchInputField />
 
       {/* Main Content */}
       <main className="relative container mx-auto grid grid-cols-1 gap-6 p-4 md:grid-cols-4">

@@ -16,14 +16,12 @@ import {
   // Bell,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import SearchInputField from '../../../components/common/Input/SearchInputField';
 import FloatingActionButton from '../../../components/common/Button/FloatingActionButton';
 
 const Feed = () => {
   return (
     <div className="min-h-screen bg-amber-50 font-sans">
       <div className="">
-        <SearchInputField />
         {/* Welcome Section for Mobile - Centered */}
         <div className="p-4 text-center md:hidden">
           <h2 className="font-serif text-xl text-amber-900">Namaste, Rahul!</h2>

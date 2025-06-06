@@ -1,13 +1,11 @@
 import { useState } from 'react';
 import { ShoppingBag, Gift, ChevronRight, Star, Filter, Heart, Mail, Search } from 'lucide-react';
-import SearchInputField from '../../../components/common/Input/SearchInputField';
 
 const TempleStore = () => {
   const [activeTab, setActiveTab] = useState('templeOfferings');
 
   return (
     <div className="min-h-screen bg-amber-50 font-sans">
-      <SearchInputField />
 
       {/* Main Content */}
       <main className="container mx-auto p-4">
