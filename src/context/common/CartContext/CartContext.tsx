@@ -11,6 +11,7 @@ interface CartContextType {
   fetchCart: (uid?: string) => Promise<void>;
   addToCart: (cartItem: CartItem) => Promise<void>;
   removeFromCart: (itemId?: string) => Promise<void>;
+  clearCart: () => Promise<void>;
 }
 
 export const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -85,6 +86,35 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const clearCart = async () => {
+    if (!firebaseUser?.uid) return;
+
+    setLoading(true);
+    setError(null);
+    try {
+      // Get all cart items first
+      const cartItems = await cartService(firebaseUser.uid).query([]);
+      
+      // Delete each item individually
+      await Promise.all(
+        cartItems.map(item => cartService(firebaseUser.uid).delete(item.id))
+      );
+      
+      // Update local state immediately for better UX
+      setCart({
+        items: [],
+        totalPrice: '0.00',
+      });
+    } catch (err) {
+      setError('Failed to clear cart');
+      console.error('Error clearing cart:', err);
+      // If clearing failed, refresh cart to get current state
+      await fetchCart(firebaseUser.uid);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (firebaseUser?.uid) {
       fetchCart(firebaseUser.uid);
@@ -103,6 +133,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         fetchCart,
         addToCart,
         removeFromCart,
+        clearCart,
       }}
     >
       {children}
