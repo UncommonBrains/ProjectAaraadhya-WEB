@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { MapPin, Mail, Phone, CreditCard, ExternalLink } from 'lucide-react';
+import {  Mail, Phone, CreditCard, ExternalLink } from 'lucide-react';
 import {
   FaFacebook,
   FaInstagram,
@@ -53,14 +53,14 @@ const Footer = () => {
 
         {/* Contact Info */}
         <div className="mb-4 flex flex-wrap justify-center space-x-6 text-sm">
-          <div className="flex items-center">
+          {/* <div className="flex items-center">
             <MapPin className="mr-2 h-4 w-4 text-orange-400" />
             <span>
               Krishnamana Illam, Cheravally,
               <br /> Kayamkulam PO, Alappzuzha,
               <br /> Kerala - 690502, India
             </span>
-          </div>
+          </div> */}
           <div className="flex items-center">
             <Mail className="mr-2 h-4 w-4 text-orange-400" />
             <a href="mailto:info@aaraadhya.com" className="hover:text-orange-300">
