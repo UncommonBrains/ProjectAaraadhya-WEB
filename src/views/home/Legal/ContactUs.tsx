@@ -96,9 +96,9 @@ const ContactUs = () => {
                   <div>
                     <h3 className="font-medium text-amber-900">Call Us</h3>
                     <p className="text-sm text-gray-600">
-                      Main: +91 484 123 4567<br />
-                      Support: +91 484 123 4568<br />
-                      WhatsApp: +91 90000 12345
+                      Main: +91 9400446095<br />
+                      Support: +91 9400446095<br />
+                      WhatsApp: +91 9400446095
                     </p>
                   </div>
                 </div>
