@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { MapPin, Mail, Phone, CreditCard, ExternalLink } from 'lucide-react';
+import {  Mail, Phone, CreditCard, ExternalLink } from 'lucide-react';
 import {
   FaFacebook,
   FaInstagram,
