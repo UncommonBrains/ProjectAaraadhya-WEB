@@ -1,4 +1,4 @@
-import { PaymentMethod } from '../../views/home/Checkout/types';
+import { PaymentDetails } from '../../views/home/Checkout/types'; 
 import { Member } from './Cart';
 import { Pooja } from './Pooja';
 import { Temple } from './Temple';
@@ -9,11 +9,7 @@ export interface Booking {
   templeId: string;
   poojas: Array<BookedPoojaDetails>;
   price: string;
-  paymentDetails: {
-    paymentMethod: PaymentMethod;
-    screenshot?: File;
-    screenshotUrl?: string;
-  };
+  paymentDetails: PaymentDetails; 
   status: BookingStatus;
   poojaDates: string[];
   templeDetails?: Temple;
