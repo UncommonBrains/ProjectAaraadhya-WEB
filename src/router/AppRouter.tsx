@@ -23,8 +23,10 @@ import VerifyEmail from '../views/auth/VerifyEmail/VerifyEmail';
 import NotFound from '../views/others/NotFound/NotFound';
 import Checkout from '../views/home/Checkout/Checkout';
 import CartPage from '../views/home/CartPage/CartPage';
+import AdminRoutes from '../admin/router/AdminRoutes';
 
 const AppRouter = () => {
+  console.log('AppRouter is rendering');
   return (
     <BrowserRouter>
       <Routes>
@@ -59,6 +61,8 @@ const AppRouter = () => {
         <Route path="/devotee-store" element={<DevoteeStore />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="*" element={<NotFound />} />
+
+        <Route path="/admin/*" element={<AdminRoutes />} />
       </Routes>
     </BrowserRouter>
   );
