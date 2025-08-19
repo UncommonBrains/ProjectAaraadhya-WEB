@@ -155,9 +155,9 @@ const ShippingDelivery = () => {
           <p className="text-sm text-gray-600 mb-4">Our customer support team is here to assist you</p>
           <div className="flex flex-wrap justify-center gap-4">
             <a href="tel:+911234567890" className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600">
-              Call Us: +91 12345 67890
+              Call Us: +91 9400446095
             </a>
-            <a href="mailto:support@aaraadhya.com" className="rounded-lg border border-orange-500 px-4 py-2 text-sm font-medium text-orange-600 hover:bg-orange-100">
+            <a href="mailto:support@aaraadhya.in" className="rounded-lg border border-orange-500 px-4 py-2 text-sm font-medium text-orange-600 hover:bg-orange-100">
               Email Support
             </a>
           </div>
