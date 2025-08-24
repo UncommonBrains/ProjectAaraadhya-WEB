@@ -13,7 +13,6 @@ export enum PaymentGateway {
 export enum PaymentMethod {
   BANK_TRANSFER = 'Bank Transfer',
   UPI = 'UPI',
-  // Gateway-specific methods
   RAZORPAY = 'razorpay',
   STRIPE = 'stripe',
   PAYU = 'payu',
@@ -62,55 +61,26 @@ export interface RazorpayResponse {
   razorpay_signature: string;
 }
 
-export interface StripeResponse {
-  id: string;
-  object: string;
-  amount: number;
-  currency: string;
-  status: string;
-  payment_intent: string;
-}
-
-export interface PayUResponse {
-  mihpayid: string;
-  mode: string;
-  status: string;
-  txnid: string;
-  amount: string;
-  productinfo: string;
-  hash: string;
-}
-
-export interface CashfreeResponse {
-  cf_payment_id: string;
-  order_id: string;
-  order_amount: string;
-  payment_status: string;
-  payment_amount: string;
-  payment_currency: string;
-}
-
 // Updated Payment Details Interface
+// types/paymentDetails.ts
+
 export interface PaymentDetails {
-  // Legacy fields (kept for backward compatibility)
-  paymentMethod?: PaymentMethod;
-  screenshot?: File | null;
-  
-  // New gateway-based fields
-  gateway: PaymentGateway; // Made required
-  paymentId?: string;
-  orderId?: string;
-  signature?: string;
-  transactionId?: string;
+  gateway: 'RAZORPAY';
+
+  // Payment lifecycle
+  paymentId?: string;     // Razorpay payment_id
+  orderId?: string;       // internal orderId
+  signature?: string;     // Razorpay signature
   status?: 'pending' | 'completed' | 'failed' | 'cancelled';
+
+  // Amount info
   amount?: number;
   currency?: string;
-  timestamp?: Date;
-  
-  // Gateway-specific data
-  gatewayResponse?: RazorpayResponse | StripeResponse | PayUResponse | CashfreeResponse;
-  
-  // Additional metadata
+
+  // Razorpay full response (optional, for debugging)
+  gatewayResponse?: any;
+
+  // Extra metadata (not persisted fully)
   metadata?: {
     gatewayFee?: number;
     processingTime?: number;
@@ -119,6 +89,7 @@ export interface PaymentDetails {
     [key: string]: any;
   };
 }
+
 
 // Payment Order Creation Interface
 export interface PaymentOrderRequest {
@@ -277,16 +248,4 @@ export interface PaymentError {
 // Type guards for gateway-specific responses
 export const isRazorpayResponse = (response: any): response is RazorpayResponse => {
   return response && typeof response.razorpay_payment_id === 'string';
-};
-
-export const isStripeResponse = (response: any): response is StripeResponse => {
-  return response && typeof response.id === 'string' && response.object === 'payment_intent';
-};
-
-export const isPayUResponse = (response: any): response is PayUResponse => {
-  return response && typeof response.mihpayid === 'string';
-};
-
-export const isCashfreeResponse = (response: any): response is CashfreeResponse => {
-  return response && typeof response.cf_payment_id === 'string';
 };

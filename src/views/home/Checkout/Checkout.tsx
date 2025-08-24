@@ -1,8 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { CartContext } from '../../../context/common/CartContext/CartContext';
 import { getTempleById } from '../../../services/templeService'; 
-
-
 import {
   CreditCard,
   CheckCircle,
@@ -17,8 +15,6 @@ import {
 // Payment Gateway Types
 enum PaymentGateway {
   RAZORPAY = 'razorpay',
-  STRIPE = 'stripe',
-  PAYU = 'payu',
   CASHFREE = 'cashfree',
 }
 
@@ -94,7 +90,7 @@ const Checkout: React.FC = () => {
       description: 'Pay securely via Cashfree',
       icon: 'cards',
       gateway: PaymentGateway.CASHFREE,
-      disabled: false,
+      disabled: true,
     },
   ];
 
