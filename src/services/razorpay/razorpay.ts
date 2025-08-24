@@ -1,5 +1,5 @@
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import { app } from '../../config/firebase';
+import app from '../../config/firebase';
 
 const functions = getFunctions(app, 'asia-south1');
 
