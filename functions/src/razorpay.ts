@@ -3,18 +3,20 @@ import Razorpay from "razorpay";
 import crypto from "crypto";
 
 import { onCall, HttpsError, onRequest } from "firebase-functions/v2/https";
-import { defineSecret } from "firebase-functions/params";
-
+import "firebase-functions/logger";
 import { PaymentOrder } from "./types/paymentOrders";
 
 // ---- init
 if (admin.apps.length === 0) admin.initializeApp();
 const db = admin.firestore();
 
-// ---- secrets (set them first: see step 0 below)
-const RAZORPAY_KEY_ID     = defineSecret("RAZORPAY_KEY_ID");
-const RAZORPAY_KEY_SECRET = defineSecret("RAZORPAY_KEY_SECRET");
-const RAZORPAY_WEBHOOK_SECRET = defineSecret("RAZORPAY_WEBHOOK_SECRET");
+// ---- secrets
+const {
+  RAZORPAY_KEY_ID,
+  RAZORPAY_KEY_SECRET,
+  RAZORPAY_WEBHOOK_SECRET
+} = process.env;
+
 
 // Helper to build client
 function buildClient(keyId: string, keySecret: string) {
@@ -22,25 +24,27 @@ function buildClient(keyId: string, keySecret: string) {
 }
 
 // ---- 1) Create order (callable from client)
-export const createRazorpayOrder = onCall(
-  { region: "asia-south1", secrets: [RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET] },
-  async (request) => {
-    const { amount, bookingId, user, device } = request.data as {
-      amount: number;
-      bookingId: string;
-      user: { id: string; name: string; email: string; phone: string };
-      device?: string;
-    };
+export const createRazorpayOrder = onCall({ region: "asia-south1" }, async (request) => {
+  if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
+    throw new HttpsError("internal", "Razorpay API keys are not configured.");
+  }
 
-    if (!amount || !bookingId || !user?.id) {
-      throw new HttpsError(
-        "invalid-argument",
-        "amount, bookingId and user.id are required"
-      );
-    }
+  const { amount, bookingId, user, device } = request.data as {
+    amount: number;
+    bookingId: string;
+    user: { id: string; name: string; email: string; phone: string };
+    device?: string;
+  };
 
-    const razorpay = buildClient(RAZORPAY_KEY_ID.value(), RAZORPAY_KEY_SECRET.value());
-    const paise = Math.round(amount * 100);
+  if (!amount || !bookingId || !user?.id) {
+    throw new HttpsError(
+      "invalid-argument",
+      "amount, bookingId and user.id are required"
+    );
+  }
+
+  const razorpay = buildClient(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET);
+  const paise = Math.round(amount * 100);
 
     const order = await razorpay.orders.create({
       amount: paise,
@@ -73,33 +77,35 @@ export const createRazorpayOrder = onCall(
       orderId: order.id,
       amount: order.amount,   // paise
       currency: order.currency,
-      key: RAZORPAY_KEY_ID.value(), // client needs only key_id
+      key: RAZORPAY_KEY_ID, // client needs only key_id
     };
   }
 );
 
 // ---- 2) Verify payment from client handler (extra safety beyond webhook)
-export const verifyPayment = onCall(
-  { region: "asia-south1", secrets: [RAZORPAY_KEY_SECRET] },
-  async (request) => {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
-      request.data as {
-        razorpay_order_id: string;
-        razorpay_payment_id: string;
-        razorpay_signature: string;
-      };
+export const verifyPayment = onCall({ region: "asia-south1" }, async (request) => {
+  if (!RAZORPAY_KEY_SECRET) {
+    throw new HttpsError("internal", "Razorpay API keys are not configured.");
+  }
 
-    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
-      throw new HttpsError("invalid-argument", "Required Razorpay fields missing");
-    }
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+    request.data as {
+      razorpay_order_id: string;
+      razorpay_payment_id: string;
+      razorpay_signature: string;
+    };
 
-    const body = `${razorpay_order_id}|${razorpay_payment_id}`;
-    const expected = crypto
-      .createHmac("sha256", RAZORPAY_KEY_SECRET.value())
-      .update(body)
-      .digest("hex");
+  if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+    throw new HttpsError("invalid-argument", "Required Razorpay fields missing");
+  }
 
-    const ok = expected === razorpay_signature;
+  const body = `${razorpay_order_id}|${razorpay_payment_id}`;
+  const expected = crypto
+    .createHmac("sha256", RAZORPAY_KEY_SECRET)
+    .update(body)
+    .digest("hex");
+
+  const ok = expected === razorpay_signature;
 
     await db.collection("payment_orders").doc(razorpay_order_id).update({
       razorpayPaymentId: razorpay_payment_id,
@@ -113,16 +119,25 @@ export const verifyPayment = onCall(
   }
 );
 
+import cors from "cors";
+
+const corsHandler = cors({ origin: true });
+
 // ---- 3) Webhook (server-to-server) — production-grade confirmation
-export const razorpayWebhook = onRequest(
-  { region: "asia-south1", secrets: [RAZORPAY_WEBHOOK_SECRET] },
-  async (req, res) => {
+export const razorpayWebhook = onRequest({ region: "asia-south1" }, (req, res) => {
+  corsHandler(req, res, async () => {
+    if (!RAZORPAY_WEBHOOK_SECRET) {
+      console.error("Razorpay webhook secret is not configured.");
+      res.status(500).send("Configuration error");
+      return;
+    }
+
     try {
       const signature = req.get("x-razorpay-signature") || "";
       const payload = JSON.stringify(req.body);
 
       const expected = crypto
-        .createHmac("sha256", RAZORPAY_WEBHOOK_SECRET.value())
+        .createHmac("sha256", RAZORPAY_WEBHOOK_SECRET)
         .update(payload)
         .digest("hex");
 
@@ -144,11 +159,9 @@ export const razorpayWebhook = onRequest(
         });
       }
       res.status(200).send("OK");
-      return;
     } catch (e) {
       console.error(e);
       res.status(500).send("ERR");
-      return;
     }
-  }
-);
+  });
+});
