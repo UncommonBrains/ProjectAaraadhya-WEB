@@ -3,8 +3,10 @@ import Razorpay from "razorpay";
 import crypto from "crypto";
 
 import { onCall, HttpsError, onRequest } from "firebase-functions/v2/https";
-import "firebase-functions/logger";
+import { logger } from "firebase-functions";
 import { PaymentOrder } from "./types/paymentOrders";
+
+logger.info("razorpay.ts module loading.");
 
 // ---- init
 if (admin.apps.length === 0) admin.initializeApp();
@@ -17,6 +19,9 @@ const {
   RAZORPAY_WEBHOOK_SECRET
 } = process.env;
 
+logger.info(`RAZORPAY_KEY_ID loaded: ${!!RAZORPAY_KEY_ID}`);
+logger.info(`RAZORPAY_KEY_SECRET loaded: ${!!RAZORPAY_KEY_SECRET}`);
+
 
 // Helper to build client
 function buildClient(keyId: string, keySecret: string) {
@@ -25,9 +30,14 @@ function buildClient(keyId: string, keySecret: string) {
 
 // ---- 1) Create order (callable from client)
 export const createRazorpayOrder = onCall({ region: "asia-south1" }, async (request) => {
+  logger.info("createRazorpayOrder function invoked.", { structuredData: true });
+
   if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
+    logger.error("Razorpay API keys are not configured. Throwing error.");
     throw new HttpsError("internal", "Razorpay API keys are not configured.");
   }
+
+  logger.info("Razorpay API key check passed.");
 
   const { amount, bookingId, user, device } = request.data as {
     amount: number;
