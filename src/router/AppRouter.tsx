@@ -22,6 +22,8 @@ import ResetPassword from '../views/auth/ResetPassword/ResetPassword';
 import VerifyEmail from '../views/auth/VerifyEmail/VerifyEmail';
 import NotFound from '../views/others/NotFound/NotFound';
 import Checkout from '../views/home/Checkout/Checkout';
+import SuccessPage from '../views/home/Checkout/SuccessPage';
+import FailurePage from '../views/home/Checkout/FailurePage';
 import CartPage from '../views/home/CartPage/CartPage';
 import PrivacyPolicy from '../views/home/Legal/PrivacyPolicy';
 import TermsConditions from '../views/home/Legal/TermsConditions';
@@ -61,7 +63,10 @@ const AppRouter = () => {
           <Route path="/my-temples" element={<MyTemples />} />
           <Route path="/my-bookings" element={<MyBookings />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/checkout" element={<Checkout />} />
           <Route path="/checkout/:id" element={<Checkout />} />
+          <Route path="/success" element={<SuccessPage />} />
+          <Route path="/fail" element={<FailurePage />} />
           <Route path="/temple-store" element={<TempleStore />} />
           <Route path="/reset-password" element={<ResetPassword />} />
         </Route>

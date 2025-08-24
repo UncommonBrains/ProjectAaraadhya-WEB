@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../../../context/common/CartContext/CartContext';
-import { getTempleById } from '../../../services/templeService'; 
+import { getTempleById } from '../../../services/templeService';
 import {
   CreditCard,
   CheckCircle,
@@ -11,6 +12,10 @@ import {
   Wallet,
   ArrowLeft,
 } from 'lucide-react';
+import { useAuth } from '../../../hooks/useAuth';
+import { useToast } from '../../../hooks/useToast';
+import { createRazorpayOrder, verifyRazorpayPayment } from '../../../services/razorpay/razorpay';
+import { loadRazorpayScript, openRazorpayCheckout } from '../../../utils/paymentHandler';
 
 // Payment Gateway Types
 enum PaymentGateway {
@@ -45,10 +50,13 @@ const Checkout: React.FC = () => {
   });
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { toast } = useToast();
   const cartContext = useContext(CartContext);
   const cart = cartContext?.cart;
 
-   // State for temple details
+  // State for temple details
   const [templeName, setTempleName] = useState<string | null>(null);
 
   useEffect(() => {
@@ -109,11 +117,69 @@ const Checkout: React.FC = () => {
   const handleProceedWithPayment = async () => {
     setPaymentState((prev) => ({ ...prev, isLoading: true, error: undefined }));
 
-    // Simulate payment processing
-    setTimeout(() => {
+    if (!user || !cart) {
+      toast.error('You must be logged in and have items in your cart to proceed.');
       setPaymentState((prev) => ({ ...prev, isLoading: false }));
-      setIsSubmitted(true);
-    }, 3000);
+      return;
+    }
+
+    const scriptLoaded = await loadRazorpayScript();
+    if (!scriptLoaded) {
+      toast.error('Failed to load payment gateway. Please try again.');
+      setPaymentState((prev) => ({ ...prev, isLoading: false }));
+      return;
+    }
+
+    try {
+      const bookingId = `${user.uid}-${Date.now()}`;
+      const orderPayload = {
+        amount: cart.totalPrice,
+        bookingId: bookingId,
+        user: {
+          id: user.uid,
+          name: user.displayName || 'Anonymous User',
+          email: user.email || 'no-email@example.com',
+          phone: '9999999999', // Razorpay requires a phone number
+        },
+      };
+
+      const result = await createRazorpayOrder(orderPayload);
+      const order = result.data;
+
+      openRazorpayCheckout({
+        order,
+        user: orderPayload.user,
+        onSuccess: async (paymentResult) => {
+          try {
+            const verificationResult = await verifyRazorpayPayment({
+              razorpay_order_id: paymentResult.razorpay_order_id,
+              razorpay_payment_id: paymentResult.razorpay_payment_id,
+              razorpay_signature: paymentResult.razorpay_signature,
+            });
+
+            if (verificationResult.data.ok) {
+              navigate('/success'); // Redirect to success page
+            } else {
+              navigate('/fail'); // Redirect to failure page
+            }
+          } catch (error) {
+            console.error('Payment verification failed:', error);
+            toast.error('Payment verification failed. Please contact support.');
+            navigate('/fail');
+          }
+        },
+        onFailure: () => {
+          toast.info('Payment was cancelled.');
+          navigate('/fail'); // Redirect to failure page
+        },
+      });
+    } catch (error) {
+      console.error('Failed to create Razorpay order:', error);
+      toast.error('Could not initiate payment. Please try again.');
+    } finally {
+      // The loading state will be managed by navigation or modal closure
+      setPaymentState((prev) => ({ ...prev, isLoading: false }));
+    }
   };
 
   const getMethodIcon = (iconType: string) => {
