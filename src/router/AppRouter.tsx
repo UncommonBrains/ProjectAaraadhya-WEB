@@ -42,10 +42,10 @@ const AppRouter = () => {
           <Route path="/divine-seva" element={<DivineSeva />} />
           <Route path="/astrology" element={<Astrology />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
-        <Route path="/terms" element={<TermsConditions />} />
-        <Route path="/refunds" element={<CancellationAndRefund />} />
-        <Route path="/shipping" element={<ShippingDelivery />} />
-        <Route path="/contact-us" element={<ContactUs />} />
+          <Route path="/terms" element={<TermsConditions />} />
+          <Route path="/refunds" element={<CancellationAndRefund />} />
+          <Route path="/shipping" element={<ShippingDelivery />} />
+          <Route path="/contact-us" element={<ContactUs />} />
         </Route>
         {/* Auth Routes */}
         <Route element={<AuthRoutes />}>
@@ -68,7 +68,6 @@ const AppRouter = () => {
         {/* Other Routes */}
         <Route path="/devotee-store" element={<DevoteeStore />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
-        
 
         <Route path="*" element={<NotFound />} />
       </Routes>
