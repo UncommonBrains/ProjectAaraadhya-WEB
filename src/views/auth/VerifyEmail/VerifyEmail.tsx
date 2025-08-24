@@ -18,7 +18,7 @@ const VerifyEmail = () => {
   }, [firebaseUser, loadingUser, error, navigate, toast]);
 
   useEffect(() => {
-    let interval: number;
+    let interval: ReturnType<typeof setInterval>;
     if (success) {
       if (firebaseUser && !firebaseUser.emailVerified) {
         interval = setInterval(async () => {
