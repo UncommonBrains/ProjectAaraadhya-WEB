@@ -1,458 +1,454 @@
-import { useState, useRef } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { CartContext } from '../../../context/common/CartContext/CartContext';
 import {
-  Copy,
   CreditCard,
-  UploadCloud,
   CheckCircle,
   ArrowRight,
-  AlertCircle,
-  ChevronLeft,
+  Loader2,
+  Smartphone,
+  Building2,
+  Wallet,
+  ArrowLeft,
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
-import { useCart } from '../../../hooks/useCart';
-import { useTempleViewModel } from '../../../view-models/temple/useTempleViewModel';
-import { generateUpiUrl, initiateUpiPayment } from '../../../utils/paymentHandler';
-import UpiQrCode from '../../../components/common/UpiQrCode';
-import { PaymentDetails, PaymentMethod } from './types';
-import { useBookingViewModel } from '../../../view-models/booking/useBookingViewModel';
 import { useAuth } from '../../../hooks/useAuth';
-import { BookingStatus } from '../../../models/entities/Booking';
-import { toast } from '../../../utils/toast';
-import { getDateFromISOString } from '../../../utils/dateFormatters';
+import { useToast } from '../../../hooks/useToast';
+// Import your new typed Razorpay service functions
+import {
+  loadRazorpayScript,
+  createRazorpayOrder,
+  openRazorpayCheckout,
+  verifyRazorpayPayment,
+} from '../../../services/razorpayService'; // Adjust path as needed
+
+// Payment Gateway Types
+enum PaymentGateway {
+  RAZORPAY = 'razorpay',
+  CASHFREE = 'cashfree',
+}
+
+interface PaymentMethod {
+  id: string;
+  name: string;
+  type: 'card' | 'upi' | 'wallet' | 'netbanking' | 'cod' | 'payment_gateway';
+  description: string;
+  icon: string;
+  balance?: string;
+  gateway: PaymentGateway;
+  lastUsed?: string;
+  disabled?: boolean;
+}
+
+interface PaymentProcessingState {
+  isLoading: boolean;
+  selectedMethod: string;
+  error?: string;
+  showConfirmation: boolean;
+}
 
 const Checkout: React.FC = () => {
+  const [paymentState, setPaymentState] = useState<PaymentProcessingState>({
+    isLoading: false,
+    selectedMethod: 'razorpay_gateway',
+    showConfirmation: false,
+  });
   const navigate = useNavigate();
-  const { firebaseUser } = useAuth();
-  const { bookPooja, loading } = useBookingViewModel();
-  const { cart } = useCart();
-  const { temple } = useTempleViewModel();
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { user } = useAuth();
+  const { showToast } = useToast();
+  const cartContext = useContext(CartContext);
+  const cart = cartContext?.cart;
 
-  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>({
-    paymentMethod: undefined,
-    screenshot: null,
-  });
+  // State for temple details
+  const [templeName, setTempleName] = useState<string | null>(null);
 
-  const [copied, setCopied] = useState<{ [key: string]: boolean }>({
-    accountNumber: false,
-    ifsc: false,
-    upi: false,
-  });
+  
 
-  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
-  const hasBankDetails = true; // Set to true or false based on your needs
-  const hasUpiDetails = true; // Set to true or false based on your needs
 
-  // Handle navigating back (dummy implementation)
+  // Payment Methods Configuration (Only Razorpay & Cashfree
+  const paymentMethods: PaymentMethod[] = [
+    {
+      id: 'razorpay_gateway',
+      name: 'Razorpay',
+      type: 'payment_gateway',
+      description: 'Pay securely via Razorpay',
+      icon: 'mastercard',
+      gateway: PaymentGateway.RAZORPAY,
+      disabled: false,
+    },
+    {
+      id: 'cashfree_gateway',
+      name: 'Cashfree',
+      type: 'payment_gateway',
+      description: 'Pay securely via Cashfree',
+      icon: 'cards',
+      gateway: PaymentGateway.CASHFREE,
+      disabled: true,
+    },
+  ];
+
+  const selectedPaymentMethod = paymentMethods.find(
+    (method) => method.id === paymentState.selectedMethod,
+  );
+
   const handleGoBack = () => {
-    navigate(-1);
+    setPaymentState((prev) => ({ ...prev, showConfirmation: false }));
   };
 
-  // Copy to clipboard functionality
-  const copyToClipboard = (text: string, field: string) => {
-    navigator.clipboard.writeText(text);
-    setCopied({ ...copied, [field]: true });
-
-    setTimeout(() => {
-      setCopied({ ...copied, [field]: false });
-    }, 2000);
+  const handleUsePaymentMethod = () => {
+    setPaymentState((prev) => ({ ...prev, showConfirmation: true }));
   };
 
-  const handleUpiPayment = () => {
-    if (!temple?.advancedOptions?.bankDetails || !cart) {
-      console.error('Missing required data: bank details or cart');
+  const handleProceedWithPayment = async () => {
+    setPaymentState((prev) => ({ ...prev, isLoading: true, error: undefined }));
+
+    if (!user || !cart) {
+      showToast('You must be logged in and have items in your cart to proceed.', 'error');
+      setPaymentState((prev) => ({ ...prev, isLoading: false }));
       return;
     }
 
-    const { upiId, accountHolderName } = temple?.advancedOptions?.bankDetails;
-    const { totalPrice } = cart;
-
-    initiateUpiPayment(
-      accountHolderName,
-      upiId,
-      totalPrice,
-      `Payment for ${temple.basicDetails?.templeName}`,
-    );
-  };
-
-  // Handle file upload
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setPaymentDetails({
-        ...paymentDetails,
-        screenshot: e.target.files[0],
-      });
+    const scriptLoaded = await loadRazorpayScript();
+    if (!scriptLoaded) {
+      showToast('Failed to load payment gateway. Please try again.', 'error');
+      setPaymentState((prev) => ({ ...prev, isLoading: false }));
+      return;
     }
-  };
-
-  // Submit payment confirmation
-  const handleSubmitPayment = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!paymentDetails.paymentMethod || !paymentDetails.screenshot)
-      return toast.error('Please select a payment method and upload a screenshot.');
-
-    if (!firebaseUser?.uid || !temple?.id || !cart?.items || cart?.items.length < 1) return;
 
     try {
-      await bookPooja({
-        userId: firebaseUser.uid,
-        templeId: temple.id,
-        poojas: cart.items.map(({ poojaId, scheduleId, poojaDate, name, starSign, members }) => ({
-          id: uuidv4(),
-          poojaId,
-          scheduleId,
-          poojaDate,
-          name,
-          starSign,
-          members,
-          isCompleted: false,
-        })),
-        price: cart.totalPrice,
-        status: BookingStatus.PENDING,
-        paymentDetails: {
-          paymentMethod: paymentDetails.paymentMethod,
-          screenshot: paymentDetails.screenshot,
+      const bookingId = `${user.uid}-${Date.now()}`;
+      const orderPayload = {
+        amount: parseFloat(cart.totalPrice),
+        bookingId: bookingId,
+        user: {
+          id: user.uid,
+          name: user.displayName || 'Anonymous User',
+          email: user.email || 'no-email@example.com',
+          phone: '9999999999', // Razorpay requires a phone number
         },
-        poojaDates: cart.items.map(({ poojaDate }) => getDateFromISOString(poojaDate)),
-      });
+      };
 
-      setIsSubmitted(true);
+      const result = await createRazorpayOrder(orderPayload);
+      const order = result.data;
+
+      openRazorpayCheckout({
+        order,
+        user: orderPayload.user,
+        onSuccess: async (paymentResult) => {
+          try {
+            const verificationResult = await verifyRazorpayPayment({
+              razorpay_order_id: paymentResult.razorpay_order_id,
+              razorpay_payment_id: paymentResult.razorpay_payment_id,
+              razorpay_signature: paymentResult.razorpay_signature,
+            });
+
+            if (verificationResult.data.ok) {
+              navigate('/success'); // Redirect to success page
+            } else {
+              navigate('/fail'); // Redirect to failure page
+            }
+          } catch (error) {
+            console.error('Payment verification failed:', error);
+            showToast('Payment verification failed. Please contact support.', 'error');
+            navigate('/fail');
+          }
+        },
+        onFailure: () => {
+          showToast('Payment was cancelled.', 'info');
+          navigate('/fail'); // Redirect to failure page
+        },
+      });
     } catch (error) {
-      toast.error('Something went wrong. Please try again later.');
+      console.error('Failed to create Razorpay order:', error);
+      showToast('Could not initiate payment. Please try again.', 'error');
+    } finally {
+      // The loading state will be managed by navigation or modal closure
+      setPaymentState((prev) => ({ ...prev, isLoading: false }));
     }
   };
 
-  const renderQrCode = () => {
-    if (!temple?.advancedOptions?.bankDetails || !cart) return null;
-
-    const { upiId, accountHolderName } = temple?.advancedOptions?.bankDetails;
-    const { totalPrice } = cart;
-
-    const upiUrl = generateUpiUrl(
-      accountHolderName,
-      upiId,
-      totalPrice,
-      `Payment for ${temple.basicDetails?.templeName}`,
-    );
-
-    return (
-      <div className="rounded-lg border border-amber-100 bg-white p-4">
-        <UpiQrCode upiUrl={upiUrl} />
-      </div>
-    );
+  const getMethodIcon = (iconType: string) => {
+    const iconProps = 'h-6 w-6';
+    switch (iconType) {
+      case 'mastercard':
+        return <div className="rounded bg-red-500 p-1 text-xs font-bold text-white">MC</div>;
+      case 'visa':
+        return <div className="rounded bg-blue-600 p-1 text-xs font-bold text-white">VISA</div>;
+      case 'bajaj':
+        return <div className="rounded bg-blue-700 p-1 text-xs font-bold text-white">B</div>;
+      case 'upi':
+        return <Smartphone className={iconProps} />;
+      case 'amazon':
+        return <div className="rounded bg-orange-500 p-1 text-xs font-bold text-white">A</div>;
+      case 'gift':
+        return <div className="rounded bg-green-500 p-1 text-xs font-bold text-white">G</div>;
+      case 'hdfc':
+        return <div className="rounded bg-blue-800 p-1 text-xs font-bold text-white">H</div>;
+      case 'cards':
+        return <CreditCard className={iconProps} />;
+      case 'bank':
+        return <Building2 className={iconProps} />;
+      case 'emi':
+        return <div className="rounded bg-purple-600 p-1 text-xs font-bold text-white">EMI</div>;
+      case 'cash':
+        return <Wallet className={iconProps} />;
+      default:
+        return <CreditCard className={iconProps} />;
+    }
   };
 
-  // UPI details display
-  const renderUpiDetails = () => {
-    if (!hasUpiDetails) return null;
-
+  const renderPaymentMethods = () => {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white p-4">
-        <div className="mb-2 flex items-center justify-between">
-          <h3 className="font-medium text-amber-900">UPI Payment Details</h3>
+      <div className="rounded-lg border border-gray-200 bg-white">
+        <div className="border-b border-gray-200 p-4">
+          <h3 className="font-medium text-gray-900">Payment method</h3>
         </div>
-
-        <div className="space-y-3">
-          {temple?.advancedOptions?.bankDetails?.accountHolderName && (
-            <div>
-              <p className="text-xs text-gray-500">UPI Name</p>
-              <p className="text-sm font-medium text-gray-700">
-                {temple?.advancedOptions?.bankDetails?.accountHolderName}
-              </p>
+        <div className="divide-y divide-gray-200">
+          <div className="p-4">
+            <div className="space-y-2">
+              {paymentMethods.map((method) => (
+                <div
+                  key={method.id}
+                  className={`flex items-center rounded border p-3 transition-colors ${
+                    method.disabled
+                      ? 'cursor-not-allowed border-gray-200 bg-gray-50 opacity-60'
+                      : paymentState.selectedMethod === method.id
+                        ? 'cursor-pointer border-orange-500 bg-orange-50'
+                        : 'cursor-pointer border-gray-200 hover:bg-gray-50'
+                  }`}
+                  onClick={() =>
+                    !method.disabled &&
+                    setPaymentState((prev) => ({ ...prev, selectedMethod: method.id }))
+                  }
+                >
+                  <input
+                    type="radio"
+                    name="payment-method"
+                    value={method.id}
+                    checked={paymentState.selectedMethod === method.id && !method.disabled}
+                    disabled={method.disabled}
+                    onChange={() => {}}
+                    className="mr-3 text-orange-500"
+                  />
+                  <div className="mr-3">{getMethodIcon(method.icon)}</div>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-gray-900">{method.name}</span>
+                    </div>
+                    <div className="text-sm text-gray-600">{method.description}</div>
+                  </div>
+                </div>
+              ))}
             </div>
-          )}
-
-          <div>
-            <div className="flex items-center justify-between">
-              <p className="text-xs text-gray-500">UPI ID</p>
-              <button
-                className="flex items-center text-xs text-amber-600"
-                onClick={() =>
-                  copyToClipboard(temple?.advancedOptions?.bankDetails?.upiId ?? '', 'upi')
-                }
-              >
-                {copied.upi ? (
-                  <>
-                    <CheckCircle className="mr-1 h-3 w-3" />
-                    Copied
-                  </>
-                ) : (
-                  <>
-                    <Copy className="mr-1 h-3 w-3" />
-                    Copy
-                  </>
-                )}
-              </button>
-            </div>
-            <p className="text-sm font-medium text-gray-700">
-              {temple?.advancedOptions?.bankDetails?.upiId}
-            </p>
           </div>
         </div>
-        <button
-          className="my-4 flex w-full items-center justify-center rounded-lg bg-amber-500 px-4 py-3 font-medium text-white shadow-sm"
-          onClick={handleUpiPayment}
-        >
-          <CreditCard className="mr-2 h-5 w-5" />
-          Pay via UPI App
-        </button>
-        <div className="my-4 flex w-full items-center">
-          <div className="h-px flex-grow bg-amber-300 dark:bg-amber-700" />
-          <span className="px-3 text-sm font-medium text-amber-500 dark:text-amber-400">OR</span>
-          <div className="h-px flex-grow bg-amber-300 dark:bg-amber-700" />
-        </div>
-        {renderQrCode()}
-      </div>
-    );
-  };
-
-  // Bank account details display
-  const renderBankDetails = () => {
-    if (!hasBankDetails) return null;
-
-    return (
-      <div className="rounded-lg border border-gray-200 bg-white p-4">
-        <div className="mb-2 flex items-center justify-between">
-          <h3 className="font-medium text-amber-900">Bank Transfer Details</h3>
-        </div>
-
-        <div className="space-y-3">
-          <div>
-            <p className="text-xs text-gray-500">Account Holder Name</p>
-            <p className="text-sm font-medium text-gray-700">
-              {temple?.advancedOptions?.bankDetails?.accountHolderName}
-            </p>
-          </div>
-
-          <div>
-            <p className="text-xs text-gray-500">Bank Name</p>
-            <p className="text-sm font-medium text-gray-700">
-              {temple?.advancedOptions?.bankDetails?.bankName}
-            </p>
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between">
-              <p className="text-xs text-gray-500">Account Number</p>
-              <button
-                className="flex items-center text-xs text-amber-600"
-                onClick={() =>
-                  copyToClipboard(
-                    temple?.advancedOptions?.bankDetails?.accountNumber ?? '',
-                    'accountNumber',
-                  )
-                }
-              >
-                {copied.accountNumber ? (
-                  <>
-                    <CheckCircle className="mr-1 h-3 w-3" />
-                    Copied
-                  </>
-                ) : (
-                  <>
-                    <Copy className="mr-1 h-3 w-3" />
-                    Copy
-                  </>
-                )}
-              </button>
-            </div>
-            <p className="text-sm font-medium text-gray-700">
-              {temple?.advancedOptions?.bankDetails?.accountNumber}
-            </p>
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between">
-              <p className="text-xs text-gray-500">IFSC Code</p>
-              <button
-                className="flex items-center text-xs text-amber-600"
-                onClick={() =>
-                  copyToClipboard(temple?.advancedOptions?.bankDetails?.ifscCode ?? '', 'ifsc')
-                }
-              >
-                {copied.ifsc ? (
-                  <>
-                    <CheckCircle className="mr-1 h-3 w-3" />
-                    Copied
-                  </>
-                ) : (
-                  <>
-                    <Copy className="mr-1 h-3 w-3" />
-                    Copy
-                  </>
-                )}
-              </button>
-            </div>
-            <p className="text-sm font-medium text-gray-700">
-              {temple?.advancedOptions?.bankDetails?.ifscCode}
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  // Payment confirmation form
-  const renderPaymentForm = () => {
-    if (isSubmitted) {
-      return (
-        <div className="mt-4 rounded-lg bg-green-50 p-4">
-          <div className="flex items-center space-x-2">
-            <CheckCircle className="h-5 w-5 text-green-500" />
-            <h3 className="font-medium text-green-700">
-              Your pooja has been successfully booked! (payment verification in progress)
-            </h3>
-          </div>
-          <p className="mt-2 text-sm text-green-600">
-            We're currently verifying your payment with the temple administrator. You'll receive an
-            update on your booking status shortly.
-          </p>
+        {/* Use this payment method button */}
+        <div className="border-t border-gray-200 bg-gray-50 p-4">
           <button
-            className="mt-4 flex w-full items-center justify-center rounded-lg bg-amber-600 px-4 py-3 font-medium text-white"
-            onClick={() =>
-              navigate('/my-bookings', {
-                replace: true,
-              })
-            }
+            onClick={handleUsePaymentMethod}
+            disabled={!paymentState.selectedMethod}
+            className={`w-full rounded px-4 py-2 text-sm font-medium transition-colors ${
+              !paymentState.selectedMethod
+                ? 'cursor-not-allowed bg-gray-300 text-gray-500'
+                : 'bg-yellow-400 text-gray-900 hover:bg-yellow-500'
+            }`}
           >
-            View Your Bookings
-            <ArrowRight className="ml-2 h-4 w-4" />
+            Use this payment method
           </button>
         </div>
-      );
-    }
+      </div>
+    );
+  };
 
+  const renderPaymentConfirmation = () => {
     return (
-      <form onSubmit={handleSubmitPayment} className="mt-4">
-        <div className="rounded-lg border border-amber-100 bg-white p-4">
-          <h3 className="mb-3 font-medium text-amber-900">Payment Confirmation</h3>
-
-          <div className="mb-4">
-            <label className="mb-1 block text-sm font-medium text-gray-700">Payment Method</label>
-            <select
-              className="w-full rounded-lg border border-amber-200 p-2 focus:ring-2 focus:ring-amber-300 focus:outline-none"
-              value={paymentDetails.paymentMethod}
-              onChange={(e) =>
-                setPaymentDetails({
-                  ...paymentDetails,
-                  paymentMethod: e.target.value as PaymentMethod,
-                })
-              }
-            >
-              <option value="">Select Payment Method</option>
-              <option key={PaymentMethod.UPI} value={PaymentMethod.UPI}>
-                {PaymentMethod.UPI}
-              </option>
-              <option key={PaymentMethod.BANK_TRANSFER} value={PaymentMethod.BANK_TRANSFER}>
-                {PaymentMethod.BANK_TRANSFER}
-              </option>
-            </select>
-          </div>
-
-          <div className="mb-4">
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              Payment Screenshot (Optional)
-            </label>
-            <div
-              className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-amber-200 p-6 hover:bg-amber-50"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              {paymentDetails.screenshot ? (
-                <div className="text-center">
-                  <CheckCircle className="mx-auto mb-2 h-8 w-8 text-green-500" />
-                  <p className="text-sm font-medium text-green-600">
-                    {paymentDetails.screenshot.name}
-                  </p>
-                  <p className="mt-1 text-xs text-gray-500">Click to change file</p>
-                </div>
-              ) : (
-                <div className="text-center">
-                  <UploadCloud className="mx-auto mb-2 h-8 w-8 text-amber-400" />
-                  <p className="text-sm text-gray-600">Click to upload screenshot</p>
-                  <p className="mt-1 text-xs text-gray-500">PNG, JPG up to 5MB</p>
-                </div>
-              )}
-              <input
-                type="file"
-                className="hidden"
-                ref={fileInputRef}
-                accept="image/*"
-                onChange={handleFileChange}
-              />
-            </div>
-          </div>
-
-          <div className="rounded-md bg-amber-50 p-3">
-            <div className="flex">
-              <AlertCircle className="h-5 w-5 text-amber-500" />
-              <div className="ml-3">
-                <p className="text-sm text-amber-700">
-                  Please complete your payment before submitting this form. Once submitted, our team
-                  will verify your payment.
-                </p>
-              </div>
-            </div>
-          </div>
-
+      <div className="rounded-lg border border-gray-200 bg-white">
+        {/* Header with back button */}
+        <div className="border-b border-gray-200 p-4">
           <button
-            type="submit"
-            className="mt-4 flex w-full items-center justify-center rounded-lg bg-amber-600 px-4 py-3 font-medium text-white"
-            disabled={loading}
+            onClick={handleGoBack}
+            className="mb-3 flex items-center text-sm text-gray-600 hover:text-gray-800"
           >
-            {loading ? (
-              <>Processing...</>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to payment methods
+          </button>
+          <h3 className="font-medium text-gray-900">
+            Proceed with payment using {selectedPaymentMethod?.name}
+          </h3>
+        </div>
+
+        {/* Selected Payment Method Display */}
+        <div className="border-b border-gray-200 p-4">
+          <div className="flex items-center rounded border border-orange-500 bg-orange-50 p-3">
+            <div className="mr-3">{getMethodIcon(selectedPaymentMethod?.icon || 'cards')}</div>
+            <div className="flex-1">
+              <div className="flex items-center justify-between">
+                <span className="font-medium text-gray-900">{selectedPaymentMethod?.name}</span>
+                <CheckCircle className="h-5 w-5 text-green-500" />
+              </div>
+              <div className="text-sm text-gray-600">{selectedPaymentMethod?.description}</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Order Summary in Payment Confirmation */}
+        <div className="border-b border-gray-200 p-4">
+          <h4 className="mb-3 font-medium text-gray-900">Order Summary</h4>
+          <div className="space-y-2">
+            {cart?.items.map((item) => (
+              <div key={item.id} className="flex justify-between text-sm">
+                <div>
+                  <div className="font-medium text-gray-900">
+                    {item.name || item.poojaDetails?.name}
+                  </div>
+                  <div className="text-gray-600">Date: {item.poojaDate}</div>
+                </div>
+                <div className="font-medium text-gray-900">₹{item.price}</div>
+              </div>
+            ))}
+          </div>
+
+          <hr className="my-3" />
+
+          <div className="space-y-1 text-sm">
+            <div className="flex justify-between text-gray-600">
+              <span>Subtotal:</span>
+              <span>
+                ₹{cart?.items.reduce((sum, item) => sum + parseFloat(item.price), 0) || '0.00'}
+              </span>
+            </div>
+            <div className="flex justify-between text-gray-600">
+              <span>Transaction Charges:</span>
+              <span>₹0.00</span>
+            </div>
+            <div className="flex justify-between border-t border-gray-200 pt-2 font-medium text-gray-900">
+              <span>Total Amount:</span>
+              <span>₹{cart?.totalPrice || '0.00'}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Proceed with Payment button */}
+        <div className="bg-gray-50 p-4">
+          <button
+            onClick={handleProceedWithPayment}
+            disabled={paymentState.isLoading}
+            className={`w-full rounded px-4 py-3 text-sm font-medium transition-colors ${
+              paymentState.isLoading
+                ? 'cursor-not-allowed bg-gray-300 text-gray-500'
+                : 'bg-green-600 text-white hover:bg-green-700'
+            }`}
+          >
+            {paymentState.isLoading ? (
+              <div className="flex items-center justify-center">
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Processing Payment...
+              </div>
             ) : (
-              <>
-                Checkout
-                <CheckCircle className="ml-2 h-4 w-4" />
-              </>
+              `Proceed with Payment using ${selectedPaymentMethod?.name}`
             )}
           </button>
+
+          <div className="mt-2 text-center text-xs text-gray-500">
+            You will be redirected to {selectedPaymentMethod?.name} to complete your payment
+          </div>
         </div>
-      </form>
+      </div>
     );
   };
 
   return (
-    <div className="min-h-screen bg-amber-50 font-sans">
-      {/* Header with back button */}
-      <header className="sticky top-0 z-10 bg-white p-4 shadow-sm">
-        <div className="container mx-auto flex items-center justify-between">
-          <div onClick={handleGoBack} className="flex cursor-pointer items-center text-amber-900">
-            <ChevronLeft className="mr-2 h-5 w-5" />
-            <span>Back</span>
+    <div className="min-h-screen bg-gray-50 font-sans">
+      {/* Header */}
+      <header className="bg-gray-900 p-4 text-white">
+        <div className="container mx-auto flex max-w-6xl items-center justify-between">
+          <div className="text-xl font-bold text-white">
+            {paymentState.showConfirmation ? 'Confirm Payment' : 'Secure checkout'}
           </div>
-          <h1 className="font-serif text-xl text-amber-900">Complete Payment</h1>
-          <div className="w-16"></div> {/* Empty div for balanced centering */}
+          <div className="w-16"></div>
         </div>
       </header>
 
-      {/* Main content */}
-      <div className="container mx-auto max-w-lg p-4">
-        {/* Order Summary */}
-        <div className="mb-4 rounded-lg bg-white p-4 shadow-sm">
-          <h2 className="mb-2 font-serif text-lg text-amber-900">Order Summary</h2>
-          <div className="flex justify-between border-b border-dashed border-amber-100 pb-2">
-            <span className="text-gray-600">Total Amount</span>
-            <span className="font-medium text-amber-900">₹{cart?.totalPrice}</span>
+      <div className="container mx-auto max-w-6xl p-4 py-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          {/* Left Column - Payment Methods or Confirmation */}
+          <div className="lg:col-span-2">
+            {/* Delivery Address */}
+            <div className="mb-4 rounded-lg border border-gray-200 bg-white">
+              <div className="flex items-center justify-between border-b border-gray-200 p-4">
+                <div className="flex items-center">
+                  <h3 className="font-medium text-gray-900">
+                      {cart?.items?.[0]?.templeId
+                      ? `Booking for poojas at ${templeName}`
+                      : 'Booking for poojas'}
+                  </h3>
+                </div>
+              </div>
+            </div>
+
+            {/* Payment Methods or Confirmation */}
+            {paymentState.showConfirmation ? renderPaymentConfirmation() : renderPaymentMethods()}
           </div>
 
-          <div className="mt-2 text-sm text-gray-600">
-            <p>Temple: {temple?.basicDetails?.templeName}</p>
+          {/* Right Column - Order Summary */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-4 rounded-lg border border-gray-200 bg-white p-4">
+              {!paymentState.showConfirmation && (
+                <>
+                  <button
+                    onClick={handleUsePaymentMethod}
+                    disabled={!paymentState.selectedMethod}
+                    className={`mb-4 w-full rounded px-4 py-3 text-sm font-medium transition-colors ${
+                      !paymentState.selectedMethod
+                        ? 'cursor-not-allowed bg-gray-300 text-gray-500'
+                        : 'bg-yellow-400 text-gray-900 hover:bg-yellow-500'
+                    }`}
+                  >
+                    Use this payment method
+                  </button>
+
+                  <div className="mb-4 text-sm text-gray-600">
+                    Choose a payment method to continue checking out. You'll still have a chance to
+                    review and edit your order before it's final.
+                  </div>
+
+                  <hr className="my-4" />
+                </>
+              )}
+
+              <h4 className="mb-3 font-medium text-gray-900">
+                Order Total: <span className="float-right">₹{cart?.totalPrice || '0.00'}</span>
+              </h4>
+
+              <div className="space-y-1 text-sm text-gray-600">
+                <div className="flex justify-between">
+                  <span>Items:</span>
+                  <span>
+                    ₹{cart?.items.reduce((sum, item) => sum + parseFloat(item.price), 0) || '0.00'}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Transaction Charges:</span>
+                  <span>₹0.00</span>
+                </div>
+                <div className="flex justify-between border-t border-gray-200 pt-2 font-medium text-gray-900">
+                  <span>Order Total:</span>
+                  <span>₹{cart?.totalPrice || '0.00'}</span>
+                </div>
+              </div>
+
+              <hr className="my-4" />
+
+              <div className="text-xs text-gray-500">
+                <p className="mb-2">How are delivery costs calculated?</p>
+                <p>
+                  By placing your order, you agree to Temple Pooja's privacy notice and conditions
+                  of use.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
-
-        {/* Payment Methods */}
-        <div className="mb-4 space-y-3">
-          {renderUpiDetails()}
-          {renderBankDetails()}
-        </div>
-
-        {/* Payment Confirmation Form */}
-        {renderPaymentForm()}
       </div>
     </div>
   );
