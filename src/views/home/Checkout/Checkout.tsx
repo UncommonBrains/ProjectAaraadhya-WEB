@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../../hooks/useAuth';
 import { useToast } from '../../../hooks/useToast';
+import { createOrder, openCheckout } from '../../../services/payments';
 
 // Payment Gateway Types
 enum PaymentGateway {
@@ -47,7 +48,6 @@ const Checkout: React.FC = () => {
   const { showToast } = useToast();
   const cartContext = useContext(CartContext);
   const cart = cartContext?.cart;
-  
 
   // State for temple details
   const [templeName] = useState<string | null>(null);
@@ -87,35 +87,63 @@ const Checkout: React.FC = () => {
   };
 
   const handleProceedWithPayment = async () => {
-    setPaymentState((prev) => ({ ...prev, isLoading: true, error: undefined }));
+  setPaymentState((prev) => ({ ...prev, isLoading: true, error: undefined }));
 
-    if (!user || !cart) {
-      showToast('You must be logged in and have items in your cart to proceed.', 'error');
-      setPaymentState((prev) => ({ ...prev, isLoading: false }));
-      return;
-    }
+  if (!user || !cart) {
+    showToast("You must be logged in and have items in your cart to proceed.", "error");
+    setPaymentState((prev) => ({ ...prev, isLoading: false }));
+    return;
+  }
 
-    // TODO: Implement payment processing logic here
-    // This is where you would integrate with your chosen payment gateway
+  try {
+    // cart.totalPrice is a string → convert to number
+    const amountInPaise = Math.round(Number(cart.totalPrice || "0") * 100);
 
-    try {
-      // Simulate processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // TODO: Replace with actual payment processing
-      console.log('Payment processing would happen here');
-      showToast('Payment processing functionality needs to be implemented', 'info');
-      
-      // For demo purposes - remove this in actual implementation
-      // navigate('/success');
-      
-    } catch (error) {
-      console.error('Payment processing error:', error);
-      showToast('Could not initiate payment. Please try again.', 'error');
-    } finally {
-      setPaymentState((prev) => ({ ...prev, isLoading: false }));
-    }
-  };
+    // No bookingId in Cart → generate one
+    const bookingId = `booking-${Date.now()}`;
+
+    const order = await createOrder({
+      amount: amountInPaise,
+      bookingId,
+      user: {
+        id: (user as any).uid || "",
+        name: user.displayName ?? "",
+        email: user.email ?? "",
+        phone: (user as any).phoneNumber ?? "",
+      },
+      device: navigator.userAgent,
+    });
+
+    await openCheckout({
+      orderId: order.orderId,
+      amount: order.amount,
+      user: {
+        id: (user as any).uid || "",
+        name: user.displayName ?? "",
+        email: user.email ?? "",
+        phone: (user as any).phoneNumber ?? "",
+      },
+      onSuccess: async (res: { order_id: string; payment_id: string; signature: string }) => {
+        await fetch("/api/payments/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(res),
+        });
+        showToast("Payment success & verified!", "success");
+      },
+      onFailure: (err: any) => {
+        console.error("Payment failed", err);
+        showToast("Payment failed", "error");
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    showToast("Could not start payment", "error");
+  } finally {
+    setPaymentState((prev) => ({ ...prev, isLoading: false }));
+  }
+};
+
 
   const getMethodIcon = (iconType: string) => {
     const iconProps = 'h-6 w-6';
@@ -328,7 +356,7 @@ const Checkout: React.FC = () => {
               <div className="flex items-center justify-between border-b border-gray-200 p-4">
                 <div className="flex items-center">
                   <h3 className="font-medium text-gray-900">
-                      {cart?.items?.[0]?.templeId
+                    {cart?.items?.[0]?.templeId
                       ? `Booking for poojas at ${templeName}`
                       : 'Booking for poojas'}
                   </h3>
