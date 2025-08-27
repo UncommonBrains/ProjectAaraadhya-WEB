@@ -47,6 +47,7 @@ const Checkout: React.FC = () => {
   const { showToast } = useToast();
   const cartContext = useContext(CartContext);
   const cart = cartContext?.cart;
+  
 
   // State for temple details
   const [templeName] = useState<string | null>(null);
