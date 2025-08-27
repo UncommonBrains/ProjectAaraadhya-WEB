@@ -1,11 +1,33 @@
+// src/types/razorpay.d.ts
+
+interface RazorpaySuccessResponse {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+}
+
+interface RazorpayFailureResponse {
+  error: {
+    code: string;
+    description: string;
+    source: string;
+    step: string;
+    reason: string;
+    metadata: {
+      order_id: string;
+      payment_id: string;
+    };
+  };
+}
+
 interface RazorpayOptions {
   key: string;
-  amount: number;
-  currency: string;
+  amount: number;          // in paise
+  currency: string;        // e.g. "INR"
   name?: string;
   description?: string;
   order_id?: string;
-  handler?: (response: any) => void;
+  handler?: (response: RazorpaySuccessResponse) => void;
   prefill?: {
     name?: string;
     email?: string;
@@ -19,8 +41,9 @@ interface RazorpayOptions {
 
 interface RazorpayInstance {
   open: () => void;
-  on: (event: string, callback: (response: any) => void) => void;
   close: () => void;
+  on: (event: "payment.failed", callback: (response: RazorpayFailureResponse) => void) => void;
+  on: (event: string, callback: (response: any) => void) => void; // fallback for other events
 }
 
 interface Window {
