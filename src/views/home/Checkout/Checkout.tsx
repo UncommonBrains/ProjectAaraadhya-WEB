@@ -1,10 +1,8 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../../../context/common/CartContext/CartContext';
 import {
   CreditCard,
   CheckCircle,
-  ArrowRight,
   Loader2,
   Smartphone,
   Building2,
@@ -45,14 +43,13 @@ const Checkout: React.FC = () => {
     selectedMethod: 'razorpay_gateway',
     showConfirmation: false,
   });
-  const navigate = useNavigate();
   const { user } = useAuth();
   const { showToast } = useToast();
   const cartContext = useContext(CartContext);
   const cart = cartContext?.cart;
 
   // State for temple details
-  const [templeName, setTempleName] = useState<string | null>(null);
+  const [templeName] = useState<string | null>(null);
 
   // Payment Methods Configuration (Only Razorpay & Cashfree)
   const paymentMethods: PaymentMethod[] = [
