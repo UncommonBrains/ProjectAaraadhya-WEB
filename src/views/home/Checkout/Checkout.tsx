@@ -13,13 +13,6 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../../hooks/useAuth';
 import { useToast } from '../../../hooks/useToast';
-// Import your new typed Razorpay service functions
-import {
-  loadRazorpayScript,
-  createRazorpayOrder,
-  openRazorpayCheckout,
-  verifyRazorpayPayment,
-} from '../../../services/razorpayService'; // Adjust path as needed
 
 // Payment Gateway Types
 enum PaymentGateway {
@@ -61,10 +54,6 @@ const Checkout: React.FC = () => {
   // State for temple details
   const [templeName, setTempleName] = useState<string | null>(null);
 
-  
-
-
-
   // Payment Methods Configuration (Only Razorpay & Cashfree
   const paymentMethods: PaymentMethod[] = [
     {
@@ -99,73 +88,195 @@ const Checkout: React.FC = () => {
     setPaymentState((prev) => ({ ...prev, showConfirmation: true }));
   };
 
-  const handleProceedWithPayment = async () => {
-    setPaymentState((prev) => ({ ...prev, isLoading: true, error: undefined }));
+  const handlePayment = async () => {
+    console.log('User UID:', user?.uid);
 
-    if (!user || !cart) {
-      showToast('You must be logged in and have items in your cart to proceed.', 'error');
-      setPaymentState((prev) => ({ ...prev, isLoading: false }));
+    if (!user?.uid) {
+      alert('Please login to continue');
       return;
     }
 
-    const scriptLoaded = await loadRazorpayScript();
-    if (!scriptLoaded) {
-      showToast('Failed to load payment gateway. Please try again.', 'error');
-      setPaymentState((prev) => ({ ...prev, isLoading: false }));
-      return;
-    }
+    setPaymentState({ isLoading: true }); // Set loading state
 
     try {
-      const bookingId = `${user.uid}-${Date.now()}`;
-      const orderPayload = {
-        amount: parseFloat(cart.totalPrice),
-        bookingId: bookingId,
-        user: {
-          id: user.uid,
-          name: user.displayName || 'Anonymous User',
-          email: user.email || 'no-email@example.com',
-          phone: '9999999999', // Razorpay requires a phone number
+      console.log('Making request to create order...');
+
+      const response = await fetch('https://createrazorpayorder-t5n6l44z2q-uc.a.run.app', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ uid: user.uid }),
+      });
+
+      console.log('Response status:', response.status);
+      console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+
+      // Get response text first to see what we're dealing with
+      const responseText = await response.text();
+      console.log('Raw response:', responseText);
+
+      // Check if response is ok
+      if (!response.ok) {
+        console.error('Server error response:', responseText);
+        throw new Error(`Server error: ${response.status} - ${responseText}`);
+      }
+
+      // Parse JSON
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Failed to parse response JSON:', parseError);
+        throw new Error('Invalid response format from server');
+      }
+
+      console.log('Parsed order data:', data);
+
+      // Check for order data - updated to match your backend response
+      if (!data.order) {
+        const errorMsg = data.error || 'Unknown error occurred';
+        console.error('No order in response:', errorMsg);
+        alert('Error creating order: ' + errorMsg);
+        return;
+      }
+
+      // Validate order data
+      if (!data.order.id || !data.order.amount) {
+        console.error('Invalid order data:', data.order);
+        alert('Invalid order data received from server');
+        return;
+      }
+
+      console.log('Order created successfully, initializing Razorpay...');
+
+      const options = {
+        key: 'rzp_test_R79F1bWUTRYNZh', // Your Razorpay Key ID
+        amount: data.order.amount,
+        currency: 'INR',
+        name: 'Your Company Name',
+        description: 'Demo Payment',
+        image: 'https://your-logo-url.com/logo.png',
+        order_id: data.order.id,
+        prefill: {
+          name: user.displayName || 'Test User',
+          email: user.email || 'test@example.com',
+          contact: '9999999999',
+        },
+        theme: {
+          color: '#F37254',
+        },
+        handler: (response: {
+          razorpay_payment_id: string;
+          razorpay_order_id: string;
+          razorpay_signature: string;
+        }) => {
+          console.log('Payment successful:', response);
+          alert('Payment Successful!\nPayment ID: ' + response.razorpay_payment_id);
+          // Here you can call another function to verify payment on backend
+          // and update order status in database
+          setPaymentState({ isLoading: false });
+        },
+        modal: {
+          ondismiss: () => {
+            console.log('Payment modal closed');
+            setPaymentState({ isLoading: false });
+            alert('Payment modal closed');
+          },
         },
       };
 
-      const result = await createRazorpayOrder(orderPayload);
-      const order = result.data;
+      // Check if Razorpay is loaded
+      if (!(window as any).Razorpay) {
+        throw new Error('Razorpay SDK not loaded. Please refresh the page.');
+      }
 
-      openRazorpayCheckout({
-        order,
-        user: orderPayload.user,
-        onSuccess: async (paymentResult) => {
-          try {
-            const verificationResult = await verifyRazorpayPayment({
-              razorpay_order_id: paymentResult.razorpay_order_id,
-              razorpay_payment_id: paymentResult.razorpay_payment_id,
-              razorpay_signature: paymentResult.razorpay_signature,
-            });
+      const rzp = new (window as any).Razorpay(options);
+      rzp.open();
+    } catch (err) {
+      console.error('Payment error details:', err);
+      setPaymentState({ isLoading: false });
 
-            if (verificationResult.data.ok) {
-              navigate('/success'); // Redirect to success page
-            } else {
-              navigate('/fail'); // Redirect to failure page
-            }
-          } catch (error) {
-            console.error('Payment verification failed:', error);
-            showToast('Payment verification failed. Please contact support.', 'error');
-            navigate('/fail');
-          }
-        },
-        onFailure: () => {
-          showToast('Payment was cancelled.', 'info');
-          navigate('/fail'); // Redirect to failure page
-        },
-      });
-    } catch (error) {
-      console.error('Failed to create Razorpay order:', error);
-      showToast('Could not initiate payment. Please try again.', 'error');
-    } finally {
-      // The loading state will be managed by navigation or modal closure
-      setPaymentState((prev) => ({ ...prev, isLoading: false }));
+      // More user-friendly error messages
+      if (err instanceof TypeError && err.message.includes('Failed to fetch')) {
+        alert(
+          'Network error: Unable to connect to payment server. Please check your internet connection and try again.',
+        );
+      } else if (err.message.includes('Server error: 500')) {
+        alert('Payment service temporarily unavailable. Please try again in a few minutes.');
+      } else {
+        alert('Failed to initiate payment: ' + err.message);
+      }
     }
   };
+
+  // const handleProceedWithPayment = async () => {
+  //   setPaymentState((prev) => ({ ...prev, isLoading: true, error: undefined }));
+
+  //   if (!user || !cart) {
+  //     showToast('You must be logged in and have items in your cart to proceed.', 'error');
+  //     setPaymentState((prev) => ({ ...prev, isLoading: false }));
+  //     return;
+  //   }
+
+  //   const scriptLoaded = await loadRazorpayScript();
+  //   if (!scriptLoaded) {
+  //     showToast('Failed to load payment gateway. Please try again.', 'error');
+  //     setPaymentState((prev) => ({ ...prev, isLoading: false }));
+  //     return;
+  //   }
+
+  //   try {
+  //     const bookingId = `${user.uid}-${Date.now()}`;
+  //     const orderPayload = {
+  //       amount: parseFloat(cart.totalPrice),
+  //       bookingId: bookingId,
+  //       user: {
+  //         id: user.uid,
+  //         name: user.displayName || 'Anonymous User',
+  //         email: user.email || 'no-email@example.com',
+  //         phone: '9999999999', // Razorpay requires a phone number
+  //       },
+  //     };
+
+  //     const result = await createRazorpayOrder(orderPayload);
+  //     const order = result.data;
+
+  //     openRazorpayCheckout({
+  //       order,
+  //       user: orderPayload.user,
+  //       onSuccess: async (paymentResult) => {
+  //         try {
+  //           const verificationResult = await verifyRazorpayPayment({
+  //             razorpay_order_id: paymentResult.razorpay_order_id,
+  //             razorpay_payment_id: paymentResult.razorpay_payment_id,
+  //             razorpay_signature: paymentResult.razorpay_signature,
+  //           });
+
+  //           if (verificationResult.data.ok) {
+  //             navigate('/success'); // Redirect to success page
+  //           } else {
+  //             navigate('/fail'); // Redirect to failure page
+  //           }
+  //         } catch (error) {
+  //           console.error('Payment verification failed:', error);
+  //           showToast('Payment verification failed. Please contact support.', 'error');
+  //           navigate('/fail');
+  //         }
+  //       },
+  //       onFailure: () => {
+  //         showToast('Payment was cancelled.', 'info');
+  //         navigate('/fail'); // Redirect to failure page
+  //       },
+  //     });
+  //   } catch (error) {
+  //     console.error('Failed to create Razorpay order:', error);
+  //     showToast('Could not initiate payment. Please try again.', 'error');
+  //   } finally {
+  //     // The loading state will be managed by navigation or modal closure
+  //     setPaymentState((prev) => ({ ...prev, isLoading: false }));
+  //   }
+  // };
 
   const getMethodIcon = (iconType: string) => {
     const iconProps = 'h-6 w-6';
@@ -331,7 +442,7 @@ const Checkout: React.FC = () => {
         {/* Proceed with Payment button */}
         <div className="bg-gray-50 p-4">
           <button
-            onClick={handleProceedWithPayment}
+            onClick={handlePayment}
             disabled={paymentState.isLoading}
             className={`w-full rounded px-4 py-3 text-sm font-medium transition-colors ${
               paymentState.isLoading
@@ -378,7 +489,7 @@ const Checkout: React.FC = () => {
               <div className="flex items-center justify-between border-b border-gray-200 p-4">
                 <div className="flex items-center">
                   <h3 className="font-medium text-gray-900">
-                      {cart?.items?.[0]?.templeId
+                    {cart?.items?.[0]?.templeId
                       ? `Booking for poojas at ${templeName}`
                       : 'Booking for poojas'}
                   </h3>
