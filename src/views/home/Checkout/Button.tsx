@@ -1,3 +1,5 @@
+import Logo from '../../../assets/images/logo.png'
+
 const Button = () => {
   const handlePayment = async () => {
     try {
@@ -17,9 +19,9 @@ const Button = () => {
         key: "rzp_test_R79F1bWUTRYNZh", // Test Key ID
         amount: data.order.amount,
         currency: "INR",
-        name: "Your Company Name",
+        name: "Aaraadhya",
         description: "Demo Payment",
-        image: "https://your-logo-url.com/logo.png",
+        image: Logo,
         order_id: data.order.id,
         prefill: {
           name: "Test User",

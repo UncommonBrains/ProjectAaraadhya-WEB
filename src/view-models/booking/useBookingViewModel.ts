@@ -8,6 +8,7 @@ import { DocumentSnapshot } from 'firebase/firestore';
 // import { StorageService } from '../../services/firebase/storage';
 import { cartService } from '../../services/cartService';
 import { PaymentMethod } from '../../views/home/Checkout/types';
+import { useCart } from '../../hooks/useCart';
 
 export const useBookingViewModel = () => {
   const { firebaseUser } = useAuth();
@@ -17,6 +18,7 @@ export const useBookingViewModel = () => {
   const [error, setError] = useState<string | null>(null);
   const [lastVisible, setLastVisible] = useState<DocumentSnapshot | null>(null);
   const [hasMore, setHasMore] = useState<boolean>(true);
+  const { fetchCart } = useCart();
 
   const PAGE_SIZE = 10;
 
@@ -103,34 +105,6 @@ export const useBookingViewModel = () => {
     }
   };
 
-  // const bookPooja = async (booking: Booking) => {
-  //   if (!firebaseUser?.uid || !booking.paymentDetails?.screenshot) return;
-  //   setLoading(true);
-  //   setError(null);
-
-  //   const storageService = new StorageService(`/booking/${booking.templeId}/${booking.userId}`);
-
-  //   try {
-  //     const screenshotUrl = await storageService.uploadFile(
-  //       storageService.generateUniqueFilename(booking.paymentDetails.screenshot.name),
-  //       booking.paymentDetails.screenshot,
-  //     );
-  //     delete booking.paymentDetails.screenshot;
-  //     await bookingService.create({
-  //       ...booking,
-  //       paymentDetails: {
-  //         ...booking.paymentDetails,
-  //         screenshotUrl: screenshotUrl,
-  //       },
-  //     });
-  //     return await cartService(firebaseUser.uid).deleteCollection();
-  //   } catch (err) {
-  //     setError('Failed to book pooja');
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const bookPooja = async (booking: Booking) => {
     if (!firebaseUser?.uid) {
       throw new Error('User not authenticated');
@@ -142,16 +116,7 @@ export const useBookingViewModel = () => {
     try {
       let finalBooking = booking;
 
-      // 1️⃣ Handle different payment methods appropriately
       if (booking.paymentDetails?.paymentMethod === PaymentMethod.RAZORPAY) {
-        // // MANUAL PAYMENT: Process screenshot upload
-        // const storageService = new StorageService(`/booking/${booking.templeId}/${booking.userId}`);
-
-        // const screenshotUrl = await storageService.uploadFile(
-        //   storageService.generateUniqueFilename(booking.paymentDetails.screenshot.name),
-        //   booking.paymentDetails.screenshot,
-        // );
-
         finalBooking = {
           ...booking,
           paymentDetails: {
@@ -160,21 +125,7 @@ export const useBookingViewModel = () => {
             screenshot: undefined, // Remove File object (can't save to Firestore)
           },
         };
-      }
-      //  else if (
-      //   booking.paymentDetails?.paymentMethod === 'Razorpay' ||
-      //   booking.paymentDetails?.paymentMethod === 'Cashfree'
-      // ) {
-      //   // GATEWAY PAYMENT: Just clean up any potential File objects
-      //   finalBooking = {
-      //     ...booking,
-      //     paymentDetails: {
-      //       ...booking.paymentDetails,
-      //       // Ensure no File objects are passed to Firestore
-      //       screenshot: undefined,
-      //     },
-      //   };
-      else {
+      } else {
         throw new Error('Unsupported payment method');
       }
 
@@ -184,6 +135,8 @@ export const useBookingViewModel = () => {
 
       // 3️⃣ Clear cart after successful booking
       await cartService(firebaseUser.uid).deleteCollection();
+
+      await fetchCart(firebaseUser.uid);
 
       return true;
     } catch (err) {

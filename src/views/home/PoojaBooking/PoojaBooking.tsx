@@ -17,6 +17,7 @@ const PoojaBooking: React.FC = () => {
   const { poojas } = useTemplePoojasViewModel();
   const { temple } = useTempleViewModel();
   const { cart, addToCart } = useCart();
+  
   const [deities, setDeities] = useState<Array<string>>([]);
   const [mainTab, setMainTab] = useState<'deity' | 'all'>('deity');
   const [selectedDeity, setSelectedDeity] = useState<string | null>(null);
