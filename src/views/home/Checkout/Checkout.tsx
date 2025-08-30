@@ -96,7 +96,7 @@ const Checkout: React.FC = () => {
       return;
     }
 
-    setPaymentState({ isLoading: true }); // Set loading state
+    // setPaymentState({ isLoading: true }); // Set loading state
 
     try {
       console.log('Making request to create order...');
@@ -166,21 +166,47 @@ const Checkout: React.FC = () => {
         theme: {
           color: '#F37254',
         },
-        handler: (response: {
+        handler: async (response: {
           razorpay_payment_id: string;
           razorpay_order_id: string;
           razorpay_signature: string;
         }) => {
           console.log('Payment successful:', response);
           alert('Payment Successful!\nPayment ID: ' + response.razorpay_payment_id);
-          // Here you can call another function to verify payment on backend
-          // and update order status in database
-          setPaymentState({ isLoading: false });
+          // Here you can call another function to verify payment on backendand update order status in database
+
+          try {
+            const verifyResponse = await fetch(
+              'https://us-central1-project-aaraadhya-v1.cloudfunctions.net/verifyRazorpayPayment',
+              {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  uid: user.uid,
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                }),
+              },
+            );
+
+            const verifyData = await verifyResponse.json();
+// 
+
+            if(verifyResponse.ok && verifyData.success){
+              alert('Payment verified & saved to Firestore');
+            }else{
+              alert('Payment verification failed:'+verifyData.error)
+            }
+          } catch (err) {
+            console.error('verification error',err)
+            alert('Error verifying payemnt on server')
+          }
         },
         modal: {
           ondismiss: () => {
             console.log('Payment modal closed');
-            setPaymentState({ isLoading: false });
+            // setPaymentState({ isLoading: false });
             alert('Payment modal closed');
           },
         },
@@ -195,7 +221,7 @@ const Checkout: React.FC = () => {
       rzp.open();
     } catch (err) {
       console.error('Payment error details:', err);
-      setPaymentState({ isLoading: false });
+      // setPaymentState({ isLoading: false });
 
       // More user-friendly error messages
       if (err instanceof TypeError && err.message.includes('Failed to fetch')) {
