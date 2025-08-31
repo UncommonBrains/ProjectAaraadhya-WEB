@@ -779,7 +779,134 @@ const Checkout: React.FC = () => {
 
   //grok
 
-  const handlePayment = async () => {
+//   const handlePayment = async () => {
+//   if (!user?.uid) {
+//     toast.error('Please login to continue');
+//     return;
+//   }
+
+//   if (!cart?.items || cart.items.length < 1) {
+//     toast.error('Cart is empty. Please add items to proceed.');
+//     return;
+//   }
+
+//   setPaymentState((prev) => ({ ...prev, isLoading: true }));
+
+//   try {
+//     // 1️⃣ Create Razorpay order
+//     const createOrderResp = await fetch('https://createrazorpayorder-t5n6l44z2q-uc.a.run.app', {
+//       method: 'POST',
+//       headers: { 'Content-Type': 'application/json' },
+//       body: JSON.stringify({ uid: user.uid }),
+//     });
+
+//     const orderData = await createOrderResp.json();
+//     if (!createOrderResp.ok || !orderData.order?.id) {
+//       throw new Error(orderData.error || 'Failed to create order');
+//     }
+
+//     // 2️⃣ Initialize Razorpay
+//     const rzp = new (window as any).Razorpay({
+//       key: 'rzp_test_R79F1bWUTRYNZh',
+//       amount: orderData.order.amount,
+//       currency: 'INR',
+//       name: 'Aaraadhya',
+//       description: 'Pooja Booking Payment',
+//       order_id: orderData.order.id,
+//       prefill: {
+//         name: user.displayName || 'Test User',
+//         email: user.email || 'test@example.com',
+//         contact: user.phoneNumber || '9999999999',
+//       },
+//       theme: { color: '#F37254' },
+//       handler: async (paymentResp: {
+//         razorpay_payment_id: string;
+//         razorpay_order_id: string;
+//         razorpay_signature: string;
+//       }) => {
+//         try {
+//           // 3️⃣ Verify payment
+//           const verifyResp = await fetch(
+//             'https://verifyrazorpaypayment-t5n6l44z2q-uc.a.run.app',
+//             {
+//               method: 'POST',
+//               headers: { 'Content-Type': 'application/json' },
+//               body: JSON.stringify({
+//                 uid: user.uid,
+//                 razorpay_order_id: paymentResp.razorpay_order_id,
+//                 razorpay_payment_id: paymentResp.razorpay_payment_id,
+//                 razorpay_signature: paymentResp.razorpay_signature,
+//               }),
+//             },
+//           );
+
+//           const verifyData = await verifyResp.json();
+//           if (!verifyResp.ok || !verifyData.success) {
+//             throw new Error(verifyData.error || 'Payment verification failed');
+//           }
+
+//           // Compute required values for bookPooja
+//           const templeId = temple?.id || cart.items[0]?.templeId;
+//           if (!templeId) throw new Error('Temple ID is missing');
+
+//           const bookingId = `BOOK_${Date.now()}`;
+
+//           // Directly book (saves will happen inside bookPooja)
+//           await bookPooja({
+//             id: bookingId,
+//             userId: user.uid,
+//             templeId,
+//             poojas: cart.items.map(
+//               ({ poojaId, scheduleId, poojaDate, name, starSign, members }) => ({
+//                 id: uuidv4(),
+//                 poojaId,
+//                 scheduleId,
+//                 poojaDate,
+//                 name,
+//                 starSign,
+//                 members,
+//                 isCompleted: false,
+//               }),
+//             ),
+//             price: cart.totalPrice,
+//             status: BookingStatus.CONFIRMED,
+//             paymentDetails: {
+//               paymentMethod: PaymentMethod.RAZORPAY,
+//               razorpay_order_id: paymentResp.razorpay_order_id,
+//               razorpay_payment_id: paymentResp.razorpay_payment_id,
+//               razorpay_signature: paymentResp.razorpay_signature,
+//             },
+//             poojaDates: cart.items.map(({ poojaDate }) => getDateFromISOString(poojaDate)),
+//           });
+
+//           setIsSubmitted(true);
+//           toast.success('Payment and booking successful!');
+//         } catch (err) {
+//           console.error('Error processing payment/booking:', err);
+//           toast.error('Error processing payment or booking: ' + (err as any).message);
+//         } finally {
+//           setPaymentState((prev) => ({ ...prev, isLoading: false }));
+//         }
+//       },
+//       modal: {
+//         ondismiss: () => {
+//           toast.info('Payment modal closed. Please complete the payment to proceed.');
+//           setPaymentState((prev) => ({ ...prev, isLoading: false }));
+//         },
+//       },
+//     });
+
+//     rzp.open();
+//   } catch (err) {
+//     console.error('Payment initiation error:', err);
+//     setPaymentState((prev) => ({ ...prev, isLoading: false }));
+//     toast.error('Failed to initiate payment: ' + (err as any).message);
+//   }
+// };
+
+//grok made relationships
+
+const handlePayment = async () => {
   if (!user?.uid) {
     toast.error('Please login to continue');
     return;
@@ -793,11 +920,14 @@ const Checkout: React.FC = () => {
   setPaymentState((prev) => ({ ...prev, isLoading: true }));
 
   try {
-    // 1️⃣ Create Razorpay order
+    // Generate bookingId early
+    const bookingId = `BOOK_${Date.now()}_${uuidv4().slice(0, 8)}`; // Unique booking ID
+
+    // 1️⃣ Create Razorpay order with bookingId
     const createOrderResp = await fetch('https://createrazorpayorder-t5n6l44z2q-uc.a.run.app', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ uid: user.uid }),
+      body: JSON.stringify({ uid: user.uid, bookingId }), // Pass bookingId
     });
 
     const orderData = await createOrderResp.json();
@@ -825,7 +955,7 @@ const Checkout: React.FC = () => {
         razorpay_signature: string;
       }) => {
         try {
-          // 3️⃣ Verify payment
+          // 3️⃣ Verify payment and save payment order/logs in backend
           const verifyResp = await fetch(
             'https://verifyrazorpaypayment-t5n6l44z2q-uc.a.run.app',
             {
@@ -833,6 +963,7 @@ const Checkout: React.FC = () => {
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 uid: user.uid,
+                bookingId, // Pass bookingId
                 razorpay_order_id: paymentResp.razorpay_order_id,
                 razorpay_payment_id: paymentResp.razorpay_payment_id,
                 razorpay_signature: paymentResp.razorpay_signature,
@@ -845,13 +976,11 @@ const Checkout: React.FC = () => {
             throw new Error(verifyData.error || 'Payment verification failed');
           }
 
-          // Compute required values for bookPooja
+          // 4️⃣ Prepare booking data
           const templeId = temple?.id || cart.items[0]?.templeId;
           if (!templeId) throw new Error('Temple ID is missing');
 
-          const bookingId = `BOOK_${Date.now()}`;
-
-          // Directly book (saves will happen inside bookPooja)
+          // 5️⃣ Book pooja (only saves to bookings collection)
           await bookPooja({
             id: bookingId,
             userId: user.uid,
@@ -903,6 +1032,10 @@ const Checkout: React.FC = () => {
     toast.error('Failed to initiate payment: ' + (err as any).message);
   }
 };
+
+
+
+
   const getMethodIcon = (iconType: string) => {
     const iconProps = 'h-6 w-6';
     switch (iconType) {

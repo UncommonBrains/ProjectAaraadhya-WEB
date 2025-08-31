@@ -259,7 +259,117 @@ export const useBookingViewModel = () => {
 // };
 
 
-//grok
+// //grok
+// const bookPooja = async (booking: Booking) => {
+//   if (!firebaseUser?.uid) {
+//     throw new Error("User not authenticated");
+//   }
+
+//   setLoading(true);
+//   setError(null);
+
+//   try {
+//     let finalBooking = booking;
+
+//     // Only handle Razorpay for now
+//     if (booking.paymentDetails.paymentMethod === PaymentMethod.RAZORPAY) {
+//       const rp = booking.paymentDetails;
+
+//       finalBooking = {
+//         ...booking,
+//         paymentDetails: {
+//           ...rp,
+//           screenshot: undefined, // Remove File object (can't save to Firestore)
+//         },
+//       };
+
+//       // 1️⃣ Prepare payment order
+//       const amountRupees = parseInt(booking.price, 10);
+//       const amountPaise = amountRupees * 100;
+//       const paymentOrder = {
+//         amount: amountRupees,
+//         bookingId: booking.id,
+//         createdAt: new Date().toISOString(),
+//         currency: "INR",
+//         events: [
+//           {
+//             ts: new Date().toISOString(),
+//             type: "create",
+//             orderId: rp.razorpay_order_id,
+//           },
+//         ],
+//         razorpayResponse: {
+//           amount: amountPaise,
+//           amount_due: 0,
+//           amount_paid: amountPaise,
+//           attempts: 1,
+//           created_at: Math.floor(Date.now() / 1000),
+//           currency: "INR",
+//           entity: "order",
+//           id: rp.razorpay_order_id,
+//         },
+//         notes: {
+//           device: "web",
+//           templeId: booking.templeId,
+//           receipt: booking.id,
+//           status: "created",
+//         },
+//         status: "created",
+//         updatedAt: new Date().toISOString(),
+//         userId: `/users/${firebaseUser.uid}`,
+//         userSnapshot: {
+//           email: firebaseUser.email,
+//           name: firebaseUser.displayName,
+//           phone: firebaseUser.phoneNumber,
+//         },
+//       };
+
+//       // 2️⃣ Save payment order
+//       await fetch("https://us-central1-project-aaraadhya-v1.cloudfunctions.net/savePaymentOrder", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify(paymentOrder),
+//       });
+
+//       // 3️⃣ Prepare payment log
+//       const paymentLog = {
+//         event: "payment.captured",
+//         orderId: rp.razorpay_order_id,
+//         payload: { receivedAt: new Date().toISOString() },
+//       };
+
+//       // 4️⃣ Save payment log
+//       await fetch("https://us-central1-project-aaraadhya-v1.cloudfunctions.net/savePaymentLog", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify(paymentLog),
+//       });
+//     } else {
+//       throw new Error("Unsupported payment method");
+//     }
+
+//     // 5️⃣ Save booking
+//     const cleanBooking = JSON.parse(JSON.stringify(finalBooking));
+//     await bookingService.create(cleanBooking);
+
+//     // 6️⃣ Clear cart
+//     await cartService(firebaseUser.uid).deleteCollection();
+//     await fetchCart(firebaseUser.uid);
+
+//     return true;
+//   } catch (err) {
+//     console.error("Booking error details:", err);
+//     const errorMessage =
+//       err instanceof Error ? err.message : "Failed to book pooja - unknown error";
+//     setError(errorMessage);
+//     throw err;
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
+//grok made relationshipt
+
 const bookPooja = async (booking: Booking) => {
   if (!firebaseUser?.uid) {
     throw new Error("User not authenticated");
@@ -269,90 +379,11 @@ const bookPooja = async (booking: Booking) => {
   setError(null);
 
   try {
-    let finalBooking = booking;
-
-    // Only handle Razorpay for now
-    if (booking.paymentDetails.paymentMethod === PaymentMethod.RAZORPAY) {
-      const rp = booking.paymentDetails;
-
-      finalBooking = {
-        ...booking,
-        paymentDetails: {
-          ...rp,
-          screenshot: undefined, // Remove File object (can't save to Firestore)
-        },
-      };
-
-      // 1️⃣ Prepare payment order
-      const amountRupees = parseInt(booking.price, 10);
-      const amountPaise = amountRupees * 100;
-      const paymentOrder = {
-        amount: amountRupees,
-        bookingId: booking.id,
-        createdAt: new Date().toISOString(),
-        currency: "INR",
-        events: [
-          {
-            ts: new Date().toISOString(),
-            type: "create",
-            orderId: rp.razorpay_order_id,
-          },
-        ],
-        razorpayResponse: {
-          amount: amountPaise,
-          amount_due: 0,
-          amount_paid: amountPaise,
-          attempts: 1,
-          created_at: Math.floor(Date.now() / 1000),
-          currency: "INR",
-          entity: "order",
-          id: rp.razorpay_order_id,
-        },
-        notes: {
-          device: "web",
-          templeId: booking.templeId,
-          receipt: booking.id,
-          status: "created",
-        },
-        status: "created",
-        updatedAt: new Date().toISOString(),
-        userId: `/users/${firebaseUser.uid}`,
-        userSnapshot: {
-          email: firebaseUser.email,
-          name: firebaseUser.displayName,
-          phone: firebaseUser.phoneNumber,
-        },
-      };
-
-      // 2️⃣ Save payment order
-      await fetch("https://us-central1-project-aaraadhya-v1.cloudfunctions.net/savePaymentOrder", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(paymentOrder),
-      });
-
-      // 3️⃣ Prepare payment log
-      const paymentLog = {
-        event: "payment.captured",
-        orderId: rp.razorpay_order_id,
-        payload: { receivedAt: new Date().toISOString() },
-      };
-
-      // 4️⃣ Save payment log
-      await fetch("https://us-central1-project-aaraadhya-v1.cloudfunctions.net/savePaymentLog", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(paymentLog),
-      });
-    } else {
-      throw new Error("Unsupported payment method");
-    }
-
-    // 5️⃣ Save booking
-    const cleanBooking = JSON.parse(JSON.stringify(finalBooking));
+    // 1️⃣ Save booking to Firestore
+    const cleanBooking = JSON.parse(JSON.stringify(booking)); // Remove undefined fields
     await bookingService.create(cleanBooking);
 
-    // 6️⃣ Clear cart
+    // 2️⃣ Clear cart
     await cartService(firebaseUser.uid).deleteCollection();
     await fetchCart(firebaseUser.uid);
 
