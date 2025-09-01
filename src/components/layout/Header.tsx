@@ -101,8 +101,8 @@ const Header = () => {
 
   const handleSignoutButtonClick = async () => {
     const confirmation = await confirm({
-      title: 'Signout',
-      message: 'Are you sure you want to signout ?',
+      title: 'Logout',
+      message: 'Are you sure you want to logout ?',
     });
 
     if (confirmation) handleSignout();

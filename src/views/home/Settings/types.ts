@@ -4,4 +4,5 @@ export interface SettingsCardProps {
   description: string;
   toggle?: boolean;
   danger?: boolean;
+  disabled?: boolean; // Added this new property
 }

@@ -22,11 +22,55 @@ import {
 import { NavLink } from 'react-router-dom';
 import { SettingsCardProps } from './types';
 import { useAuthContext } from '../../../context/common/AuthContext/AuthContext';
+import { useConfirmation } from '../../../hooks/useConfirmation';
+import { useSignoutViewModel } from '../../../view-models/auth/useSignoutViewModel';
 
+// Configuration object to control which settings cards are enabled/disabled
+const SETTINGS_CONFIG = {
+  // Profile Settings
+  personalInfo: false,
+  changePassword: true,
+  linkedAccounts: false,
+  
+  // Notification Settings
+  pushNotifications: false,
+  emailSmsAlerts: false,
+  templeSpecificUpdates: false,
+  
+  // Temple Preferences
+  followedTemples: false,
+  templeSubscriptions: false,
+  
+  // Payment Settings
+  savedPaymentMethods: false,
+  transactionHistory: false,
+  autoDeduction: false,
+  
+  // Privacy Settings
+  dataSharing: false,
+  twoFactorAuth: false,
+  deviceManagement: false,
+  
+  // Language Settings
+  changeLanguage: false,
+  largerText: false,
+  highContrast: false,
+  
+  // Support & Help
+  faqs: false,  // Example: disabled by default
+  contactSupport: true,
+  reportIssue: false,
+  
+  // Account Actions
+  deleteAccount: false,
+  logout: true,
+};
 
 const Settings = () => {
   const [activeSection, setActiveSection] = useState('profile');
 
+
+ 
   // Settings sections with their icons and content components
   const sections = [
     {
@@ -80,7 +124,6 @@ const Settings = () => {
   ];
 
   return (
-    
     <div className="container mx-auto px-4 py-8">
       <h1 className="mb-8 font-serif text-2xl font-bold text-amber-900">Settings</h1>
 
@@ -120,7 +163,7 @@ const Settings = () => {
 
 // Individual Settings Section Components
 const ProfileSettings = () => {
-    const { user } = useAuthContext();
+  const { user } = useAuthContext();
 
   return (
     <div className="space-y-8">
@@ -155,7 +198,7 @@ const ProfileSettings = () => {
             title="Personal Information"
             icon={<User className="h-5 w-5" />}
             description="Update your name, email, phone number and profile picture"
-            
+            disabled={!SETTINGS_CONFIG.personalInfo}
           />
 
           <NavLink to="/reset-password">
@@ -163,6 +206,7 @@ const ProfileSettings = () => {
               title="Change Password"
               icon={<Key className="h-5 w-5" />}
               description="Securely update your password to keep your account safe"
+              disabled={!SETTINGS_CONFIG.changePassword}
             />
           </NavLink>
 
@@ -170,6 +214,7 @@ const ProfileSettings = () => {
             title="Manage Linked Accounts"
             icon={<Link className="h-5 w-5" />}
             description="Connect with Google, Facebook, Apple accounts"
+            disabled={!SETTINGS_CONFIG.linkedAccounts}
           />
         </div>
       </div>
@@ -191,6 +236,7 @@ const NotificationSettings = () => {
             icon={<Bell className="h-5 w-5" />}
             description="Manage notifications for poojas, events and community updates"
             toggle={true}
+            disabled={!SETTINGS_CONFIG.pushNotifications}
           />
 
           <SettingsCard
@@ -198,12 +244,14 @@ const NotificationSettings = () => {
             icon={<FileText className="h-5 w-5" />}
             description="Subscription, donation receipts, and event reminders"
             toggle={true}
+            disabled={!SETTINGS_CONFIG.emailSmsAlerts}
           />
 
           <SettingsCard
             title="Temple-Specific Updates"
             icon={<Calendar className="h-5 w-5" />}
             description="Choose favorite temples for personalized notifications"
+            disabled={!SETTINGS_CONFIG.templeSpecificUpdates}
           />
         </div>
       </div>
@@ -224,6 +272,7 @@ const TemplePreferences = () => {
             title="Followed Temples"
             icon={<Heart className="h-5 w-5" />}
             description="Manage list of followed temples and their updates"
+            disabled={!SETTINGS_CONFIG.followedTemples}
           />
 
           <SettingsCard
@@ -231,6 +280,7 @@ const TemplePreferences = () => {
             icon={<Calendar className="h-5 w-5" />}
             description="Auto-reminders for bookings, donations, and poojas"
             toggle={true}
+            disabled={!SETTINGS_CONFIG.templeSubscriptions}
           />
         </div>
       </div>
@@ -251,12 +301,14 @@ const PaymentSettings = () => {
             title="Saved Payment Methods"
             icon={<CreditCard className="h-5 w-5" />}
             description="Manage UPI, cards, and wallets for quick payments"
+            disabled={!SETTINGS_CONFIG.savedPaymentMethods}
           />
 
           <SettingsCard
             title="Transaction History"
             icon={<FileText className="h-5 w-5" />}
             description="View past donations, ticket bookings, etc."
+            disabled={!SETTINGS_CONFIG.transactionHistory}
           />
 
           <SettingsCard
@@ -264,6 +316,7 @@ const PaymentSettings = () => {
             icon={<Calendar className="h-5 w-5" />}
             description="Enable recurring donations to your favorite temples"
             toggle={true}
+            disabled={!SETTINGS_CONFIG.autoDeduction}
           />
         </div>
       </div>
@@ -284,6 +337,7 @@ const PrivacySettings = () => {
             title="Data Sharing Preferences"
             icon={<ShieldCheck className="h-5 w-5" />}
             description="Choose what information temples can see about you"
+            disabled={!SETTINGS_CONFIG.dataSharing}
           />
 
           <SettingsCard
@@ -291,12 +345,14 @@ const PrivacySettings = () => {
             icon={<Smartphone className="h-5 w-5" />}
             description="Add an extra layer of security to your account"
             toggle={true}
+            disabled={!SETTINGS_CONFIG.twoFactorAuth}
           />
 
           <SettingsCard
             title="Device Management"
             icon={<Smartphone className="h-5 w-5" />}
             description="See and log out of active sessions on other devices"
+            disabled={!SETTINGS_CONFIG.deviceManagement}
           />
         </div>
       </div>
@@ -317,6 +373,7 @@ const LanguageSettings = () => {
             title="Change Language"
             icon={<Languages className="h-5 w-5" />}
             description="Support for Malayalam, Sanskrit, Hindi, English, etc."
+            disabled={!SETTINGS_CONFIG.changeLanguage}
           />
 
           <SettingsCard
@@ -324,6 +381,7 @@ const LanguageSettings = () => {
             icon={<AlignLeft className="h-5 w-5" />}
             description="Increase text size for better readability"
             toggle={true}
+            disabled={!SETTINGS_CONFIG.largerText}
           />
 
           <SettingsCard
@@ -331,6 +389,7 @@ const LanguageSettings = () => {
             icon={<Moon className="h-5 w-5" />}
             description="For better accessibility and viewing comfort"
             toggle={true}
+            disabled={!SETTINGS_CONFIG.highContrast}
           />
         </div>
       </div>
@@ -351,18 +410,21 @@ const SupportHelp = () => {
             title="FAQs"
             icon={<HelpCircle className="h-5 w-5" />}
             description="Find answers to commonly asked questions"
+            disabled={!SETTINGS_CONFIG.faqs}
           />
 
           <SettingsCard
             title="Contact Support"
             icon={<HelpCircle className="h-5 w-5" />}
             description="Connect with our support team for assistance"
+            disabled={!SETTINGS_CONFIG.contactSupport}
           />
 
           <SettingsCard
             title="Report an Issue"
             icon={<HelpCircle className="h-5 w-5" />}
             description="Let us know if you're experiencing any problems"
+            disabled={!SETTINGS_CONFIG.reportIssue}
           />
         </div>
       </div>
@@ -371,6 +433,20 @@ const SupportHelp = () => {
 };
 
 const AccountActions = () => {
+  const { handleSignout } = useSignoutViewModel();
+  const confirm = useConfirmation();
+
+  const handleSignoutButtonClick = async () => {
+    const confirmation = await confirm({
+      title: 'Logout',
+      message: 'Are you sure you want to logout?',
+    });
+
+    if (confirmation) handleSignout();
+  };
+
+  
+
   return (
     <div className="space-y-8">
       <h2 className="border-b border-amber-100 pb-2 font-serif text-xl font-bold text-amber-900">
@@ -379,18 +455,24 @@ const AccountActions = () => {
 
       <div className="space-y-6">
         <div className="grid grid-cols-1 gap-6">
-          <SettingsCard
-            title="Delete Account"
-            icon={<Trash2 className="h-5 w-5 text-red-500" />}
-            description="Permanently remove your account and all data"
-            danger={true}
-          />
+          <div>
+            <SettingsCard
+              title="Delete Account"
+              icon={<Trash2 className="h-5 w-5 text-red-500" />}
+              description="Permanently remove your account and all data"
+              danger={true}
+              disabled={!SETTINGS_CONFIG.deleteAccount}
+            />
+          </div>
 
-          <SettingsCard
-            title="Logout"
-            icon={<LogOut className="h-5 w-5" />}
-            description="Sign out of your account on this device"
-          />
+          <div onClick={handleSignoutButtonClick}>
+            <SettingsCard
+              title="Logout"
+              icon={<LogOut className="h-5 w-5" />}
+              description="Sign out of your account on this device"
+              disabled={!SETTINGS_CONFIG.logout}
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -404,50 +486,102 @@ const SettingsCard: React.FC<SettingsCardProps> = ({
   description,
   toggle = false,
   danger = false,
+  disabled = false,
 }) => {
   const [isEnabled, setIsEnabled] = useState(false);
 
+  const handleToggleClick = () => {
+    if (!disabled) {
+      setIsEnabled(!isEnabled);
+    }
+  };
+
+  const handleButtonClick = () => {
+    if (!disabled) {
+      // Handle button click for non-toggle cards
+      console.log(`${title} clicked`);
+    }
+  };
+
   return (
-    <div
-      className={`rounded-lg border p-4 ${
-        danger ? 'border-red-100' : 'border-amber-100'
-      } transition-shadow hover:shadow-sm`}
-    >
-      <div className="flex items-start justify-between">
-        <div className="flex items-start space-x-3">
-          <div className={`mt-0.5 rounded-full p-2 ${danger ? 'bg-red-50' : 'bg-amber-50'}`}>
+  <div
+    className={`rounded-lg border p-4 transition-shadow ${
+      disabled 
+        ? 'border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed'
+        : danger 
+        ? 'border-red-100 hover:shadow-sm cursor-pointer'
+        : 'border-amber-100 hover:shadow-sm cursor-pointer'
+    }`}
+  >
+    <div className="flex items-start justify-between">
+      <div className="flex items-start space-x-3">
+        <div 
+          className={`mt-0.5 rounded-full p-2 ${
+            disabled 
+              ? 'bg-gray-100' 
+              : danger 
+              ? 'bg-red-50' 
+              : 'bg-amber-50'
+          }`}
+        >
+          <div className={disabled ? 'text-gray-400' : ''}>
             {icon}
           </div>
-          <div>
-            <h3 className={`font-medium ${danger ? 'text-red-500' : 'text-amber-900'}`}>{title}</h3>
-            <p className="mt-1 text-sm text-gray-500">{description}</p>
-          </div>
         </div>
-        {toggle ? (
-          <button
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-              isEnabled ? 'bg-amber-500' : 'bg-gray-200'
-            }`}
-            onClick={() => setIsEnabled(!isEnabled)}
-          >
-            <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                isEnabled ? 'translate-x-6' : 'translate-x-1'
-              }`}
-            />
-          </button>
-        ) : (
-          <button
-            className={`rounded-full p-2 transition-colors hover:bg-amber-50 ${
-              danger ? 'text-red-500' : 'text-amber-700'
+        <div>
+          <h3 
+            className={`font-medium ${
+              disabled 
+                ? 'text-gray-400' 
+                : danger 
+                ? 'text-red-500' 
+                : 'text-amber-900'
             }`}
           >
-            <ChevronRight className="h-4 w-4" />
-          </button>
-        )}
+            {title}
+          </h3>
+          <p className={`mt-1 text-sm ${disabled ? 'text-gray-400' : 'text-gray-500'}`}>
+            {description}
+          </p>
+        </div>
       </div>
+      {toggle ? (
+        <button
+          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+            disabled
+              ? 'bg-gray-300 cursor-not-allowed'
+              : isEnabled 
+              ? 'bg-amber-500 cursor-pointer' 
+              : 'bg-gray-200 cursor-pointer'
+          }`}
+          onClick={handleToggleClick}
+          disabled={disabled}
+        >
+          <span
+            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+              isEnabled ? 'translate-x-6' : 'translate-x-1'
+            }`}
+          />
+        </button>
+      ) : (
+        <button
+          className={`rounded-full p-2 transition-colors ${
+            disabled 
+              ? 'text-gray-400 cursor-not-allowed' 
+              : danger 
+              ? 'text-red-500 hover:bg-red-50 cursor-pointer' 
+              : 'text-amber-700 hover:bg-amber-50 cursor-pointer'
+          }`}
+          onClick={handleButtonClick}
+          disabled={disabled}
+        >
+          <ChevronRight className="h-4 w-4" />
+        </button>
+      )}
     </div>
-  );
+  </div>
+);
+
 };
 
 export default Settings;
