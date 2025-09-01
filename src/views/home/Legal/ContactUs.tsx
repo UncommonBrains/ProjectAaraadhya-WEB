@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { MapPin, Mail, Phone, Clock, Send, MessageCircle, HelpCircle } from 'lucide-react';
 import FloatingActionButton from '../../../components/common/Button/FloatingActionButton';
-import {companyInfo} from '../../../components/contacts'
+import {companyInfo} from '../../../components/companyInfo'
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({

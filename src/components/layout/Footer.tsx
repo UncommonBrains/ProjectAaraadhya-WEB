@@ -7,7 +7,7 @@ import {
   FaWhatsapp
 } from 'react-icons/fa6';
 
-import {companyInfo} from '../contacts'
+import {companyInfo} from '../companyInfo'
 
 
 const Footer = () => {

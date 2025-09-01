@@ -1,5 +1,5 @@
 import { Truck, Clock, MapPin, Shield, Package, CheckCircle } from 'lucide-react';
-import {companyInfo} from '../../../components/contacts'
+import {companyInfo} from '../../../components/companyInfo'
 
 
 const ShippingDelivery = () => {

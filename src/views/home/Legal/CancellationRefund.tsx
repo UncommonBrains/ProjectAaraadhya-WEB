@@ -1,5 +1,5 @@
 import { ArrowLeft, RefreshCw, Shield, Clock, AlertCircle } from 'lucide-react';
-import { companyInfo} from '../../../components/contacts'
+import { companyInfo} from '../../../components/companyInfo'
 
 
 const CancellationAndRefund = () => {

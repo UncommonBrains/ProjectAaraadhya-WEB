@@ -1,5 +1,8 @@
 export const companyInfo = {
   name: 'Aaraadhya',
+  tagline:'Uniting Temples, Connecting Devotees',
+  tagline1:'Connecting Tradition with Technology',
+
   address: {
     line1: 'Krishnamana Illam, Cheravally',
     line2: 'Kayamkulam PO, Alappuzha',
