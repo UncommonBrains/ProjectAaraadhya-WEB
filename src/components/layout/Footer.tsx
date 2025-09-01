@@ -7,7 +7,7 @@ import {
   FaWhatsapp
 } from 'react-icons/fa6';
 
-import {numbers, emails, socials} from '../contacts'
+import {companyInfo} from '../contacts'
 
 
 const Footer = () => {
@@ -68,13 +68,13 @@ const Footer = () => {
           <div className="flex items-center">
             <Mail className="mr-2 h-4 w-4 text-orange-400" />
             <a href="mailto:info@aaraadhya.com" className="hover:text-orange-300">
-              {emails.general}
+              {companyInfo.emails.general}
             </a>
           </div>
           <div className="flex items-center">
             <Phone className="mr-2 h-4 w-4 text-orange-400" />
-            <a href={`tel:${numbers.primary}`} className="hover:text-orange-300">
-              {numbers.primary}
+            <a href={`tel:${companyInfo.numbers.primary}`} className="hover:text-orange-300">
+              {companyInfo.numbers.primary}
             </a>
           </div>
         </div>
@@ -84,7 +84,7 @@ const Footer = () => {
           <div className="mr-6 flex items-center">
             <span className="mr-2 text-sm">Follow Us</span>
             <a
-              href={socials.facebook}
+              href={companyInfo.socials.facebook}
               target="_blank"
               rel="noopener noreferrer"
               className="mx-1 text-blue-500 transition-colors hover:text-blue-400"
@@ -93,7 +93,7 @@ const Footer = () => {
               <FaFacebook className="h-4 w-4" />
             </a>
             <a
-              href={socials.instagram}
+              href={companyInfo.socials.instagram}
               target="_blank"
               rel="noopener noreferrer"
               className="mx-1 text-pink-500 transition-colors hover:text-pink-400"
@@ -102,7 +102,7 @@ const Footer = () => {
               <FaInstagram className="h-4 w-4" />
             </a>
             <a
-              href={socials.youtube}
+              href={companyInfo.socials.youtube}
               target="_blank"
               rel="noopener noreferrer"
               className="mx-1 text-red-500 transition-colors hover:text-red-400"
@@ -111,7 +111,7 @@ const Footer = () => {
               <FaYoutube className="h-4 w-4" />
             </a>
             <a
-              href={socials.whatsapp}
+              href={companyInfo.socials.whatsapp}
               target="_blank"
               rel="noopener noreferrer"
               className="mx-1 text-green-500 transition-colors hover:text-red-400"
@@ -120,7 +120,7 @@ const Footer = () => {
               <FaWhatsapp className="h-4 w-4" />
             </a>
             {/* <a 
-              href="https://twitter.com/aaraadhya" 
+              href="{companyInfo.socials.twitter}" 
               target="_blank" 
               rel="noopener noreferrer"
               className="mx-1 text-blue-400 hover:text-blue-300 transition-colors"
