@@ -1,4 +1,6 @@
 import { Shield, Eye, Lock, UserCheck } from 'lucide-react';
+import {numbers, emails, address, companyName} from '../../../components/contacts'
+
 
 const PrivacyPolicy = () => {
   return (
@@ -10,7 +12,7 @@ const PrivacyPolicy = () => {
             <Shield className="h-8 w-8" />
           </div>
           <h1 className="mb-2 font-serif text-3xl text-amber-900">Privacy Policy</h1>
-          <p className="text-gray-600">Your privacy is important to us at Aaraadhya</p>
+          <p className="text-gray-600">Your privacy is important to us at {companyName}</p>
           <p className="text-sm text-gray-500">Last updated: August 20, 2025</p>
         </div>
 
@@ -25,7 +27,7 @@ const PrivacyPolicy = () => {
                 <h2 className="font-serif text-xl text-amber-900">Introduction</h2>
               </div>
               <p className="mb-4 text-gray-700 leading-relaxed">
-                At Aaraadhya, we respect your privacy and are committed to protecting your personal data. 
+                At {companyName}, we respect your privacy and are committed to protecting your personal data. 
                 This privacy policy explains how we collect, use, and safeguard your information when you 
                 use our temple discovery and devotional services platform.
               </p>
@@ -154,9 +156,9 @@ const PrivacyPolicy = () => {
                   If you have questions about this privacy policy or our practices, please contact us:
                 </p>
                 <div className="text-sm text-gray-600">
-                  <p>Email: privacy@aaraadhya.in</p>
-                  <p>Phone: +91 9400446095</p>
-                  <p>Address: Krishnamana Illam, Cheravally, Kayamkulam PO,<br /> Alappuzha, Kerala - 690502, India</p>
+                  <p>Email: {emails.privacy}</p>
+                  <p>Phone: {numbers.primary}</p>
+                  <p>Address: {address.companyName}, {address.address}, {address.city}, {address.state}</p>
                 </div>
               </div>
             </section>
