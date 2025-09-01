@@ -1,5 +1,5 @@
 // BookingFormModal.tsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, ShoppingCart, Plus, Minus } from 'lucide-react';
 import { Pooja, ScheduleMode } from '../../models/entities/Pooja';
 import { CartForm } from '../../views/home/PoojaBooking/types';
@@ -67,6 +67,37 @@ const BookingFormModal: React.FC<BookingFormModalProps> = ({
   calculateTotalPrice,
 }) => {
   if (!selectedPooja) return null;
+  
+
+  const [customAmountError, setCustomAmountError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Reset error when a new pooja is selected or modal is opened
+    setCustomAmountError(null);
+  }, [selectedPooja]);
+
+  const handleCustomAmountBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    const minPrice = selectedPooja.variablePriceRange?.startingPrice;
+    const maxPrice = selectedPooja.variablePriceRange?.maximumPrice;
+
+    const numericMinPrice = minPrice ? parseFloat(minPrice) : undefined;
+    const numericMaxPrice = maxPrice ? parseFloat(maxPrice) : undefined;
+    const numericValue = parseFloat(value);
+
+    if (value === '' || isNaN(numericValue)) {
+      setCustomAmountError('Please enter a valid offering amount.');
+      return;
+    }
+
+    if (numericMinPrice !== undefined && numericValue < numericMinPrice) {
+      setCustomAmountError(`Amount must be at least ₹${numericMinPrice}.`);
+    } else if (numericMaxPrice !== undefined && numericValue > numericMaxPrice) {
+      setCustomAmountError(`Amount cannot exceed ₹${numericMaxPrice}.`);
+    } else {
+      setCustomAmountError(null);
+    }
+  };
 
   // Determine base price
   const basePrice =
@@ -118,7 +149,9 @@ const BookingFormModal: React.FC<BookingFormModalProps> = ({
                   onChange={(e) =>
                     onFormDataChange({ ...formData, customAmount: e.target.value })
                   }
+                  onBlur={handleCustomAmountBlur}
                 />
+                {customAmountError && <p className="mt-1 text-sm text-red-600">{customAmountError}</p>}
               </div>
             )}
           </div>

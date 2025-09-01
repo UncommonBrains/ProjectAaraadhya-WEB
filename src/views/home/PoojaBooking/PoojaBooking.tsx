@@ -89,6 +89,30 @@ const PoojaBooking: React.FC = () => {
 
     if (!selectedPooja) return;
 
+    if (selectedPooja.poojaPricing === 'variable') {
+      const customAmountValue = formData.customAmount;
+      const minPrice = selectedPooja.variablePriceRange?.startingPrice;
+      const maxPrice = selectedPooja.variablePriceRange?.maximumPrice;
+      const numericMinPrice = minPrice ? parseFloat(minPrice) : undefined;
+      const numericMaxPrice = maxPrice ? parseFloat(maxPrice) : undefined;
+      const numericValue = parseFloat(customAmountValue);
+
+      if (customAmountValue === '' || isNaN(numericValue)) {
+        toast.error('Please enter a valid offering amount.');
+        return;
+      }
+
+      if (numericMinPrice !== undefined && numericValue < numericMinPrice) {
+        toast.error(`Amount must be at least ₹${numericMinPrice}.`);
+        return;
+      }
+
+      if (numericMaxPrice !== undefined && numericValue > numericMaxPrice) {
+        toast.error(`Amount cannot exceed ₹${numericMaxPrice}.`);
+        return;
+      }
+    }
+
     const basePrice =
       selectedPooja.poojaPricing === 'fixed'
         ? parseFloat(selectedPooja.price)
