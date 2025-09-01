@@ -1,4 +1,6 @@
 import { FileText, Users, AlertTriangle, Scale } from 'lucide-react';
+import {companyInfo} from '../../../components/contacts'
+
 
 const TermsConditions = () => {
   return (
@@ -10,7 +12,7 @@ const TermsConditions = () => {
             <FileText className="h-8 w-8" />
           </div>
           <h1 className="mb-2 font-serif text-3xl text-amber-900">Terms and Conditions</h1>
-          <p className="text-gray-600">Please read these terms carefully before using Aaraadhya</p>
+          <p className="text-gray-600">Please read these terms carefully before using {companyInfo.name}</p>
           <p className="text-sm text-gray-500">Last updated: August 20, 2025</p>
         </div>
 
@@ -25,7 +27,7 @@ const TermsConditions = () => {
                 <h2 className="font-serif text-xl text-amber-900">Agreement</h2>
               </div>
               <p className="mb-4 text-gray-700 leading-relaxed">
-                By accessing and using Aaraadhya's platform, website, mobile applications, and related services 
+                By accessing and using {companyInfo.name}'s platform, website, mobile applications, and related services
                 (collectively, the "Services"), you agree to be bound by these Terms and Conditions ("Terms").
               </p>
               <div className="rounded-lg bg-orange-50 border border-orange-200 p-4">
@@ -42,7 +44,7 @@ const TermsConditions = () => {
                 <h2 className="font-serif text-xl text-amber-900">Our Services</h2>
               </div>
               <p className="mb-4 text-gray-700 leading-relaxed">
-                Aaraadhya is a digital platform that provides:
+                {companyInfo.name} is a digital platform that provides:
               </p>
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="rounded-lg bg-amber-50 p-4">
@@ -129,8 +131,8 @@ const TermsConditions = () => {
               <h2 className="mb-4 font-serif text-xl text-amber-900">Intellectual Property</h2>
               <div className="rounded-lg bg-purple-50 border border-purple-200 p-4">
                 <p className="mb-2 text-purple-800">
-                  All content on Aaraadhya, including text, images, videos, logos, and software, 
-                  is protected by intellectual property laws and belongs to Aaraadhya or its licensors.
+                  All content on {companyInfo.name}, including text, images, videos, logos, and software, 
+                  is protected by intellectual property laws and belongs to {companyInfo.name} or its licensors.
                 </p>
                 <p className="text-sm text-purple-700">
                   You may not copy, modify, distribute, or reproduce any content without our express written permission.
@@ -165,7 +167,7 @@ const TermsConditions = () => {
               <h2 className="mb-4 font-serif text-xl text-amber-900">Limitation of Liability</h2>
               <div className="rounded-lg bg-gray-50 border border-gray-200 p-4">
                 <p className="text-sm text-gray-700">
-                  Aaraadhya shall not be liable for any indirect, incidental, special, or consequential 
+                  {companyInfo.name} shall not be liable for any indirect, incidental, special, or consequential 
                   damages resulting from your use of our services. Our total liability is limited to 
                   the amount you paid for our services in the 12 months preceding any claim.
                 </p>
@@ -190,10 +192,9 @@ const TermsConditions = () => {
                   For questions about these Terms and Conditions, please contact us:
                 </p>
                 <div className="text-sm text-gray-600">
-                  <p>Email: legal@aaraadhya.in</p>
-                  <p>Phone: +91 9400446095</p>
-                  <p>Address: Krishnamana Illam, Cheravally,</p>
-                  <p>Kayamkulam P.O., Alappuzha, Kerala - 690502</p>
+                  <p>Email: {companyInfo.emails.legal}</p>
+                  <p>Phone: {companyInfo.numbers.primary}</p>
+                  <p>Address: {companyInfo.address.address}, {companyInfo.address.locality}, {companyInfo.address.city}, {companyInfo.address.state} - {companyInfo.address.zip}</p>
                 </div>
               </div>
             </section>

@@ -1,4 +1,6 @@
 import { ArrowLeft, RefreshCw, Shield, Clock, AlertCircle } from 'lucide-react';
+import { companyInfo} from '../../../components/contacts'
+
 
 const CancellationAndRefund = () => {
   return (
@@ -25,8 +27,8 @@ const CancellationAndRefund = () => {
                 <h2 className="font-serif text-xl text-amber-900">Policy Overview</h2>
               </div>
               <p className="text-gray-600 leading-relaxed">
-                At Aaraadhya, we understand that plans can change. This policy outlines our 
-                cancellation and refund procedures for various services including temple bookings, 
+                At {companyInfo.name}, we understand that plans can change. This policy outlines our
+                cancellation and refund procedures for various services including temple bookings,
                 puja services, and devotee store purchases.
               </p>
             </div>
@@ -162,7 +164,7 @@ const CancellationAndRefund = () => {
             <div className="rounded-lg border border-amber-100 bg-white p-4 shadow-sm">
               <h3 className="font-serif text-amber-900 mb-3">Need Help?</h3>
               <div className="space-y-3">
-                <button className="block w-full rounded-lg bg-orange-500 py-2 px-4 text-center text-sm font-medium text-white hover:bg-orange-600">
+                <button onClick={() => window.location.href = `/contact-us`} className="block w-full rounded-lg bg-orange-500 py-2 px-4 text-center text-sm font-medium text-white hover:bg-orange-600">
                   Contact Support
                 </button>
                 <div className="text-center text-sm text-gray-600">

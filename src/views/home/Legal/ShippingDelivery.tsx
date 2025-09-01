@@ -1,5 +1,5 @@
 import { Truck, Clock, MapPin, Shield, Package, CheckCircle } from 'lucide-react';
-import {numbers, emails, address, companyName} from '../../../components/contacts'
+import {companyInfo} from '../../../components/contacts'
 
 
 const ShippingDelivery = () => {
@@ -156,10 +156,10 @@ const ShippingDelivery = () => {
           <h3 className="font-serif text-lg text-orange-900 mb-2">Need Help with Your Order?</h3>
           <p className="text-sm text-gray-600 mb-4">Our customer support team is here to assist you</p>
           <div className="flex flex-wrap justify-center gap-4">
-            <a href={`tel:${numbers.primary}`} className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600">
-              Call Us: {numbers.primary}
+            <a href={`tel:${companyInfo.numbers.primary}`} className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600">
+              Call Us: {companyInfo.numbers.primary}
             </a>
-            <a href={`mailto:${emails.support}`} className="rounded-lg border border-orange-500 px-4 py-2 text-sm font-medium text-orange-600 hover:bg-orange-100">
+            <a href={`mailto:${companyInfo.emails.support}`} className="rounded-lg border border-orange-500 px-4 py-2 text-sm font-medium text-orange-600 hover:bg-orange-100">
               Email Support
             </a>
           </div>

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { MapPin, Mail, Phone, Clock, Send, MessageCircle, HelpCircle } from 'lucide-react';
 import FloatingActionButton from '../../../components/common/Button/FloatingActionButton';
-import {numbers, emails, address} from '../../../components/contacts'
+import {companyInfo} from '../../../components/contacts'
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
@@ -68,10 +68,11 @@ const ContactUs = () => {
                   <div>
                     <h3 className="font-medium text-amber-900">Visit Us</h3>
                     <p className="text-sm text-gray-600">
-                      {address.companyName} <br />
-                      {address.address} <br />
-                      {address.city} <br />
-                      {address.state}
+                      {companyInfo.name} <br />
+                      {companyInfo.address.address} <br />
+                      {companyInfo.address.locality} <br />
+                      {companyInfo.address.city} <br />
+                      {companyInfo.address.state}
                     </p>
                   </div>
                 </div>
@@ -83,9 +84,9 @@ const ContactUs = () => {
                   <div>
                     <h3 className="font-medium text-amber-900">Email Us</h3>
                     <p className="text-sm text-gray-600">
-                      General: {emails.general} <br />
-                      Support: {emails.support} <br />
-                      Partnerships: {emails.partnerships}
+                      General: {companyInfo.emails.general} <br />
+                      Support: {companyInfo.emails.support} <br />
+                      Partnerships: {companyInfo.emails.partnerships}
                     </p>
                   </div>
                 </div>
@@ -97,9 +98,9 @@ const ContactUs = () => {
                   <div>
                     <h3 className="font-medium text-amber-900">Call Us</h3>
                     <p className="text-sm text-gray-600">
-                      Main: {numbers.primary} <br />
-                      Support: {numbers.secondary} <br />
-                      WhatsApp: {numbers.whatsapp}
+                      Main: {companyInfo.numbers.primary} <br />
+                      Support: {companyInfo.numbers.secondary} <br />
+                      WhatsApp: {companyInfo.numbers.whatsapp}
                     </p>
                   </div>
                 </div>
