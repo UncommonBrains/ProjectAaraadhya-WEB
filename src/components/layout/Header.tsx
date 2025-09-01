@@ -25,7 +25,6 @@ import { toast } from '../../utils/toast';
 import { useCart } from '../../hooks/useCart';
 import { useAuthContext } from '../../context/common/AuthContext/AuthContext';
 
-
 const Header = () => {
   const { cart } = useCart();
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
@@ -39,8 +38,7 @@ const Header = () => {
   const { handleSignout, error, success } = useSignoutViewModel();
   const confirm = useConfirmation();
   const navigate = useNavigate();
-    const { user } = useAuthContext();
-
+  const { user } = useAuthContext();
 
   useEffect(() => {
     if (success) {
@@ -249,7 +247,7 @@ const Header = () => {
                     className="flex h-9 w-9 items-center justify-center rounded-full bg-amber-600 font-medium text-white focus:outline-none"
                     onClick={handleProfileClick}
                   >
-                    {user?.displayName ? user.displayName.charAt(0).toUpperCase() : 'U'  }
+                    {user?.displayName ? user.displayName.charAt(0).toUpperCase() : 'U'}
                   </button>
 
                   {/* Profile Dropdown - ONLY shown on desktop */}
@@ -512,7 +510,7 @@ const Header = () => {
             <div className="flex items-center justify-between border-b border-amber-100 p-4">
               <div className="flex items-center">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-600 font-medium text-white">
-                 {user?.displayName ? user.displayName.charAt(0).toUpperCase() : 'U'  } 
+                  {user?.displayName ? user.displayName.charAt(0).toUpperCase() : 'U'}
                 </div>
                 <div className="ml-3">
                   <p className="text-sm font-medium text-amber-900">{user?.displayName}</p>
