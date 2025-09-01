@@ -6,12 +6,15 @@ import { useTemplesListViewModel } from '../../../view-models/temple/useTemplesL
 import { formatTimeString } from '../../../utils/dateFormatters';
 import { getManagingAuthorityLabel } from '../../../models/entities/Temple';
 import LoadingSpinner from '../../../components/common/LoadingSpinner';
+import { useAuthContext } from '../../../context/common/AuthContext/AuthContext';
 
 const ExploreTemples = () => {
   const [activeFilter, setActiveFilter] = useState<string>('All');
   const [activeSortBy, setActiveSortBy] = useState<string>('Popular');
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState<boolean>(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuthContext();
+
 
   const { temples, loading, hasMore, loadingMore, loadMoreTemples } = useTemplesListViewModel();
 
@@ -101,7 +104,7 @@ const ExploreTemples = () => {
 
             {/* Welcome Section */}
             <div className="hidden md:!block">
-              <h2 className="font-serif text-xl text-amber-900">Namaste, Rahul!</h2>
+              <h2 className="font-serif text-xl text-amber-900">Namaste, {user?.displayName?.split(' ')[0]}!</h2>
               <p className="text-sm text-gray-600">Wishing you spiritual blessings today</p>
             </div>
 
