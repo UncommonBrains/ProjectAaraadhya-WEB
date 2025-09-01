@@ -12,6 +12,13 @@ export interface Pooja {
   poojaTime: string;
   scheduleMode: ScheduleMode;
   templeDetails?: Temple;
+  poojaPricing?:string;
+  variablePriceRange?: VariablePrice;
+}
+
+export interface VariablePrice {
+  maximumPrice?: string;
+  startingPrice?: string;
 }
 
 export interface PoojaDetails {
