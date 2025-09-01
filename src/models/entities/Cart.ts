@@ -17,6 +17,7 @@ export interface CartItem {
   members: Member[];
   poojaDate: string;
   poojaDetails?: PoojaDetails;
+  customAmount: string;
 }
 
 export interface Member {

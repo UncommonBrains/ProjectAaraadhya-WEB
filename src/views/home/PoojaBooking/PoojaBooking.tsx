@@ -9,8 +9,7 @@ import CartBox from '../CartPage/CartBox';
 import { CartItem, Member } from '../../../models/entities/Cart';
 import { useCart } from '../../../hooks/useCart';
 import { toast } from '../../../utils/toast';
-import  BookingFormModal  from  '../../../components/common/BookingFormModal';
-
+import BookingFormModal from '../../../components/common/BookingFormModal';
 
 const PoojaBooking: React.FC = () => {
   const navigate = useNavigate();
@@ -30,6 +29,7 @@ const PoojaBooking: React.FC = () => {
     starSign: '',
     members: [],
     poojaDate: '',
+    customAmount: '',
   });
 
   useEffect(() => {
@@ -89,8 +89,13 @@ const PoojaBooking: React.FC = () => {
 
     if (!selectedPooja) return;
 
+    const basePrice =
+      selectedPooja.poojaPricing === 'fixed'
+        ? parseFloat(selectedPooja.price)
+        : parseFloat(formData.customAmount);
+
     // Calculate the total price with additional members
-    const totalPrice = calculateTotalPrice(parseFloat(selectedPooja.price), formData.members);
+    const totalPrice = calculateTotalPrice(basePrice, formData.members);
 
     const newCartItem: CartItem = {
       poojaId: selectedPooja.poojaId,
@@ -111,6 +116,7 @@ const PoojaBooking: React.FC = () => {
       starSign: '',
       members: [],
       poojaDate: '',
+      customAmount: '',
     });
   };
 
@@ -270,7 +276,14 @@ const PoojaBooking: React.FC = () => {
                                 {pooja.poojaDetails.name}
                               </h4>
                               <p className="mt-1 text-sm font-medium text-amber-900">
-                                ₹{pooja.price}
+                                {pooja.poojaPricing === 'fixed' ? (
+                                  <>₹{pooja.price}</>
+                                ) : (
+                                  <>
+                                    ₹{pooja.variablePriceRange?.startingPrice} – ₹
+                                    {pooja.variablePriceRange?.maximumPrice}
+                                  </>
+                                )}
                               </p>
                             </div>
                             <button

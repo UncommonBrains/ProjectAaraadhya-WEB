@@ -11,5 +11,5 @@ export interface CartForm {
   starSign: string;
   members: Member[];
   poojaDate: string;
-  customAmount: string;
+  customAmount: string ;
 }

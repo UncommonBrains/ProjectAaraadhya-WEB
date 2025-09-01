@@ -32,34 +32,52 @@ const CartBox: React.FC = () => {
       ) : (
         <>
           <div className="mb-4 flex-1 space-y-3 overflow-y-auto">
-            {cart?.items.map((item) => (
-              <div
-                key={item.id}
-                className="flex items-center justify-between rounded-lg bg-amber-50 p-3"
-              >
-                <div>
-                  <p className="text-sm font-medium text-amber-900">{item.poojaDetails?.name}</p>
-                  <p className="text-xs text-gray-600">
-                    For: {item.name}
-                    {item.members.length > 0 && ` +${item.members.length}`}
-                  </p>
-                  {item.members.length > 0 && (
-                    <p className="text-xs text-amber-700">
-                      Base: ₹{item.poojaPrice} + {item.members.length} members
-                    </p>
-                  )}
-                </div>
-                <div className="flex items-center">
-                  <span className="mr-2 font-medium text-amber-900">₹{item.price}</span>
-                  <button
-                    onClick={() => removeFromCart(item.id)}
-                    className="rounded-full bg-amber-100 p-1 text-amber-900"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            ))}
+            {cart?.items.map((item) => {
+  // Determine base price depending on fixed or variable
+  const isVariable = !!item.customAmount && item.customAmount !== '0';
+  const basePrice = isVariable
+    ? parseFloat(item.customAmount) // user-entered amount
+    : parseFloat(item.poojaPrice);  // fixed from DB
+
+  return (
+    <div
+      key={item.id}
+      className="flex items-center justify-between rounded-lg bg-amber-50 p-3"
+    >
+      <div>
+        <p className="text-sm font-medium text-amber-900">{item.poojaDetails?.name}</p>
+        <p className="text-xs text-gray-600">
+          For: {item.name}
+          {item.members.length > 0 && ` +${item.members.length}`}
+        </p>
+
+        {/* Show base breakdown only if members exist */}
+        {item.members.length > 0 && (
+          <p className="text-xs text-amber-700">
+            Base: ₹{basePrice} + {item.members.length} members
+          </p>
+        )}
+
+        {/* Show range note for variable pooja (optional) */}
+        {isVariable && item.members.length === 0 && (
+          <p className="text-xs text-amber-700">Custom Offering: ₹{basePrice}</p>
+        )}
+      </div>
+
+      <div className="flex items-center">
+        {/* Final price = base + members (already computed when added to cart) */}
+        <span className="mr-2 font-medium text-amber-900">₹{item.price}</span>
+        <button
+          onClick={() => removeFromCart(item.id)}
+          className="rounded-full bg-amber-100 p-1 text-amber-900"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+    </div>
+  );
+})}
+
           </div>
 
           <div className="border-t border-amber-200 pt-3">
