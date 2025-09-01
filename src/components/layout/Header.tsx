@@ -512,11 +512,11 @@ const Header = () => {
             <div className="flex items-center justify-between border-b border-amber-100 p-4">
               <div className="flex items-center">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-600 font-medium text-white">
-                  R
+                 {user?.displayName ? user.displayName.charAt(0).toUpperCase() : 'U'  } 
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm font-medium text-amber-900">Rahul Kumar</p>
-                  <p className="truncate text-xs text-gray-500">rahul@example.com</p>
+                  <p className="text-sm font-medium text-amber-900">{user?.displayName}</p>
+                  <p className="truncate text-xs text-gray-500">{user?.email}</p>
                 </div>
               </div>
               <button
