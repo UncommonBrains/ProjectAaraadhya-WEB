@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { Star, Filter, Map, Clock, ArrowUpDown, X, Heart } from 'lucide-react';
+// import { Star, Filter, Map, Clock, ArrowUpDown, X, Heart } from 'lucide-react';
+import { Star, Clock, X, Heart } from 'lucide-react';
 import FloatingActionButton from '../../../components/common/Button/FloatingActionButton';
 import { NavLink } from 'react-router-dom';
 import { useTemplesListViewModel } from '../../../view-models/temple/useTemplesListViewModel';
@@ -9,8 +10,8 @@ import LoadingSpinner from '../../../components/common/LoadingSpinner';
 import { useAuthContext } from '../../../context/common/AuthContext/AuthContext';
 
 const ExploreTemples = () => {
-  const [activeFilter, setActiveFilter] = useState<string>('All');
-  const [activeSortBy, setActiveSortBy] = useState<string>('Popular');
+  // const [activeFilter, setActiveFilter] = useState<string>('All');
+  // const [activeSortBy, setActiveSortBy] = useState<string>('Popular');
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState<boolean>(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const { user } = useAuthContext();
@@ -196,24 +197,24 @@ const ExploreTemples = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="font-serif text-xl text-amber-900">Explore Temples</h2>
-                  <p className="text-sm text-gray-600">Discover sacred places across India</p>
+                  <p className="text-sm text-gray-600">Discover sacred places across Kerala</p>
                 </div>
                 <div className="flex space-x-3">
                   {/* Filter button - Visible only on small screens */}
-                  <button
+                  {/* <button
                     className="rounded border border-amber-200 bg-white p-2 text-gray-600 md:hidden"
                     onClick={toggleMobileFilters}
                   >
                     <Filter className="h-4 w-4" />
-                  </button>
-                  <button className="rounded border border-amber-200 bg-white p-2 text-gray-600">
+                  </button> */}
+                  {/* <button className="rounded border border-amber-200 bg-white p-2 text-gray-600">
                     <Map className="h-4 w-4" />
-                  </button>
+                  </button> */}
                 </div>
               </div>
 
               {/* Category Filters - Touch scroll with no visible scrollbar */}
-              <div className="scrollbar-hide -mx-4 overflow-x-auto px-4 md:mx-0 md:px-0">
+              {/* <div className="scrollbar-hide -mx-4 overflow-x-auto px-4 md:mx-0 md:px-0">
                 <div className="mb-2 flex touch-pan-x space-x-3 text-sm whitespace-nowrap">
                   {['All', 'Favorites', 'Vishnu', 'Shiva', 'Shakti'].map((filter) => (
                     <button
@@ -229,10 +230,10 @@ const ExploreTemples = () => {
                     </button>
                   ))}
                 </div>
-              </div>
+              </div> */}
 
               {/* Sort Options and Results Count */}
-              <div className="mb-4 flex items-center justify-between">
+              {/* <div className="mb-4 flex items-center justify-between">
                 <p className="text-sm text-gray-600">
                   Showing <span className="font-medium">{temples.length}</span> temples
                 </p>
@@ -253,7 +254,7 @@ const ExploreTemples = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               {/* Temple Cards - Grid Layout */}
               <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
