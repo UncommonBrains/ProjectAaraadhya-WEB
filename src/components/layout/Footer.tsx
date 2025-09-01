@@ -4,7 +4,11 @@ import {
   FaFacebook,
   FaInstagram,
   FaYoutube,
+  FaWhatsapp
 } from 'react-icons/fa6';
+
+import {numbers, emails, socials} from '../contacts'
+
 
 const Footer = () => {
   return (
@@ -64,13 +68,13 @@ const Footer = () => {
           <div className="flex items-center">
             <Mail className="mr-2 h-4 w-4 text-orange-400" />
             <a href="mailto:info@aaraadhya.com" className="hover:text-orange-300">
-              info@aaraadhya.in
+              {emails.general}
             </a>
           </div>
           <div className="flex items-center">
             <Phone className="mr-2 h-4 w-4 text-orange-400" />
-            <a href="tel:+914841234567" className="hover:text-orange-300">
-              +91 9400446095
+            <a href={`tel:${numbers.primary}`} className="hover:text-orange-300">
+              {numbers.primary}
             </a>
           </div>
         </div>
@@ -80,7 +84,7 @@ const Footer = () => {
           <div className="mr-6 flex items-center">
             <span className="mr-2 text-sm">Follow Us</span>
             <a
-              href="https://facebook.com/aaraadhya"
+              href={socials.facebook}
               target="_blank"
               rel="noopener noreferrer"
               className="mx-1 text-blue-500 transition-colors hover:text-blue-400"
@@ -89,7 +93,7 @@ const Footer = () => {
               <FaFacebook className="h-4 w-4" />
             </a>
             <a
-              href="https://instagram.com/aaraadhya"
+              href={socials.instagram}
               target="_blank"
               rel="noopener noreferrer"
               className="mx-1 text-pink-500 transition-colors hover:text-pink-400"
@@ -98,13 +102,22 @@ const Footer = () => {
               <FaInstagram className="h-4 w-4" />
             </a>
             <a
-              href="https://youtube.com/@aaraadhya"
+              href={socials.youtube}
               target="_blank"
               rel="noopener noreferrer"
               className="mx-1 text-red-500 transition-colors hover:text-red-400"
               aria-label="YouTube"
             >
               <FaYoutube className="h-4 w-4" />
+            </a>
+            <a
+              href={socials.whatsapp}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mx-1 text-green-500 transition-colors hover:text-red-400"
+              aria-label="WhatsApp"
+            >
+              <FaWhatsapp className="h-4 w-4" />
             </a>
             {/* <a 
               href="https://twitter.com/aaraadhya" 

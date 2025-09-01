@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { MapPin, Mail, Phone, Clock, Send, MessageCircle, HelpCircle } from 'lucide-react';
 import FloatingActionButton from '../../../components/common/Button/FloatingActionButton';
+import {numbers, emails, address} from '../../../components/contacts'
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
@@ -67,10 +68,10 @@ const ContactUs = () => {
                   <div>
                     <h3 className="font-medium text-amber-900">Visit Us</h3>
                     <p className="text-sm text-gray-600">
-                      Aaraadhya <br />
-                      Krishnamana Illam, Cheravally,<br />
-                      Kayamkulam PO, Alappuzha,<br />
-                      Kerala - 690502, India
+                      {address.companyName} <br />
+                      {address.address} <br />
+                      {address.city} <br />
+                      {address.state}
                     </p>
                   </div>
                 </div>
@@ -82,9 +83,9 @@ const ContactUs = () => {
                   <div>
                     <h3 className="font-medium text-amber-900">Email Us</h3>
                     <p className="text-sm text-gray-600">
-                      General: info@aaraadhya.in<br />
-                      Support: support@aaraadhya.in<br />
-                      Partnerships: partners@aaraadhya.in
+                      General: {emails.general} <br />
+                      Support: {emails.support} <br />
+                      Partnerships: {emails.partnerships}
                     </p>
                   </div>
                 </div>
@@ -96,9 +97,9 @@ const ContactUs = () => {
                   <div>
                     <h3 className="font-medium text-amber-900">Call Us</h3>
                     <p className="text-sm text-gray-600">
-                      Main: +91 9400446095 <br />
-                      Support: +91 9400446095 <br />
-                      WhatsApp: +91 9400446095
+                      Main: {numbers.primary} <br />
+                      Support: {numbers.secondary} <br />
+                      WhatsApp: {numbers.whatsapp}
                     </p>
                   </div>
                 </div>
