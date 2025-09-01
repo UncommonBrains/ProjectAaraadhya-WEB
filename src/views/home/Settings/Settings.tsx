@@ -21,6 +21,8 @@ import {
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { SettingsCardProps } from './types';
+import { useAuthContext } from '../../../context/common/AuthContext/AuthContext';
+
 
 const Settings = () => {
   const [activeSection, setActiveSection] = useState('profile');
@@ -78,6 +80,7 @@ const Settings = () => {
   ];
 
   return (
+    
     <div className="container mx-auto px-4 py-8">
       <h1 className="mb-8 font-serif text-2xl font-bold text-amber-900">Settings</h1>
 
@@ -117,6 +120,8 @@ const Settings = () => {
 
 // Individual Settings Section Components
 const ProfileSettings = () => {
+    const { user } = useAuthContext();
+
   return (
     <div className="space-y-8">
       <h2 className="border-b border-amber-100 pb-2 font-serif text-xl font-bold text-amber-900">
@@ -127,7 +132,7 @@ const ProfileSettings = () => {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
           <div className="relative">
             <div className="flex h-24 w-24 items-center justify-center rounded-full bg-amber-600 text-3xl font-medium text-white">
-              R
+              {user?.displayName ? user.displayName.charAt(0).toUpperCase() : 'U'}
             </div>
             <button className="absolute right-0 bottom-0 rounded-full border border-amber-200 bg-amber-100 p-2 transition-colors hover:bg-amber-200">
               <Edit3 className="h-4 w-4 text-amber-800" />
@@ -135,8 +140,8 @@ const ProfileSettings = () => {
           </div>
 
           <div className="flex-1">
-            <h3 className="text-lg font-medium text-amber-900">Ramesh Kumar</h3>
-            <p className="text-gray-500">ramesh@example.com</p>
+            <h3 className="text-lg font-medium text-amber-900">{user?.displayName}</h3>
+            <p className="text-gray-500">{user?.email}</p>
           </div>
 
           <button className="flex items-center gap-2 rounded-md bg-amber-50 px-4 py-2 text-amber-900 transition-colors hover:bg-amber-100">
@@ -150,6 +155,7 @@ const ProfileSettings = () => {
             title="Personal Information"
             icon={<User className="h-5 w-5" />}
             description="Update your name, email, phone number and profile picture"
+            
           />
 
           <NavLink to="/reset-password">
