@@ -28,6 +28,7 @@ import TermsConditions from '../views/home/Legal/TermsConditions';
 import CancellationAndRefund from '../views/home/Legal/CancellationRefund';
 import ShippingDelivery from '../views/home/Legal/ShippingDelivery';
 import ContactUs from '../views/home/Legal/ContactUs';
+import About from '../views/home/Extras/About';
 
 const AppRouter = () => {
   return (
@@ -42,10 +43,11 @@ const AppRouter = () => {
           <Route path="/divine-seva" element={<DivineSeva />} />
           <Route path="/astrology" element={<Astrology />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
-        <Route path="/terms" element={<TermsConditions />} />
-        <Route path="/refunds" element={<CancellationAndRefund />} />
-        <Route path="/shipping" element={<ShippingDelivery />} />
-        <Route path="/contact-us" element={<ContactUs />} />
+          <Route path="/terms" element={<TermsConditions />} />
+          <Route path="/refunds" element={<CancellationAndRefund />} />
+          <Route path="/shipping" element={<ShippingDelivery />} />
+          <Route path="/contact-us" element={<ContactUs />} />
+          <Route path="/about" element={<About />} />
         </Route>
         {/* Auth Routes */}
         <Route element={<AuthRoutes />}>
@@ -68,7 +70,6 @@ const AppRouter = () => {
         {/* Other Routes */}
         <Route path="/devotee-store" element={<DevoteeStore />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
-        
 
         <Route path="*" element={<NotFound />} />
       </Routes>
