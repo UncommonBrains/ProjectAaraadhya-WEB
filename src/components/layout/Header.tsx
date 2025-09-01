@@ -2,7 +2,6 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { MdTempleHindu } from 'react-icons/md';
 import { FaPeopleGroup } from 'react-icons/fa6';
 import {
-  Bell,
   Settings,
   LogOut,
   Phone,
@@ -24,6 +23,8 @@ import { useConfirmation } from '../../hooks/useConfirmation';
 import { useSignoutViewModel } from '../../view-models/auth/useSignoutViewModel';
 import { toast } from '../../utils/toast';
 import { useCart } from '../../hooks/useCart';
+import { useAuthContext } from '../../context/common/AuthContext/AuthContext';
+
 
 const Header = () => {
   const { cart } = useCart();
@@ -38,6 +39,8 @@ const Header = () => {
   const { handleSignout, error, success } = useSignoutViewModel();
   const confirm = useConfirmation();
   const navigate = useNavigate();
+    const { user } = useAuthContext();
+
 
   useEffect(() => {
     if (success) {
@@ -246,15 +249,15 @@ const Header = () => {
                     className="flex h-9 w-9 items-center justify-center rounded-full bg-amber-600 font-medium text-white focus:outline-none"
                     onClick={handleProfileClick}
                   >
-                    R
+                    {user?.displayName ? user.displayName.charAt(0).toUpperCase() : 'U'  }
                   </button>
 
                   {/* Profile Dropdown - ONLY shown on desktop */}
                   {showDropdown && window.innerWidth >= 768 && (
                     <div className="absolute right-0 z-50 mt-2 w-48 -translate-y-1 transform rounded-md border border-amber-100 bg-white py-1 shadow-lg">
                       <div className="border-b border-amber-100 px-4 py-3">
-                        <p className="text-sm font-medium text-amber-900">Rahul Kumar</p>
-                        <p className="truncate text-xs text-gray-500">rahul@example.com</p>
+                        <p className="text-sm font-medium text-amber-900">{user?.displayName}</p>
+                        <p className="truncate text-xs text-gray-500">{user?.email}</p>
                       </div>
 
                       <ul className="py-1">
