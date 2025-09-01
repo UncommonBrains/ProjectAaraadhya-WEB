@@ -109,51 +109,7 @@ const ExploreTemples = () => {
             </div>
 
             {/* Filters Section */}
-            <div className="mb-6 rounded-lg border border-amber-100 bg-white p-4 shadow-sm">
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="font-serif text-amber-900">Filters</h3>
-                <button className="text-xs text-orange-500">Reset All</button>
-              </div>
-
-              {/* Deity Filter */}
-              <div className="mb-4">
-                <h4 className="mb-2 text-sm font-medium text-gray-700">Deity</h4>
-                <div className="space-y-1">
-                  {['Vishnu', 'Shiva', 'Shakti', 'Ganesh', 'Hanuman'].map((deity) => (
-                    <div key={deity} className="flex items-center">
-                      <input type="checkbox" id={deity} className="h-4 w-4 accent-orange-500" />
-                      <label htmlFor={deity} className="ml-2 text-sm text-gray-600">
-                        {deity}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Amenities Filter */}
-              <div className="mb-4">
-                <h4 className="mb-2 text-sm font-medium text-gray-700">Amenities</h4>
-                <div className="space-y-1">
-                  {['Parking', 'Food', 'Accommodation', 'Guides'].map((amenity) => (
-                    <div key={amenity} className="flex items-center">
-                      <input type="checkbox" id={amenity} className="h-4 w-4 accent-orange-500" />
-                      <label htmlFor={amenity} className="ml-2 text-sm text-gray-600">
-                        {amenity}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {mobileFiltersOpen && (
-                <button
-                  onClick={toggleMobileFilters}
-                  className="mt-4 w-full rounded-lg bg-orange-500 py-2 text-sm font-medium text-white"
-                >
-                  Apply Filters
-                </button>
-              )}
-            </div>
+           
 
             {/* Featured Temples */}
             <div className="hidden rounded-lg border border-amber-100 bg-white p-4 shadow-sm md:!block">
