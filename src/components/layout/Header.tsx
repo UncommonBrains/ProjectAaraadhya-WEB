@@ -136,14 +136,14 @@ const Header = () => {
                 Explore Temples
               </NavLink>
 
-              <NavLink
+              {/* <NavLink
                 to="/upcoming-poojas"
                 className={({ isActive }) =>
                   isActive ? 'font-bold text-orange-600' : 'text-gray-600 hover:text-amber-900'
                 }
               >
                 Upcoming Poojas
-              </NavLink>
+              </NavLink> */}
               <NavLink
                 to="/feed"
                 className={({ isActive }) =>
@@ -229,12 +229,12 @@ const Header = () => {
             {/* Profile */}
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
-                <div className="relative mx-3">
+                {/* <div className="relative mx-3">
                   <Bell className="h-6 w-6 text-gray-500" />
                   <span className="absolute -top-1.5 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-orange-400 text-xs text-white">
                     3
                   </span>
-                </div>
+                </div> */}
                 <NavLink to="/cart" className="relative mx-3">
                   <ShoppingCart className="h-6 w-6 text-gray-500" />
                   <span className="absolute -top-1.5 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-orange-400 text-xs text-white">
