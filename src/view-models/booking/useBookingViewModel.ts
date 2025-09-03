@@ -99,7 +99,7 @@ export const useBookingViewModel = () => {
       setLastVisible(result.lastVisible);
       setHasMore(result.hasMore);
     } catch (err) {
-      setError('Failed to load more posts');
+      setError('Failed to load more posts',);
     } finally {
       setLoadingMore(false);
     }
@@ -368,7 +368,7 @@ export const useBookingViewModel = () => {
 //   }
 // };
 
-//grok made relationshipt
+//grok made relationship
 
 const bookPooja = async (booking: Booking) => {
   if (!firebaseUser?.uid) {
