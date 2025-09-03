@@ -22,7 +22,6 @@ const ExploreTemples = () => {
   // Add click outside handler
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      // If the sidebar is open and the click is outside the sidebar element
       if (
         mobileFiltersOpen &&
         sidebarRef.current &&
