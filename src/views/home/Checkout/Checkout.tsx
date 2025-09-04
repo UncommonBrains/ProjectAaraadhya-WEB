@@ -1076,9 +1076,9 @@ const handlePayment = async () => {
       description: "Pooja Booking Payment",
       order_id: orderData.order.id,
       prefill: {
-        name: user.displayName || "Test User",
-        email: user.email || "test@example.com",
-        contact: user.phoneNumber || "9999999999",
+        name: user.displayName || "",
+        email: user.email || "",
+        contact: user.phoneNumber || "",
       },
       theme: { color: "#F37254" },
 

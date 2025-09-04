@@ -25,9 +25,9 @@ export function openRazorpayCheckout(
       onSuccess(response.razorpay_payment_id);
     },
     prefill: {
-      name: "Devotee",
-      email: "test@example.com",
-      contact: "9999999999",
+      name: "",
+      email: "",
+      contact: "",
     },
     theme: {
       color: "#F59E0B", // amber
