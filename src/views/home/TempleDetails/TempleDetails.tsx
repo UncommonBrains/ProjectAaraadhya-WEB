@@ -127,12 +127,12 @@ const TempleDetails = () => {
                   <MapPin className="mr-1 h-4 w-4" />
                   <span className="text-sm md:text-base">{temple?.contactDetails?.address}</span>
                 </div>
-                <div className="flex items-center">
+                {/* <div className="flex items-center">
                   <div className="mr-3 flex">{renderRating(0)}</div>
                   <span className="text-sm md:text-base">
                     {0} ({0} reviews)
                   </span>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

@@ -67,9 +67,14 @@ const BookingFormModal: React.FC<BookingFormModalProps> = ({
   calculateTotalPrice,
 }) => {
   if (!selectedPooja) return null;
-  
 
   const [customAmountError, setCustomAmountError] = useState<string | null>(null);
+
+function getMonthlyAvailableDates(poojaDates: string[]): Date[] {
+  if (!poojaDates || poojaDates.length === 0) return [];
+  return poojaDates.map(d => new Date(d));
+}
+
 
   useEffect(() => {
     // Reset error when a new pooja is selected or modal is opened
@@ -146,12 +151,12 @@ const BookingFormModal: React.FC<BookingFormModalProps> = ({
                   placeholder={`₹${selectedPooja.variablePriceRange?.startingPrice} - ₹${selectedPooja.variablePriceRange?.maximumPrice}`}
                   value={formData.customAmount || ''}
                   required
-                  onChange={(e) =>
-                    onFormDataChange({ ...formData, customAmount: e.target.value })
-                  }
+                  onChange={(e) => onFormDataChange({ ...formData, customAmount: e.target.value })}
                   onBlur={handleCustomAmountBlur}
                 />
-                {customAmountError && <p className="mt-1 text-sm text-red-600">{customAmountError}</p>}
+                {customAmountError && (
+                  <p className="mt-1 text-sm text-red-600">{customAmountError}</p>
+                )}
               </div>
             )}
           </div>
@@ -257,7 +262,8 @@ const BookingFormModal: React.FC<BookingFormModalProps> = ({
             </div>
 
             {/* Date and Calendar */}
-            {selectedPooja.scheduleMode === ScheduleMode.repeat ? (
+            {selectedPooja.scheduleMode === ScheduleMode.weekly ||
+            selectedPooja.scheduleMode === ScheduleMode.monthly ? (
               <CustomDatePicker
                 onSelected={(date) => {
                   if (date) {
@@ -268,7 +274,13 @@ const BookingFormModal: React.FC<BookingFormModalProps> = ({
                   }
                 }}
                 dates={dates}
-                availableDates={availableDates}
+                availableDates={
+                  selectedPooja.scheduleMode === ScheduleMode.weekly
+                    ? availableDates
+                    : selectedPooja.poojaDates
+                      ? getMonthlyAvailableDates(selectedPooja.poojaDates)
+                      : []
+                }
               />
             ) : (
               <div>

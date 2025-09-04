@@ -9,6 +9,7 @@ export interface Pooja {
   isActive: boolean;
   poojaDateAndTime?: string;
   poojaDays: Array<boolean>;
+  poojaDates?: Array<string>;
   poojaTime: string;
   scheduleMode: ScheduleMode;
   templeDetails?: Temple;
@@ -31,7 +32,8 @@ export interface PoojaDetails {
 }
 
 export enum ScheduleMode {
-  repeat = 'repeat',
+  weekly = 'weekly',
+  monthly = 'monthly',
   once = 'once',
 }
 
