@@ -1,5 +1,5 @@
 // src/services/payments.ts
-import type { CreateOrderInput, CreateOrderResponse, PaymentOrder } from "../types/payments";
+import type { CreateOrderInput, CreateOrderResponse } from "../types/payments";
 
 
 export async function createOrder(input: CreateOrderInput): Promise<CreateOrderResponse> {
