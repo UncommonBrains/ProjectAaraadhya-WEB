@@ -46,7 +46,16 @@ const TemplePoojas: React.FC<{ templeId?: string }> = ({ templeId }) => {
                 </div>
                 <div className="ml-3">
                   <h4 className="text-sm font-medium text-amber-900">{pooja.poojaDetails.name}</h4>
-                  <p className="text-xs text-gray-600">From ₹{pooja.price}</p>
+                  <p className="mt-1 text-sm font-medium text-amber-900">
+                    {pooja.poojaPricing === 'fixed' ? (
+                      <>₹{pooja.price}</>
+                    ) : (
+                      <>
+                        ₹{pooja.variablePriceRange?.startingPrice} – ₹
+                        {pooja.variablePriceRange?.maximumPrice}
+                      </>
+                    )}
+                  </p>{' '}
                 </div>
               </div>
             ))}

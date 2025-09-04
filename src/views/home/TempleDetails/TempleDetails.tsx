@@ -42,6 +42,27 @@ const TempleDetails = () => {
     // You might want to show a success message or update the reviews list
   };
 
+  const handleShare = async () => {
+    const shareData = {
+      title: temple?.basicDetails?.templeName,
+      text: `Check out ${temple?.basicDetails?.templeName} on Project Aaraadhya.`,
+      url: window.location.href,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+        console.log('Temple details shared successfully');
+      } else {
+        // Fallback for browsers that do not support the Web Share API
+        await navigator.clipboard.writeText(window.location.href);
+        alert('Link copied to clipboard!');
+      }
+    } catch (err) {
+      console.error('Error sharing:', err);
+    }
+  };
+
   const navigate = useNavigate();
 
   // Render stars based on rating
@@ -79,7 +100,10 @@ const TempleDetails = () => {
             >
               <Heart className={`h-5 w-5 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`} />
             </button>
-            <button className="rounded-full bg-amber-100 p-2 text-amber-900">
+            <button
+              className="rounded-full bg-amber-100 p-2 text-amber-900"
+              onClick={handleShare}
+            >
               <Share className="h-5 w-5" />
             </button>
           </div>
