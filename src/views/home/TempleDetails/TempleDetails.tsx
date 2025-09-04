@@ -171,7 +171,8 @@ const TempleDetails = () => {
         {/* Tabs Navigation */}
         <div className="container mx-auto px-4">
           <div className="flex overflow-x-auto border-b border-amber-200 md:justify-center md:overflow-visible">
-            {['about', 'photos', 'events', 'reviews', 'nearby'].map((tab) => (
+            {/* {['about', 'photos', 'events', 'reviews', 'nearby'].map((tab) => ( */}
+            {['about', 'photos'].map((tab) => (
               <button
                 key={tab}
                 className={`cursor-pointer px-4 py-3 text-sm font-medium whitespace-nowrap ${
