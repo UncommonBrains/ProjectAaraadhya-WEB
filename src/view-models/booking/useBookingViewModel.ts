@@ -7,7 +7,7 @@ import { templeService } from '../../services/templeService';
 import { DocumentSnapshot } from 'firebase/firestore';
 // import { StorageService } from '../../services/firebase/storage';
 import { cartService } from '../../services/cartService';
-import { PaymentMethod } from '../../views/home/Checkout/types';
+// import { PaymentMethod } from '../../views/home/Checkout/types';
 import { useCart } from '../../hooks/useCart';
 
 export const useBookingViewModel = () => {
