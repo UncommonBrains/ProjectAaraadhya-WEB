@@ -21,6 +21,7 @@ import { formatTimeString } from '../../../utils/dateFormatters';
 import TempleGallery from './TempleGallery';
 import TemplePoojas from './TemplePoojas';
 import ReviewModal from './ReviewModal';
+import ContactModal from './ContactModal';
 
 const TempleDetails = () => {
   const { temple } = useTempleViewModel();
@@ -30,6 +31,7 @@ const TempleDetails = () => {
   const [readMoreDescription, setReadMoreDescription] = useState(false);
   const [readMoreHistory, setReadMoreHistory] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
   // Function to handle review submission
   const handleReviewSubmit = (reviewData: { rating: number; title: string; review: string }) => {
@@ -161,7 +163,10 @@ const TempleDetails = () => {
               Book Pooja
             </button>
 
-            <button className="text-md md:text-md flex cursor-pointer items-center justify-center rounded-lg bg-amber-100 py-3 font-medium text-amber-900">
+            <button
+              className="text-md md:text-md flex cursor-pointer items-center justify-center rounded-lg bg-amber-100 py-3 font-medium text-amber-900"
+              onClick={() => setIsContactModalOpen(true)}
+            >
               <Phone className="mr-1 h-5 w-5" />
               Contact
             </button>
@@ -482,6 +487,13 @@ const TempleDetails = () => {
         isOpen={isReviewModalOpen}
         onClose={() => setIsReviewModalOpen(false)}
         onSubmit={handleReviewSubmit}
+      />
+
+      {/* Contact Modal */}
+      <ContactModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+        contactDetails={temple?.contactDetails}
       />
 
       {/* Floating Action Button - Adjusted position for mobile */}
