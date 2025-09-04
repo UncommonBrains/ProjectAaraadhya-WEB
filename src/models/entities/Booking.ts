@@ -9,11 +9,7 @@ export interface Booking {
   templeId: string;
   poojas: Array<BookedPoojaDetails>;
   price: string;
-  paymentDetails: {
-    paymentMethod: PaymentMethod;
-    screenshot?: File;
-    screenshotUrl?: string;
-  };
+  paymentDetails: PaymentDetails; // <-- updated
   status: BookingStatus;
   poojaDates: string[];
   templeDetails?: Temple;
@@ -36,3 +32,18 @@ export enum BookingStatus {
   COMPLETED = 'completed',
   REFUNDED = 'refunded',
 }
+
+export type PaymentDetails =
+  | {
+      paymentMethod: PaymentMethod.RAZORPAY;
+      razorpay_order_id: string;
+      razorpay_payment_id: string;
+      razorpay_signature: string;
+      screenshot?: File;
+      screenshotUrl?: string;
+    }
+  | {
+      paymentMethod: Exclude<PaymentMethod, PaymentMethod.RAZORPAY>;
+      screenshot?: File;
+      screenshotUrl?: string;
+    };
