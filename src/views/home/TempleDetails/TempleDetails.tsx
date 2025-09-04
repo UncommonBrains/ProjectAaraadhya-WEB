@@ -30,17 +30,13 @@ const TempleDetails = () => {
   const [readMoreDescription, setReadMoreDescription] = useState(false);
   const [readMoreHistory, setReadMoreHistory] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-  
+
   // Function to handle review submission
-  const handleReviewSubmit = (reviewData: {
-    rating: number;
-    title: string;
-    review: string;
-  }) => {
+  const handleReviewSubmit = (reviewData: { rating: number; title: string; review: string }) => {
     // In a real app, you would send this data to your backend
     console.log('Review submitted:', reviewData);
     // TODO: Implement API call to save review
-    
+
     // You might want to show a success message or update the reviews list
   };
 
@@ -89,7 +85,7 @@ const TempleDetails = () => {
       </header>
 
       {/* Main content wrapper with max-width for larger screens */}
-      <div className="mx-auto max-w-4xl ">
+      <div className="mx-auto max-w-4xl">
         {/* Hero Image Section */}
         <div
           className="relative h-80 overflow-hidden bg-cover bg-center md:h-80"
@@ -158,14 +154,14 @@ const TempleDetails = () => {
               Virtual Tour
             </button> */}
             <button
-              className="text-md md:text-md flex items-center justify-center rounded-lg bg-amber-600 py-3 font-medium text-white cursor-pointer"
+              className="text-md md:text-md flex cursor-pointer items-center justify-center rounded-lg bg-amber-600 py-3 font-medium text-white"
               onClick={() => navigate(`/temple-details/pooja-booking/${temple?.id}`)}
             >
               <Gift className="mr-1 h-5 w-5" />
               Book Pooja
             </button>
 
-            <button className="text-md md:text-md flex items-center justify-center rounded-lg bg-amber-100 py-3 font-medium text-amber-900 cursor-pointer">
+            <button className="text-md md:text-md flex cursor-pointer items-center justify-center rounded-lg bg-amber-100 py-3 font-medium text-amber-900">
               <Phone className="mr-1 h-5 w-5" />
               Contact
             </button>
@@ -174,11 +170,11 @@ const TempleDetails = () => {
 
         {/* Tabs Navigation */}
         <div className="container mx-auto px-4">
-          <div className="flex overflow-x-auto border-b border-amber-200 md:justify-center md:overflow-visible ">
+          <div className="flex overflow-x-auto border-b border-amber-200 md:justify-center md:overflow-visible">
             {['about', 'photos', 'events', 'reviews', 'nearby'].map((tab) => (
               <button
                 key={tab}
-                className={`px-4 py-3 text-sm font-medium whitespace-nowrap cursor-pointer ${
+                className={`cursor-pointer px-4 py-3 text-sm font-medium whitespace-nowrap ${
                   activeTab === tab
                     ? 'border-b-2 border-orange-500 text-orange-500'
                     : 'text-gray-600'
@@ -282,13 +278,17 @@ const TempleDetails = () => {
 
               {/* Visiting Tips */}
               {temple?.basicDetails?.rules && (
-                <div className="rounded-lg border border-amber-100 bg-white p-4 shadow-sm md:p-6 ">
+                <div className="rounded-lg border border-amber-100 bg-white p-4 shadow-sm md:p-6">
                   <h3 className="mb-3 font-serif text-lg text-amber-900 md:text-xl">
                     Visiting Tips
                   </h3>
-                  <p className="space-y-2 text-sm text-gray-700 md:space-y-3 md:text-base">
-                    {temple?.basicDetails?.rules}
-                  </p>
+                  <ol className="list-decimal space-y-2 pl-5 text-sm text-gray-700 md:space-y-3 md:text-base">
+                    {(temple?.basicDetails?.rules.match(/\d+\s[^0-9]+/g) || []).map(
+                      (rule, index) => (
+                        <li key={index}>{rule.replace(/^\d+\s*/, '').trim()}</li>
+                      ),
+                    )}
+                  </ol>
                 </div>
               )}
             </div>
@@ -359,7 +359,7 @@ const TempleDetails = () => {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-serif text-lg text-amber-900 md:text-xl">Reviews & Ratings</h3>
-                <button 
+                <button
                   className="text-sm font-medium text-orange-500 md:text-base"
                   onClick={() => setIsReviewModalOpen(true)}
                 >
@@ -477,7 +477,7 @@ const TempleDetails = () => {
       </div>
 
       {/* Review Modal */}
-      <ReviewModal 
+      <ReviewModal
         isOpen={isReviewModalOpen}
         onClose={() => setIsReviewModalOpen(false)}
         onSubmit={handleReviewSubmit}
