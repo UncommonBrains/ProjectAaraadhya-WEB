@@ -1069,17 +1069,13 @@ const handlePayment = async () => {
 
     // 2️⃣ Initialize Razorpay
     const rzp = new (window as any).Razorpay({
-      key: "rzp_test_R79F1bWUTRYNZh",
+      key:  import.meta.env.VITE_RAZORPAY_KEY_ID,
       amount: orderData.order.amount,
       currency: "INR",
-      name: "Aaraadhya",
+      name: `${temple?.basicDetails?.templeName }`,
       description: "Pooja Booking Payment",
       order_id: orderData.order.id,
-      prefill: {
-        name: user.displayName || "",
-        email: user.email || "",
-        contact: user.phoneNumber || "",
-      },
+     
       theme: { color: "#F37254" },
 
       // ✅ Success Handler
