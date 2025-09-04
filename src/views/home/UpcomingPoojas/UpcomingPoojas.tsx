@@ -50,6 +50,7 @@ const UpcomingPoojas = () => {
     starSign: '',
     members: [],
     poojaDate: '',
+    customAmount: '',
   });
 
   const [wordLimit, setWordLimit] = useState(13); // default to 13 for md+
@@ -191,6 +192,7 @@ const UpcomingPoojas = () => {
       starSign: '',
       members: [],
       poojaDate: '',
+      customAmount: '',
     });
     toast.success('Pooja added to cart!');
   };
