@@ -6,4 +6,6 @@ export interface PaymentDetails {
 export enum PaymentMethod {
   BANK_TRANSFER = 'Bank Transfer',
   UPI = 'UPI',
+  RAZORPAY = "Razorpay"
+
 }
