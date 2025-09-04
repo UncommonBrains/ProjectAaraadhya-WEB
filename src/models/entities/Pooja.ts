@@ -32,7 +32,6 @@ export interface PoojaDetails {
 }
 
 export enum ScheduleMode {
-  repeat = 'repeat',
   weekly = 'weekly',
   monthly = 'monthly',
   once = 'once',

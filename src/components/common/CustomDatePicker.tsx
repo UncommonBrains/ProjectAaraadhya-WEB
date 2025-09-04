@@ -14,13 +14,16 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
   dates,
   availableDates,
 }) => {
-  const [selectedDate, setSelectedDate] = useState<Date>(availableDates[0]);
+const [selectedDate, setSelectedDate] = useState<Date | null>(
+  availableDates.length > 0 ? availableDates[0] : null
+);
 
   const firstDayOfWeek = dates[0].getDay();
 
   const isEnabled = (date: Date): boolean => {
-    return availableDates.includes(date);
-  };
+  return availableDates.some(d => moment(d).isSame(date, 'day'));
+};
+
 
   const handleSelect = (date: Date): void => {
     if (isEnabled(date)) {

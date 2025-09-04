@@ -45,25 +45,35 @@ const PoojaBooking: React.FC = () => {
   // Set the additional member price (percentage of base price)
   const additionalMemberRate = 1; // 100% of base price for each additional member
 
+  function getMonthlyAvailableDates(poojaDates: string[]): Date[] {
+  if (!poojaDates || poojaDates.length === 0) return [];
+  return poojaDates.map(d => new Date(d));
+}
+
+
   // Handle adding a pooja to cart
   const handleAddToCart = (pooja: Pooja): void => {
     if (cart?.items && cart.items.length > 0 && cart.items[0].templeId != pooja.templeId) {
       return toast.error('Please clear the cart before adding a pooja from a different temple.');
     }
 
-    if (pooja?.scheduleMode == ScheduleMode.repeat) {
-      const today = new Date();
-      const daysAfter = parseInt(temple?.advancedOptions?.advancedOnlneBookingLimit ?? '10') - 1;
-      const dates: Date[] = [];
+    const today = new Date();
+    const daysAfter = parseInt(temple?.advancedOptions?.advancedOnlneBookingLimit ?? '10') - 1;
+    const dates: Date[] = [];
 
-      for (let i = 0; i <= daysAfter; i++) {
-        const d = new Date(today);
-        d.setDate(today.getDate() + i);
-        dates.push(d);
-      }
+    for (let i = 0; i <= daysAfter; i++) {
+      const d = new Date(today);
+      d.setDate(today.getDate() + i);
+      dates.push(d);
+    }
 
-      setDates(dates);
-      setAvailableDates(dates.filter((date) => pooja?.poojaDays[date.getDay()]));
+    setDates(dates);
+
+    if (pooja.scheduleMode === ScheduleMode.weekly && pooja.poojaDays) {
+      setAvailableDates(dates.filter((date) => pooja.poojaDays![date.getDay()]));
+    } else if (pooja.scheduleMode === ScheduleMode.monthly && pooja.poojaDates) {
+      const monthlyDates = getMonthlyAvailableDates(pooja.poojaDates);
+      setAvailableDates(monthlyDates);
     }
 
     setFormData({
@@ -71,8 +81,7 @@ const PoojaBooking: React.FC = () => {
       poojaDate:
         pooja.scheduleMode === ScheduleMode.once
           ? (pooja.poojaDateAndTime ?? new Date().toISOString())
-          : (dates.find((date) => pooja?.poojaDays[date.getDay()])?.toISOString() ??
-            new Date().toISOString()),
+          : new Date().toISOString(),
     });
     setSelectedPooja(pooja);
   };
