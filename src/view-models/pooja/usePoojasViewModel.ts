@@ -35,8 +35,13 @@ export const usePoojasViewModel = () => {
         {
           field: 'scheduleMode',
           operator: '==',
-          value: ScheduleMode.repeat,
+          value: ScheduleMode.weekly,
         },
+        {
+          field: 'scheduleMode',
+          operator: '==',
+          value: ScheduleMode.monthly,
+        }
       ]);
 
       const poojasList = await Promise.all(
@@ -75,8 +80,13 @@ export const usePoojasViewModel = () => {
         {
           field: 'scheduleMode',
           operator: '==',
-          value: ScheduleMode.repeat,
+          value: ScheduleMode.weekly,
         },
+        {
+          field: 'scheduleMode',
+          operator: '==',
+          value: ScheduleMode.monthly,
+        }
       ]);
 
       const poojasList = await Promise.all(
@@ -116,7 +126,12 @@ export const usePoojasViewModel = () => {
         {
           field: 'scheduleMode',
           operator: '==',
-          value: ScheduleMode.repeat,
+          value: ScheduleMode.weekly,
+        },
+         {
+          field: 'scheduleMode',
+          operator: '==',
+          value: ScheduleMode.monthly,
         },
         {
           field: 'keywords',
@@ -160,7 +175,12 @@ export const usePoojasViewModel = () => {
         {
           field: 'scheduleMode',
           operator: '==',
-          value: ScheduleMode.repeat,
+          value: ScheduleMode.weekly,
+        },
+        {
+          field: 'scheduleMode',
+          operator: '==',
+          value: ScheduleMode.monthly,
         },
         {
           field: 'keywords',
