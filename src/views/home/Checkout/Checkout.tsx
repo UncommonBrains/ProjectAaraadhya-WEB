@@ -777,7 +777,7 @@ const Checkout: React.FC = () => {
 
 
 
-  //grok
+  //   setPaymentState((prev) => ({ ...prev, isLoading: true }));
 
 //   const handlePayment = async () => {
 //   if (!user?.uid) {
@@ -1347,9 +1347,31 @@ const handlePayment = async () => {
               <div key={item.id} className="flex justify-between text-sm">
                 <div>
                   <div className="font-medium text-gray-900">
-                    {item.name || item.poojaDetails?.name}
+                    {item.poojaDetails?.name} {'for'} <br />
+                    {item.name}  {`- ${item.starSign}`}
                   </div>
-                  <div className="text-gray-600">Date: {item.poojaDate}</div>
+                  {item.members && item.members.length > 0 && (
+                    <div className="mt-1 font-medium text-gray-700">
+                      {item.members.map((member: any, index: number) => (
+                        <div key={index}>
+                          {member.name ? `${member.name} - ` : ''}
+                          {member.starSign}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <div className="text-gray-600 mt-2">
+                    Pooja to be held on Date:{' '}
+                    <span className="font-bold">
+                      {new Date(item.poojaDate).toLocaleDateString('en-GB', {
+                        weekday: 'long',
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric',
+                      })}
+                    </span>
+                    <div className='border-t border-gray-200 mt-3'></div>
+                  </div>
                 </div>
                 <div className="font-medium text-gray-900">₹{item.price}</div>
               </div>
@@ -1402,7 +1424,7 @@ const handlePayment = async () => {
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans">
-      <header className="bg-gray-900 p-4 text-white">
+      <header className="bg-yellow-500 p-4 text-white">
         <div className="container mx-auto flex max-w-6xl items-center justify-between">
           <div className="text-xl font-bold text-white">
             {isSubmitted
@@ -1448,6 +1470,12 @@ const handlePayment = async () => {
               <div className="mb-4 rounded-lg border border-gray-200 bg-white">
                 <div className="flex items-center justify-between border-b border-gray-200 p-4">
                   <div className="flex items-center">
+                    <button
+                      onClick={() => navigate(-1)}
+                      className="mr-2 rounded-full p-2 hover:bg-gray-200"
+                    >
+                      <ArrowLeft className="h-4 w-4" />
+                    </button>
                     <h3 className="font-medium text-gray-900">
                       {templeName ? `Booking for poojas at ${templeName}` : 'Booking for poojas'}
                     </h3>
