@@ -1529,6 +1529,32 @@ const handlePayment = async () => {
                   </div>
                 </div>
                 <hr className="my-4" />
+                {paymentState.showConfirmation && (
+                  <div className="mb-4">
+                    <button
+                      onClick={handlePayment}
+                      disabled={paymentState.isLoading || bookingLoading}
+                      className={`w-full rounded px-4 py-3 text-sm font-medium transition-colors ${
+                        paymentState.isLoading || bookingLoading
+                          ? 'cursor-not-allowed bg-gray-300 text-gray-500'
+                          : 'bg-green-600 text-white hover:bg-green-700'
+                      }`}
+                    >
+                      {paymentState.isLoading || bookingLoading ? (
+                        <div className="flex items-center justify-center">
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Processing...
+                        </div>
+                      ) : (
+                        `Proceed with Payment using ${selectedPaymentMethod?.name}`
+                      )}
+                    </button>
+                    <div className="mt-2 text-center text-xs text-gray-500">
+                      You will be redirected to {selectedPaymentMethod?.name} to complete your
+                      payment
+                    </div>
+                  </div>
+                )}
                 <div className="text-xs text-gray-500">
                   <p className="mb-2">How are delivery costs calculated?</p>
                   <p>
