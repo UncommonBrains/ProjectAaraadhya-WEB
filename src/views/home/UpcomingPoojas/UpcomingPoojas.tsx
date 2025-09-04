@@ -131,7 +131,7 @@ const UpcomingPoojas = () => {
       return toast.error('Please clear the cart before adding a pooja from a different temple.');
     }
 
-    if (pooja?.scheduleMode == ScheduleMode.repeat) {
+    if (pooja?.scheduleMode == ScheduleMode.weekly || pooja?.scheduleMode == ScheduleMode.monthly) {
       const today = new Date();
       const daysAfter =
         parseInt(pooja?.templeDetails?.advancedOptions?.advancedOnlneBookingLimit ?? '10') - 1;
